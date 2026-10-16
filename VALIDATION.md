@@ -16,10 +16,19 @@
 - 追加パックJS3本とPNG画像94枚を含む配信用ファイルの存在とSHA-256を確認。
 - 本番リポジトリのローカルチェックアウトは変更なし。今回、本番への書込・Pages設定変更は行っていない。
 
-## 公開後に必要な確認
+## GitHub Actionsと公開URLの確認（2026-10-16 JST）
 
-テストリポジトリ `naninunenonano/Test-kokoryo` は作成済み。Pages公開はActionsの結果で別途確認する。公開URLでの実配信、CSPのブラウザ適用、
-iPhone Safariのレイアウト・タッチ操作・Bot戦完走は未確認。
+- 公開URL: https://naninunenonano.github.io/Test-kokoryo/
+- 実行記録: https://github.com/naninunenonano/Test-kokoryo/actions/runs/38859286399 （再実行2回目）
+- build・deployジョブとも成功。GitHub上でも分離検査11件・構文検査4本・オフライン／BotのDOMテストが成功。
+- 公開されたtest-build.jsonのPR・バージョン・ソースコミット・onlineEnabled=falseを確認。
+- 公開URLからHTMLと追加パックJS3本を取得し、全4ファイルのSHA-256がビルド記録と一致。
+- PNG画像94枚すべてでHTTP HEAD 200と画像のContent-Typeを確認。うち1枚はGETでも取得しSHA-256一致を確認。
+- 実配信HTMLでもTEST表示、空のSupabase URL、connect-src noneを確認。実配信されたJavaScript4本の構文検査も成功。
+
+## 実機で残る確認
+
+CSPのブラウザ適用、iPhone Safariのレイアウト・タッチ操作・Bot戦完走は未確認。
 DOMテストは実機Safariの代わりにはならない。
 
 ## 更新手順
