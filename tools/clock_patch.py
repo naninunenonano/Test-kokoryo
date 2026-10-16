@@ -16,6 +16,13 @@ def share_normal_conversion(source, once):
 
 
 def inject_clock(source, once):
+    # Native timed PRs already contain the shared handler, lifecycle and Bot
+    # guards. Keep a single clock; normalize private names for preview tests.
+    if 'function turnClockTick(){' in source:
+        for required in ['function turnClockConvertNormalDie(', 'function turnClockOriginalCompleteEnd(){', 'function turnClockReceiveAction(']:
+            if source.count(required) != 1:
+                raise ValueError('Unknown native clock structure; refusing duplicate injection')
+        return source.replace('turnClock', 'testClock').replace('TURN_CLOCK', 'TEST_CLOCK').replace('data-turn-clock-payment', 'data-test-clock-payment')
     hooks = [
         ('function beginTurn(){', 'function beginTurn(){\n testClockBeginTurn();'),
         ('function completeEnd(){', 'function testClockOriginalCompleteEnd(){'),

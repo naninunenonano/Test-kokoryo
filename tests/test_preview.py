@@ -94,6 +94,20 @@ class PreviewTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             share_normal_conversion('upstream conversion rewritten', builder.once)
 
+    def test_native_timed_pr_reuses_one_clock_instead_of_injecting_twice(self):
+        from clock_patch import inject_clock
+        fixture = ('function turnClockTick(){}\nfunction turnClockConvertNormalDie(id){}\n'
+                   'function turnClockOriginalCompleteEnd(){}\nfunction turnClockReceiveAction(payload){}')
+        patched = inject_clock(fixture, builder.once)
+        self.assertEqual(patched.count('function testClockTick(){'), 1)
+        self.assertEqual(patched.count('function testClockConvertNormalDie('), 1)
+        self.assertNotIn('function turnClockTick(){', patched)
+
+    def test_unknown_native_clock_structure_aborts(self):
+        from clock_patch import inject_clock
+        with self.assertRaises(ValueError):
+            inject_clock('function turnClockTick(){}', builder.once)
+
     def test_local_and_bot_modes_reuse_existing_handlers(self):
         self.assertEqual(self.dom.ids.count('testOfflineStart'), 1)
         self.assertEqual(self.dom.ids.count('testBotStart'), 1)
