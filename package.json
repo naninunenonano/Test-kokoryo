@@ -1,0 +1,7 @@
+{
+  "name": "kokoryo-offline-test-builder",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {"test:dom": "node tests/dom-smoke.cjs"},
+  "devDependencies": {"jsdom": "30.1.3"}
+}

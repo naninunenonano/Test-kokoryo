@@ -1,0 +1,75 @@
+name: Update offline test
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/preview.yml'
+      - 'tools/**'
+      - 'tests/**'
+      - 'package*.json'
+      - 'preview-target.json'
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'ここ領のPR番号'
+        required: true
+        default: '1'
+      expected_commit:
+        description: '取得するコミットを固定する場合に指定（空欄ならPRの最新）'
+        required: false
+        default: ''
+permissions:
+  contents: read
+concurrency:
+  group: kokoryo-test-pages
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.repository == 'naninunenonano/Test-kokoryo'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Build PR preview
+        env:
+          PR_NUMBER: ${{ inputs.pr_number }}
+          EXPECTED_COMMIT: ${{ inputs.expected_commit }}
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess, sys
+          target = json.load(open('preview-target.json'))
+          manual_pr = os.environ.get('PR_NUMBER', '')
+          pr = manual_pr or str(target['pr'])
+          commit = os.environ.get('EXPECTED_COMMIT', '') if manual_pr else target['commit']
+          subprocess.run([sys.executable, 'tools/build_preview.py', '--pr', pr, '--commit', commit, '--output', '_site'], check=True)
+          PY
+      - name: Verify offline isolation and packaged assets
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Check generated JavaScript syntax
+        run: node tools/check_syntax.cjs _site
+      - name: Check offline and Bot screen transitions
+        run: |
+          npm ci --ignore-scripts
+          npm run test:dom
+      - name: Configure test Pages
+        uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
