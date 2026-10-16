@@ -9,7 +9,11 @@
 - 将来の基本量を3へ変更したケースで、通常操作と時間切れの獲得量が一致することを検証。
 - 上流の通常変換処理を認識できない場合、固定個数へのフォールバックはせずビルドを失敗させる。
 
-公開後の結果はGitHub Actionsとtest-build.jsonで確認する。iPhone Safariの実機操作は未確認。
+GitHub Actionsのbuild・deployとも成功。配信HTMLのSHA-256とビルド記録の一致、通常操作と時間切れによる同じ共有関数の呼出しを確認済み。
+公開URL: https://naninunenonano.github.io/Test-kokoryo/?build=a8c7661b71af
+ビルド: `a8c7661b71af579c79d5bace122c0c33d06d844b`
+Actions: https://github.com/naninunenonano/Test-kokoryo/actions/runs/38884979676
+画像94枚・追加パックJS3本は変更なし。本番への反映なし。iPhone Safariの実機操作は未確認。
 
 ---
 
