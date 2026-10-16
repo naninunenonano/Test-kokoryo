@@ -116,6 +116,11 @@ test('Yggdrasil repeat choice and extra resources resolve without pausing at a m
  const h=await fixture(t);h.run("installed[0]=[{id:'q',special:'mayqueen'},{id:'m',special:'mine'}];resolveMayQueen()");
  await h.expire();assert.equal(h.read('powers[0].y'),2);assert.equal(h.read('turn'),1);
 });
+test('Bot copy choice rendered disabled for the human viewer still resolves on timeout',async t=>{
+ const h=await fixture(t);h.run("botMatchMode=true;onlineDebugMode=true;onlineDebugPlayers=['human','bot1','bot2','bot3'];turn=1;viewer=0;testClockState.active=null;installed[1]=[{id:'copy',special:'abilityCopy',type:'LEGEND'}];beginTurn()");
+ assert.equal(h.read("q('#legendChoiceCards button').disabled"),true);
+ await h.expire();assert.equal(h.read('turn'),2);assert.equal(h.read("q('#legendChoiceModal').classList.contains('hidden')"),true);
+});
 test('pending Park selections for all players finish automatically',async t=>{
  const h=await fixture(t);h.run("pendingParkPlayers=[0,1,2];market=[{id:'a',key:'a',type:'N',name:'a'},{id:'b',key:'b',type:'N',name:'b'},{id:'c',key:'c',type:'N',name:'c'}]");
  await h.expire();assert.equal(h.read('pendingParkPlayers.length'),0);assert.deepEqual(h.read('hands.map(x=>x.length)'),[1,1,1,0]);assert.equal(h.read('turn'),1);

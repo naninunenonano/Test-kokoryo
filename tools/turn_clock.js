@@ -73,6 +73,10 @@ function testClockResolvePending(owner,token){
    const title=q('#legendChoiceTitle').textContent;
    if(title==='オルフェンズ'||title==='消費する資源')q('#legendChoiceCancel').click();
    else{
+    // Bot start choices were rendered from the human viewer, with controls disabled.
+    // The timeout resolver now owns this turn and may complete that mandatory choice.
+    if(title==='パーフェクト・イミテーション')
+     for(const el of q('#legendChoiceCards').querySelectorAll('select,button'))el.disabled=false;
     const pick=q('#legendChoiceCards .selectable-card')||q('#legendChoiceCards button:not(:disabled)');
     if(pick)pick.click();else q('#legendChoiceCancel').click();
    }
