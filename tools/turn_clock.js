@@ -142,6 +142,8 @@ function testClockExpire(token){
    if(!useDie(die.id))continue;
    const color=colorFor(die.value);totals[color]+=gainResource(owner,color,3,'dieConvert');
   }
+  // Resource-dependent VP must trigger the final round before advancing turn.
+  checkEndgameTrigger();
   testClockDiscardOverflow(owner);testClockCloseChoices();
   addDialog('⏱ P'+(owner+1)+'の持ち時間切れ：未使用ダイスを変換（資金'+totals.y+'・食料'+totals.p+'・兵力'+totals.r+'）、手札上限を自動処理しました。');
   playLogAction('turn_clock_timeout',{player:owner+1,resources:totals});

@@ -146,6 +146,11 @@ test('game-ending final turn uses existing game-over path and stops the clock',a
  const h=await fixture(t);h.run('endgameStarter=3;endgameRemaining=1');await h.expire();
  assert.equal(h.read('gameEnded'),true);assert.equal(h.read('testClockState.active'),null);h.advance(900000);assert.equal(h.read('turn'),0);
 });
+test('resource-derived victory reached by timeout starts the final round for the expiring player',async t=>{
+ const h=await fixture(t);h.run("installed[0]=[{id:'spirit',type:'N',special:'inadamashii',name:'spirit'}];powers[0]={y:57,p:0,r:0};dice=[{id:1,value:1,used:false}]");
+ await h.expire();assert.equal(h.read('endgameStarter'),0);assert.equal(h.read('endgameRemaining'),3);assert.equal(h.read('canAcquireDebt()'),false);
+ for(let i=0;i<3;i++)h.run('completeEnd()');assert.equal(h.read('gameEnded'),true);
+});
 test('background elapsed time expires once, leaves next player with a full clock',async t=>{
  const h=await fixture(t);h.advance(3600000);assert.equal(h.read('turn'),1);
  assert.equal(h.read('testClockState.remaining[0]'),30000);assert.equal(h.read('testClockState.remaining[1]'),180000);
