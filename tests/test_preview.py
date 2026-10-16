@@ -3,6 +3,7 @@ import importlib.util
 import json
 import re
 import unittest
+import tempfile
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -33,10 +34,14 @@ class Assets(HTMLParser):
 class PreviewTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.html = (SITE / 'index.html').read_text()
+        cls.document = (SITE / 'index.html').read_text()
+        cls.html = cls.document
+        tag = re.search(r'<script src="js/app\.js(?:\?v=[0-9.]+)?"></script>', cls.html)
+        if tag:
+            cls.html = cls.html.replace(tag[0], '<script>' + (SITE / 'js/app.js').read_text() + '</script>')
         cls.metadata = json.loads((SITE / 'test-build.json').read_text())
         cls.dom = Assets()
-        cls.dom.feed(cls.html)
+        cls.dom.feed(cls.document)
 
     def test_visible_build_identity(self):
         m = self.metadata
@@ -108,6 +113,42 @@ class PreviewTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             inject_clock('function turnClockTick(){}', builder.once)
 
+    def test_split_bundle_must_match_its_sources(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / 'src').mkdir()
+            (root / 'js').mkdir()
+            manifest = {'schema': 1, 'prefix': '(()=>{', 'close': '})();', 'sections': [
+                {'id': 'S0001', 'file': 'game.js'}, {'id': 'S0002', 'file': 'bootstrap.js', 'epilogue': True}]}
+            (root / 'src/order.json').write_text(json.dumps(manifest))
+            (root / 'src/game.js').write_text('// @kokoryo-section S0001\nconst x=1;\n// @kokoryo-end-section S0001\n')
+            (root / 'src/bootstrap.js').write_text('// @kokoryo-section S0002\n\n// @kokoryo-end-section S0002\n')
+            (root / 'js/app.js').write_text('(()=>{const x=1;})();')
+            html = '<script src="js/app.js?v=0.3.221"></script>'
+            inlined, split = builder.inline_split_source(root, html)
+            self.assertTrue(split)
+            self.assertIn('const x=1;', inlined)
+            (root / 'js/app.js').write_text('stale bundle')
+            with self.assertRaisesRegex(ValueError, 'Stale split bundle'):
+                builder.inline_split_source(root, html)
+
+    def test_split_manifest_cannot_fall_back_to_inline(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / 'src').mkdir()
+            (root / 'src/order.json').write_text('{}')
+            with self.assertRaises(ValueError):
+                builder.inline_split_source(root, '<script src="unknown.js"></script>')
+
+    def test_split_preview_keeps_external_app_and_all_sources(self):
+        if 'source-split' not in self.metadata['features']:
+            return
+        self.assertIn('src="js/app.js?v=', self.document)
+        self.assertIn('KOKORYO_OFFLINE_TEST=true', (SITE / 'js/app.js').read_text())
+        self.assertEqual(self.html.count('function testClockTick(){'), 1)
+        for name in ['game', 'card_effects', 'characters', 'decks', 'ui', 'bot', 'online', 'debug', 'bootstrap']:
+            self.assertTrue((SITE / 'src' / (name + '.js')).is_file())
+
     def test_local_and_bot_modes_reuse_existing_handlers(self):
         self.assertEqual(self.dom.ids.count('testOfflineStart'), 1)
         self.assertEqual(self.dom.ids.count('testBotStart'), 1)
@@ -130,7 +171,7 @@ class PreviewTests(unittest.TestCase):
             self.assertIn(file, self.metadata['files'])
         self.assertGreater(len(list((SITE / 'images').rglob('*.png'))), 0)
         for source in self.dom.sources:
-            self.assertTrue((SITE / source).is_file(), source)
+            self.assertTrue((SITE / source.split('?')[0]).is_file(), source)
 
     def test_generated_only_assets_not_workflows_or_tests(self):
         self.assertFalse((SITE / '.github').exists())
