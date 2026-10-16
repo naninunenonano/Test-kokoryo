@@ -5,12 +5,16 @@ import hashlib
 import html as html_lib
 import io
 import json
+import os
 import re
 import shutil
 import tarfile
 import tempfile
 import urllib.request
 from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from clock_patch import inject_clock
 
 SOURCE_REPO = 'naninunenonano/kokoryo'
 TARGET_REPO = 'naninunenonano/Test-kokoryo'
@@ -58,8 +62,14 @@ def patch_html(source, pr, commit):
     match = re.search(r'オリジナル版 Ver\.(\d+\.\d+\.\d+)', source)
     if not match:
         raise ValueError('Missing source version')
-    version = match[1]
-    build = {'environment': 'offline-test', 'version': version, 'pr': pr, 'commit': commit, 'onlineEnabled': False}
+    source_version = match[1]
+    parts = source_version.split('.')
+    version = '.'.join(parts[:-1] + [str(int(parts[-1]) + 1)])
+    preview_commit = os.environ.get('GITHUB_SHA', 'local')
+    build = {'environment': 'offline-test', 'version': version, 'sourceVersion': source_version,
+             'pr': pr, 'commit': commit, 'previewCommit': preview_commit, 'onlineEnabled': False,
+             'features': ['turn-chess-clock'], 'clock': {'initialSeconds': 180, 'maxSeconds': 180, 'incrementSeconds': 30, 'timeoutDieResources': 3}}
+    source = source.replace(source_version, version)
     source = once(source, '<html lang="ja"><head>', '<html lang="ja"><head>' +
         '<meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39;; script-src &#39;self&#39; &#39;unsafe-inline&#39; &#39;unsafe-eval&#39;; style-src &#39;self&#39; &#39;unsafe-inline&#39;; img-src &#39;self&#39; data:; connect-src &#39;none&#39;; object-src &#39;none&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;">')
     source = once(source, '<title>ここから先は、僕の領地</title>', f'<title>TEST Ver.{version}｜ここ領 PR #{pr}</title>')
@@ -88,7 +98,7 @@ def patch_html(source, pr, commit):
 <button id="testBotStart" class="primary" type="button">Bot戦</button>
 <div id="entryError" class="entry-error"></div><input id="entryName" type="hidden"><input id="entryPass" type="hidden"><button id="entryJoin" type="button" hidden>オンライン接続無効</button>
 </div></div>''' + source[end:]
-    banner = f'''<aside id="testBanner" role="status"><strong>TEST Ver.{version}</strong> <span>PR #{pr} · commit <code title="{commit}">{commit[:12]}</code> · オフライン／Bot専用</span> <button id="testHome" type="button">テスト入口へ</button></aside>'''
+    banner = f'''<aside id="testBanner" role="status"><strong>TEST Ver.{version}</strong> <span title="基準Ver.{source_version} / source {commit}">PR #{pr} · build <code title="{preview_commit}">{preview_commit[:12]}</code> · 持ち時間制／オフライン・Bot専用</span> <button id="testHome" type="button">テスト入口へ</button></aside>'''
     style = '''<style>#testBanner{position:fixed;inset:0 0 auto 0;z-index:30000;background:#fff1b8;color:#302700;border-bottom:2px solid #a87500;padding:7px 9px;font:12px/1.5 system-ui;box-sizing:border-box}#testBanner strong{font-size:14px}#testBanner button{font-size:11px;padding:2px 5px;background:white;border:1px solid #997000;border-radius:5px}body{padding-top:65px!important}.online-draft-screen,.online-resource-screen{padding-top:65px!important}.online-char-screen,.online-debug-lobby{padding-top:10px}.entry-screen{min-height:calc(100dvh - 100px)}@media(max-width:500px){#testBanner span{font-size:10px}}</style>'''
     source = once(source, '</head><body>', style + '</head><body>' + banner)
     entry_handlers = '''
@@ -102,6 +112,7 @@ q('#testBotStart').onclick=()=>enterBotMatch();
 q('#testHome').onclick=()=>location.reload();
 '''
     source = once(source, '\n})();\nconst q=s=>document.querySelector(s);', entry_handlers + '\n})();\nconst q=s=>document.querySelector(s);')
+    source = inject_clock(source, once)
     return source, build
 
 

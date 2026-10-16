@@ -70,6 +70,16 @@ class PreviewTests(unittest.TestCase):
         self.assertIn('function loadRealOnlineResume(){if(KOKORYO_OFFLINE_TEST)return null;', self.html)
         self.assertIn('setTimeout(()=>{if(KOKORYO_OFFLINE_TEST)return;const r=loadRealOnlineResume();', self.html)
 
+    def test_clock_feature_identity_and_fail_closed_hooks(self):
+        self.assertIn('turn-chess-clock', self.metadata['features'])
+        self.assertEqual(self.metadata['clock'], {'initialSeconds': 180, 'maxSeconds': 180, 'incrementSeconds': 30, 'timeoutDieResources': 3})
+        self.assertIn('sourceVersion', self.metadata)
+        self.assertIn('previewCommit', self.metadata)
+        self.assertIn('function testClockOriginalCompleteEnd(){', self.html)
+        self.assertIn('function completeEnd(){', self.html)
+        self.assertIn("gainResource(turn,col,1+bonus,'dieConvert')", self.html)
+        self.assertIn('testClockBotValid(actor,clockBotToken)', self.html)
+
     def test_local_and_bot_modes_reuse_existing_handlers(self):
         self.assertEqual(self.dom.ids.count('testOfflineStart'), 1)
         self.assertEqual(self.dom.ids.count('testBotStart'), 1)
