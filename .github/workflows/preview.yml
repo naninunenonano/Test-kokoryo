@@ -13,7 +13,7 @@ on:
       pr_number:
         description: 'ここ領のPR番号'
         required: true
-        default: '1'
+        default: '3'
       expected_commit:
         description: '取得するコミットを固定する場合に指定（空欄ならPRの最新）'
         required: false

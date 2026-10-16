@@ -16,17 +16,17 @@ async function waitUntil(predicate){
 }
 async function open(){
  const errors=[],requests=[];
+ const instrument=text=>text.replace('\n})();\nconst q=s=>document.querySelector(s);',
+  '\nwindow.__connectionGuards={ensureSupabaseClient,enterRealOnlineLobby,loadRealOnlineResume};\n})();\nconst q=s=>document.querySelector(s);');
  const assets=requestInterceptor(request=>{
    const url=request.url;
    requests.push(url);
    assert.ok(url.startsWith(origin),'external asset requested: '+url);
-   return new Response(fs.readFileSync(path.join(root,url.slice(origin.length))),{headers:{'Content-Type':'application/javascript'}});
+   return new Response(instrument(fs.readFileSync(path.join(root,new URL(url).pathname.replace('/Test-kokoryo/','')),'utf8')),{headers:{'Content-Type':'application/javascript'}});
  });
  const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));
  // Expose the connection guards only inside this test DOM, never in the deployed file.
- const html=fs.readFileSync(path.join(root,'index.html'),'utf8').replace(
-  '\n})();\nconst q=s=>document.querySelector(s);',
-  '\nwindow.__connectionGuards={ensureSupabaseClient,enterRealOnlineLobby,loadRealOnlineResume};\n})();\nconst q=s=>document.querySelector(s);');
+ const html=instrument(fs.readFileSync(path.join(root,'index.html'),'utf8'));
  const dom=new JSDOM(html,{
   url:origin,runScripts:'dangerously',resources:{interceptors:[assets]},virtualConsole:vc,
   beforeParse(w){
@@ -53,7 +53,7 @@ async function open(){
  const finish=()=>{
   assert.equal(dom.window.localStorage.getItem('kokoryo_custom_decks_v1'),'production sentinel');
   assert.equal(dom.window.localStorage.getItem('kokoryo_online_resume_v36'),'production sentinel');
-  assert.deepEqual(errors,[]);assert.equal(requests.length,3);
+  assert.deepEqual(errors,[]);assert.equal(requests.length,dom.window.document.querySelectorAll('script[src]').length);
   dom.window.close();
  };
  return {dom,q,click,visible,finish,errors};

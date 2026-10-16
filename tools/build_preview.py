@@ -45,7 +45,7 @@ def unpack_source(commit, target):
                 continue
             if not member.isfile() or member.issym() or member.islnk():
                 continue
-            if parts[0] not in ('images', 'packs', 'tests') and parts != ('index.html',):
+            if parts[0] not in ('images', 'packs', 'tests', 'src', 'js') and parts != ('index.html',):
                 continue
             destination = target.joinpath(*parts)
             destination.parent.mkdir(parents=True, exist_ok=True)
@@ -58,17 +58,19 @@ def once(source, old, new):
     return source.replace(old, new, 1)
 
 
-def patch_html(source, pr, commit):
+def patch_html(source, pr, commit, source_split=False):
     match = re.search(r'オリジナル版 Ver\.(\d+\.\d+\.\d+)', source)
     if not match:
         raise ValueError('Missing source version')
     source_version = match[1]
     parts = source_version.split('.')
-    version = '.'.join(parts[:-1] + [str(int(parts[-1]) + 2)])
+    version = source_version if source_split else '.'.join(parts[:-1] + [str(int(parts[-1]) + 2)])
     preview_commit = os.environ.get('GITHUB_SHA', 'local')
     build = {'environment': 'offline-test', 'version': version, 'sourceVersion': source_version,
              'pr': pr, 'commit': commit, 'previewCommit': preview_commit, 'onlineEnabled': False,
              'features': ['turn-chess-clock'], 'clock': {'initialSeconds': 180, 'maxSeconds': 180, 'incrementSeconds': 30, 'timeoutDieConversion': 'normal'}}
+    if source_split:
+        build['features'].append('source-split')
     source = source.replace(source_version, version)
     source = once(source, '<html lang="ja"><head>', '<html lang="ja"><head>' +
         '<meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39;; script-src &#39;self&#39; &#39;unsafe-inline&#39; &#39;unsafe-eval&#39;; style-src &#39;self&#39; &#39;unsafe-inline&#39;; img-src &#39;self&#39; data:; connect-src &#39;none&#39;; object-src &#39;none&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;">')
@@ -116,6 +118,55 @@ q('#testHome').onclick=()=>location.reload();
     return source, build
 
 
+def inline_split_source(source_dir, source):
+    tags = re.findall(r'<script src="js/app\.js(?:\?v=[0-9.]+)?"></script>', source)
+    if len(tags) != 1:
+        if (source_dir / 'src/order.json').exists():
+            raise ValueError('Unknown split entry point; refusing an inline fallback')
+        return source, False
+    manifest = json.loads((source_dir / 'src/order.json').read_text())
+    if manifest.get('schema') != 1:
+        raise ValueError('Unknown split manifest schema')
+    sections = {}
+    for name in set(x['file'] for x in manifest['sections']):
+        if not re.fullmatch(r'[a-z_]+\.js', name):
+            raise ValueError('Unsafe split source path')
+        text = (source_dir / 'src' / name).read_text()
+        pattern = r'^// @kokoryo-section (S\d+)\n([\s\S]*?)\n// @kokoryo-end-section \1(?:\n|$)'
+        for m in re.finditer(pattern, text, re.M):
+            if m[1] in sections:
+                raise ValueError('Duplicate split section')
+            sections[m[1]] = (name, m[2])
+        outside = re.sub(pattern, '', text, flags=re.M)
+        outside = re.sub(r'//[^\n]*|/\*[\s\S]*?\*/', '', outside)
+        if outside.strip():
+            raise ValueError('Unordered split source code')
+    code, closed, used = manifest['prefix'], False, set()
+    for entry in manifest['sections']:
+        if entry['id'] in used or sections.get(entry['id'], (None,))[0] != entry['file']:
+            raise ValueError('Missing or moved split section')
+        if entry.get('epilogue'):
+            if closed:
+                raise ValueError('Duplicate split epilogue')
+            code += manifest['close']
+            closed = True
+        code += sections[entry['id']][1]
+        used.add(entry['id'])
+    if not closed or len(used) != len(sections) or code != (source_dir / 'js/app.js').read_text():
+        raise ValueError('Stale split bundle; run npm run build in the source PR')
+    return once(source, tags[0], '<script>' + code + '</script>'), True
+
+
+def externalize_split_preview(source, output):
+    matches = list(re.finditer(r'<script>([\s\S]*?)</script>', source))
+    if len(matches) != 1:
+        raise ValueError('Expected one patched app script')
+    m = matches[0]
+    (output / 'js/app.js').write_text(m[1])
+    version = re.search(r'TEST Ver\.(\d+\.\d+\.\d+)', source)[1]
+    return once(source, m[0], '<script src="js/app.js?v=' + version + '"></script>')
+
+
 def build(source_dir, output, pr, commit):
     if output.exists() and any(output.iterdir()):
         raise ValueError('Output must be empty; refusing to overwrite another build')
@@ -127,8 +178,13 @@ def build(source_dir, output, pr, commit):
     for script in ['pack1.js', 'pack2.js', 'rules_pack1.js']:
         if not (output / 'packs' / script).is_file():
             raise ValueError('Missing required pack: ' + script)
-    source = (source_dir / 'index.html').read_text()
-    patched, metadata = patch_html(source, pr, commit)
+    for folder in ['src', 'js']:
+        if (source_dir / folder).is_dir():
+            shutil.copytree(source_dir / folder, output / folder, dirs_exist_ok=True)
+    source, source_split = inline_split_source(source_dir, (source_dir / 'index.html').read_text())
+    patched, metadata = patch_html(source, pr, commit, source_split)
+    if source_split:
+        patched = externalize_split_preview(patched, output)
     (output / 'index.html').write_text(patched)
     (output / '.nojekyll').write_text('')
     manifest = {str(p.relative_to(output)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(output.rglob('*')) if p.is_file()}

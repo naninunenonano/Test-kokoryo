@@ -8,12 +8,15 @@ window.__clockTest={run:code=>eval(code),tick:testClockTick,expire:testClockExpi
 `;
 async function fixture(t,options={}){
  let now=0,id=0;const jobs=new Map(),errors=[];
- let html=fs.readFileSync(path.join(root,'index.html'),'utf8').replace('\n})();\nconst q=s=>document.querySelector(s);',bridge+'\n})();\nconst q=s=>document.querySelector(s);');
- if(options.futureBaseThree)html=html.replaceAll('1+bonus','3+bonus');
+ const instrument=text=>{
+  text=text.replace('\n})();\nconst q=s=>document.querySelector(s);',bridge+'\n})();\nconst q=s=>document.querySelector(s);');
+  return options.futureBaseThree?text.replaceAll('1+bonus','3+bonus'):text;
+ };
+ let html=instrument(fs.readFileSync(path.join(root,'index.html'),'utf8'));
  const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));
  const dom=new JSDOM(html,{
   url:'https://naninunenonano.github.io/Test-kokoryo/',runScripts:'dangerously',virtualConsole:vc,
-  resources:{interceptors:[requestInterceptor(req=>new Response(fs.readFileSync(path.join(root,new URL(req.url).pathname.replace('/Test-kokoryo/',''))),{headers:{'Content-Type':'application/javascript'}}))]},
+  resources:{interceptors:[requestInterceptor(req=>new Response(instrument(fs.readFileSync(path.join(root,new URL(req.url).pathname.replace('/Test-kokoryo/','')),'utf8')),{headers:{'Content-Type':'application/javascript'}}))]},
   beforeParse(w){
    w.Date.now=()=>now;Object.defineProperty(w.performance,'now',{value:()=>now});
    w.setTimeout=(fn,ms=0)=>{jobs.set(++id,{fn,at:now+ms});return id};w.clearTimeout=n=>jobs.delete(n);
