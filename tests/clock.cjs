@@ -6,9 +6,10 @@ const root=path.resolve(__dirname,'../_site');
 const bridge=`
 window.__clockTest={run:code=>eval(code),tick:testClockTick,expire:testClockExpire};
 `;
-async function fixture(t){
+async function fixture(t,options={}){
  let now=0,id=0;const jobs=new Map(),errors=[];
- const html=fs.readFileSync(path.join(root,'index.html'),'utf8').replace('\n})();\nconst q=s=>document.querySelector(s);',bridge+'\n})();\nconst q=s=>document.querySelector(s);');
+ let html=fs.readFileSync(path.join(root,'index.html'),'utf8').replace('\n})();\nconst q=s=>document.querySelector(s);',bridge+'\n})();\nconst q=s=>document.querySelector(s);');
+ if(options.futureBaseThree)html=html.replaceAll('1+bonus','3+bonus');
  const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));
  const dom=new JSDOM(html,{
   url:'https://naninunenonano.github.io/Test-kokoryo/',runScripts:'dangerously',virtualConsole:vc,
@@ -59,10 +60,18 @@ test('normal completion recovers 30 seconds, caps at 180, preserves carryover',a
  assert.equal(h.read('testClockState.remaining[0]'),120000);
  assert.equal(h.read('testClockState.remaining[1]'),180000);
 });
-test('timeout converts all six unused faces at exactly three, ignores used dice and orders',async t=>{
+test('timeout uses ordinary conversion for all six faces, ignores used dice and orders',async t=>{
  const h=await fixture(t);h.run("dice=[1,2,3,4,5,6].map((value,i)=>({id:i+1,value,used:false}));dice.push({id:7,value:1,used:true});breadHands[0]=[{id:'b',value:6}]");
- await h.expire();assert.deepEqual(h.read('powers[0]'),{y:6,p:6,r:6});
+ await h.expire();assert.deepEqual(h.read('powers[0]'),{y:2,p:2,r:2});
  assert.equal(h.read('breadHands[0].length'),1);assert.equal(h.read('testClockState.remaining[0]'),30000);assert.equal(h.read('turn'),1);
+});
+test('manual and timeout conversions share employee and copied-ability bonuses',async t=>{
+ const h=await fixture(t);h.run("employees[0]=[{dieResourceBonus:1}];copiedAbility='神の恩恵';dice=[{id:1,value:1,used:false},{id:2,value:1,used:false}];renderConversionActions();q('#normalconvertchoices button').click()");
+ assert.equal(h.read('powers[0].y'),3);await h.expire();assert.equal(h.read('powers[0].y'),6);
+});
+test('a future ordinary base amount change reaches both manual and timeout conversion',async t=>{
+ const h=await fixture(t,{futureBaseThree:true});h.run("dice=[{id:1,value:1,used:false},{id:2,value:1,used:false}];renderConversionActions();q('#normalconvertchoices button').click()");
+ assert.equal(h.read('powers[0].y'),3);await h.expire();assert.equal(h.read('powers[0].y'),6);
 });
 test('timeout and repeated stale expiration finalize temporary cards and advance exactly once',async t=>{
  const h=await fixture(t);h.run("temporary[0]=[{id:'placed',key:'N1',type:'N',name:'test',vp:0}]");
@@ -93,7 +102,7 @@ test('Great Depression owner keeps the existing debt-count exemption',async t=>{
 });
 test('pending start resources, chosen dice, and post-start phase resolve before timeout conversion',async t=>{
  const h=await fixture(t);h.run("pendingLordResource=1;pendingSSRBonus=1;pendingNanban=1;pendingTenkuCat=1;pendingCastResourceChoices=[{name:'maid',amount:3}];pendingOverclockChoices=[{name:'test',remaining:2}];turnStartPostPending=true");
- await h.expire();assert.deepEqual(h.read('powers[0]'),{y:12,p:0,r:0});assert.equal(h.read('turn'),1);
+ await h.expire();assert.deepEqual(h.read('powers[0]'),{y:10,p:0,r:0});assert.equal(h.read('turn'),1);
 });
 test('resource prohibition cannot strand pending choices or bypass card restrictions',async t=>{
  const h=await fixture(t);h.run("installed[0]=[{type:'LEGEND',special:'goldenAge',_eraAcquiredThisTurn:true}];pendingLordResource=1;pendingNanban=2;pendingOverclockChoices=[{remaining:3}];dice=[{id:1,value:3,used:false}]");
@@ -152,7 +161,7 @@ test('game-ending final turn uses existing game-over path and stops the clock',a
  assert.equal(h.read('gameEnded'),true);assert.equal(h.read('testClockState.active'),null);h.advance(900000);assert.equal(h.read('turn'),0);
 });
 test('resource-derived victory reached by timeout starts the final round for the expiring player',async t=>{
- const h=await fixture(t);h.run("installed[0]=[{id:'spirit',type:'N',special:'inadamashii',name:'spirit'}];powers[0]={y:57,p:0,r:0};dice=[{id:1,value:1,used:false}]");
+ const h=await fixture(t);h.run("installed[0]=[{id:'spirit',type:'N',special:'inadamashii',name:'spirit'}];powers[0]={y:59,p:0,r:0};dice=[{id:1,value:1,used:false}]");
  await h.expire();assert.equal(h.read('endgameStarter'),0);assert.equal(h.read('endgameRemaining'),3);assert.equal(h.read('canAcquireDebt()'),false);
  for(let i=0;i<3;i++)h.run('completeEnd()');assert.equal(h.read('gameEnded'),true);
 });

@@ -3,6 +3,18 @@ from pathlib import Path
 import re
 
 
+def share_normal_conversion(source, once):
+    # Reuse the upstream UI handler itself, including its amount, bonuses and logs.
+    pattern = r'b.onclick=\(\)=>\{(let used=useDie\(d\.id\);.*?)\};nd.appendChild\(b\)'
+    matches = list(re.finditer(pattern, source, re.S))
+    if len(matches) != 1:
+        raise ValueError('Normal die conversion structure changed; refusing a separate timeout rule')
+    match = matches[0]
+    body = match[1].replace('useDie(d.id)', 'useDie(dieId)', 1)
+    source = once(source, match[0], 'b.onclick=()=>testClockConvertNormalDie(d.id);nd.appendChild(b)')
+    return source, 'function testClockConvertNormalDie(dieId){' + body + '}\n'
+
+
 def inject_clock(source, once):
     hooks = [
         ('function beginTurn(){', 'function beginTurn(){\n testClockBeginTurn();'),
@@ -33,5 +45,6 @@ def inject_clock(source, once):
     # These are game-owned native dialogues; wrappers decline optional requests during timeout.
     source = re.sub(r'(?<![\w.])prompt\(', 'testClockPrompt(', source)
     source = re.sub(r'(?<![\w.])confirm\(', 'testClockConfirm(', source)
-    module = Path(__file__).with_name('turn_clock.js').read_text()
+    source, conversion = share_normal_conversion(source, once)
+    module = conversion + Path(__file__).with_name('turn_clock.js').read_text()
     return once(source, '\n})();\nconst q=s=>document.querySelector(s);', '\n' + module + '\n})();\nconst q=s=>document.querySelector(s);')

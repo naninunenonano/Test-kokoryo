@@ -143,8 +143,9 @@ function testClockExpire(token){
   if(!testClockLeaseValid(owner,token))return;
   const totals={y:0,p:0,r:0};
   for(const die of [...unusedDice()]){
-   if(!useDie(die.id))continue;
-   const color=colorFor(die.value);totals[color]+=gainResource(owner,color,3,'dieConvert');
+   const color=colorFor(die.value),before=powers[owner][color];
+   testClockConvertNormalDie(die.id);
+   totals[color]+=Math.max(0,powers[owner][color]-before);
   }
   // Resource-dependent VP must trigger the final round before advancing turn.
   checkEndgameTrigger();

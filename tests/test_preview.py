@@ -72,13 +72,27 @@ class PreviewTests(unittest.TestCase):
 
     def test_clock_feature_identity_and_fail_closed_hooks(self):
         self.assertIn('turn-chess-clock', self.metadata['features'])
-        self.assertEqual(self.metadata['clock'], {'initialSeconds': 180, 'maxSeconds': 180, 'incrementSeconds': 30, 'timeoutDieResources': 3})
+        self.assertEqual(self.metadata['clock'], {'initialSeconds': 180, 'maxSeconds': 180, 'incrementSeconds': 30, 'timeoutDieConversion': 'normal'})
         self.assertIn('sourceVersion', self.metadata)
         self.assertIn('previewCommit', self.metadata)
         self.assertIn('function testClockOriginalCompleteEnd(){', self.html)
         self.assertIn('function completeEnd(){', self.html)
         self.assertIn("gainResource(turn,col,1+bonus,'dieConvert')", self.html)
         self.assertIn('testClockBotValid(actor,clockBotToken)', self.html)
+
+    def test_future_normal_conversion_amount_is_shared_automatically(self):
+        from clock_patch import share_normal_conversion
+        fixture = "b.onclick=()=>{let used=useDie(d.id);if(!used)return;let bonus=1;gainResource(turn,'y',3+bonus,'dieConvert');renderGame()};nd.appendChild(b)"
+        patched, helper = share_normal_conversion(fixture, builder.once)
+        self.assertIn('onclick=()=>testClockConvertNormalDie(d.id)', patched)
+        self.assertIn('3+bonus', helper)
+        self.assertIn('useDie(dieId)', helper)
+        self.assertEqual(self.html.count('function testClockConvertNormalDie('), 1)
+
+    def test_changed_conversion_structure_aborts_instead_of_falling_back(self):
+        from clock_patch import share_normal_conversion
+        with self.assertRaises(ValueError):
+            share_normal_conversion('upstream conversion rewritten', builder.once)
 
     def test_local_and_bot_modes_reuse_existing_handlers(self):
         self.assertEqual(self.dom.ids.count('testOfflineStart'), 1)

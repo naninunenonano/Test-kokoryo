@@ -64,11 +64,11 @@ def patch_html(source, pr, commit):
         raise ValueError('Missing source version')
     source_version = match[1]
     parts = source_version.split('.')
-    version = '.'.join(parts[:-1] + [str(int(parts[-1]) + 1)])
+    version = '.'.join(parts[:-1] + [str(int(parts[-1]) + 2)])
     preview_commit = os.environ.get('GITHUB_SHA', 'local')
     build = {'environment': 'offline-test', 'version': version, 'sourceVersion': source_version,
              'pr': pr, 'commit': commit, 'previewCommit': preview_commit, 'onlineEnabled': False,
-             'features': ['turn-chess-clock'], 'clock': {'initialSeconds': 180, 'maxSeconds': 180, 'incrementSeconds': 30, 'timeoutDieResources': 3}}
+             'features': ['turn-chess-clock'], 'clock': {'initialSeconds': 180, 'maxSeconds': 180, 'incrementSeconds': 30, 'timeoutDieConversion': 'normal'}}
     source = source.replace(source_version, version)
     source = once(source, '<html lang="ja"><head>', '<html lang="ja"><head>' +
         '<meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39;; script-src &#39;self&#39; &#39;unsafe-inline&#39; &#39;unsafe-eval&#39;; style-src &#39;self&#39; &#39;unsafe-inline&#39;; img-src &#39;self&#39; data:; connect-src &#39;none&#39;; object-src &#39;none&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;">')
