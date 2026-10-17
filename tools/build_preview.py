@@ -13,6 +13,7 @@ import tempfile
 import urllib.request
 from pathlib import Path
 import sys
+import subprocess
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from clock_patch import inject_clock
 
@@ -45,7 +46,7 @@ def unpack_source(commit, target):
                 continue
             if not member.isfile() or member.issym() or member.islnk():
                 continue
-            if parts[0] not in ('images', 'packs', 'tests', 'src', 'js') and parts != ('index.html',):
+            if parts[0] not in ('images', 'packs', 'tests', 'src', 'js', 'tools', 'docs') and parts not in [('index.html',), ('package.json',), ('package-lock.json',), ('README.md',)]:
                 continue
             destination = target.joinpath(*parts)
             destination.parent.mkdir(parents=True, exist_ok=True)
@@ -194,11 +195,34 @@ def build(source_dir, output, pr, commit):
     print(f'Copied {len(manifest)} files; original online code retained but connection disabled.')
 
 
+def apply_command_overrides(directory, overrides, commit):
+    if commit != '1ca6ccfcf7c5f9cddea8c508f472b0af04a9167a':
+        raise ValueError('Phase-one overrides require the pinned Ver.0.3.221 baseline')
+    allowed = {'index.html', 'package.json', 'README.md', 'src/game.js', 'src/online.js',
+               'src/debug.js', 'src/card_effects.js', 'tests/regression.cjs', 'tests/split.cjs',
+               'tests/commands.cjs', 'tests/online.cjs', 'docs/DEPENDENCIES.md',
+               'docs/COMMANDS.md', 'docs/dependencies.json', 'tests/fixtures/standard_221.json'}
+    files = {str(p.relative_to(overrides)): p for p in overrides.rglob('*') if p.is_file()}
+    if set(files) != allowed:
+        raise ValueError('Unexpected or missing phase-one override files')
+    for relative, source in files.items():
+        if source.is_symlink():
+            raise ValueError('Override symlinks are forbidden')
+        destination = directory / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, destination)
+    subprocess.run(['npm', 'ci', '--ignore-scripts'], cwd=directory, check=True)
+    for command in ['build', 'analyze']:
+        subprocess.run(['npm', 'run', command], cwd=directory, check=True)
+    subprocess.run(['npm', 'test'], cwd=directory, check=True)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--pr', type=int, required=True)
     parser.add_argument('--commit', help='Optional expected PR commit; abort when head changed')
     parser.add_argument('--source-dir', type=Path, help='Local immutable source snapshot, for tests')
+    parser.add_argument('--command-overrides', type=Path, help='TEST-owned phase-one source changes')
     parser.add_argument('--output', type=Path, default=Path('_site'))
     args = parser.parse_args()
     if args.pr < 1:
@@ -206,6 +230,8 @@ def main():
     if args.source_dir:
         if not args.commit or not re.fullmatch('[0-9a-f]{40}', args.commit):
             parser.error('Local builds require an explicit commit SHA')
+        if args.command_overrides:
+            parser.error('Overrides require a fresh immutable download')
         build(args.source_dir, args.output, args.pr, args.commit)
     else:
         commit = resolve_pr(args.pr)
@@ -214,6 +240,8 @@ def main():
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary)
             unpack_source(commit, directory)
+            if args.command_overrides:
+                apply_command_overrides(directory, args.command_overrides, commit)
             build(directory, args.output, args.pr, commit)
 
 

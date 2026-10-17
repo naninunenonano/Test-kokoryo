@@ -1,0 +1,15 @@
+{
+  "name": "kokoryo-regression-tests",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node tools/build.cjs",
+    "build:check": "node tools/build.cjs --check",
+    "analyze": "node tools/analyze.cjs",
+    "test": "npm run build:check && node --test tests/regression.cjs tests/clock.cjs tests/online.cjs tests/split.cjs tests/startup.cjs tests/commands.cjs"
+  },
+  "devDependencies": {
+    "acorn": "8.15.0",
+    "jsdom": "30.1.3"
+  }
+}
