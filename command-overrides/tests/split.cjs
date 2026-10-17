@@ -3,12 +3,12 @@ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypt
 const acorn=require('acorn'),{assemble,inlineHtml}=require('../tools/build.cjs');
 const root=path.resolve(__dirname,'..'),manifest=require('../src/order.json');
 const sha=s=>crypto.createHash('sha256').update(s).digest('hex');
-const baseline=require('./fixtures/standard_221.json');
-const normalize=s=>s.replace(/0\.3\.(220|221|222)/g,'VERSION');
-test('scope: only four migrated handlers and shared commands differ from Ver221',()=>{
+const baseline=require('./fixtures/normal_222.json'),shellBaseline=require('./fixtures/standard_221.json');
+const normalize=s=>s.replace(/0\.3\.(220|221|222|223)/g,'VERSION');
+test('scope: only approved normal handlers and command definitions differ from Ver222',()=>{
  const {code}=assemble(),p=acorn.parse(code,{ecmaVersion:'latest'});
- const additions=new Set(['commandQuantity','commandPool','commandDraw','commandDice','commandLimit','cardCommands']);
- const changed=new Set(Object.keys(baseline.legacyFunctions));
+ const additions=new Set(['commandZone','commandChoice','commandMove','commandStart','commandPlus','commandChange','commandCan','commandCount','commandTrigger','commandHire','commandToba','commandOnce']);
+ const changed=new Set([...Object.keys(baseline.legacyFunctions),'cardCommands','installNewNormal']);
  const record=n=>({type:n.type,name:n.id?.name||n.declarations?.map(d=>d.id.name).join(',')||'',hash:sha(normalize(code.slice(n.start,n.end)))});
  const actual=p.body[0].expression.callee.body.body.map(record);
  assert.deepEqual(actual.filter(n=>additions.has(n.name)).map(n=>n.name),[...additions]);
@@ -21,10 +21,10 @@ test('scope: only four migrated handlers and shared commands differ from Ver221'
  assert.equal(fs.readFileSync(path.join(root,'js/app.js'),'utf8'),code);
 });
 test('split: HTML, CSS, card IDs, images and script order are identical except version/extraction',()=>{
- assert.equal(sha(normalize(inlineHtml().replace(/<script>([\s\S]*?)<\/script>/,'<script>APP</script>'))),baseline.htmlShellSha256);
+ assert.equal(sha(normalize(inlineHtml().replace(/<script>([\s\S]*?)<\/script>/,'<script>APP</script>'))),shellBaseline.htmlShellSha256);
  const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
  assert.deepEqual([...html.matchAll(/<script src="([^"]+)"/g)].map(x=>x[1]),[
-  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2','packs/pack1.js','packs/pack2.js','packs/rules_pack1.js','js/app.js?v=0.3.222']);
+  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2','packs/pack1.js','packs/pack2.js','packs/rules_pack1.js','js/app.js?v=0.3.223']);
  assert.equal([...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].length,0);
 });
 test('split: all editing sources parse as classic JS, with one original private closure at runtime',()=>{

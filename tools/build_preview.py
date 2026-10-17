@@ -72,6 +72,8 @@ def patch_html(source, pr, commit, source_split=False):
              'features': ['turn-chess-clock'], 'clock': {'initialSeconds': 180, 'maxSeconds': 180, 'incrementSeconds': 30, 'timeoutDieConversion': 'normal'}}
     if source_split:
         build['features'].append('source-split')
+        if 'once:commandOnce' in source:
+            build['features'].append('generic-commands-phase2')
     source = source.replace(source_version, version)
     source = once(source, '<html lang="ja"><head>', '<html lang="ja"><head>' +
         '<meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39;; script-src &#39;self&#39; &#39;unsafe-inline&#39; &#39;unsafe-eval&#39;; style-src &#39;self&#39; &#39;unsafe-inline&#39;; img-src &#39;self&#39; data:; connect-src &#39;none&#39;; object-src &#39;none&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;">')
@@ -197,14 +199,14 @@ def build(source_dir, output, pr, commit):
 
 def apply_command_overrides(directory, overrides, commit):
     if commit != '1ca6ccfcf7c5f9cddea8c508f472b0af04a9167a':
-        raise ValueError('Phase-one overrides require the pinned Ver.0.3.221 baseline')
+        raise ValueError('Phase-two cumulative overrides require the pinned Ver.0.3.221 baseline')
     allowed = {'index.html', 'package.json', 'README.md', 'src/game.js', 'src/online.js',
                'src/debug.js', 'src/card_effects.js', 'tests/regression.cjs', 'tests/split.cjs',
                'tests/commands.cjs', 'tests/online.cjs', 'docs/DEPENDENCIES.md',
-               'docs/COMMANDS.md', 'docs/dependencies.json', 'tests/fixtures/standard_221.json'}
+               'docs/COMMANDS.md', 'docs/dependencies.json', 'tests/fixtures/standard_221.json', 'src/characters.js', 'tests/normal_commands.cjs', 'tests/fixtures/normal_222.json'}
     files = {str(p.relative_to(overrides)): p for p in overrides.rglob('*') if p.is_file()}
     if set(files) != allowed:
-        raise ValueError('Unexpected or missing phase-one override files')
+        raise ValueError('Unexpected or missing phase-two override files')
     for relative, source in files.items():
         if source.is_symlink():
             raise ValueError('Override symlinks are forbidden')

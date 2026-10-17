@@ -151,3 +151,21 @@ test('online: stale owner proposal cannot undo an accepted other-player Park pic
  r.clients[3].run("turnClockRequestPark(3,'S5')");r.deliver(r.queue.shift(),0);r.deliver(stale,0);await r.drain();
  r.same('hands[3].length',1);r.same('pendingParkPlayers.length',0);r.same('powers[1].y',0);
 });
+
+test('online: N8–N10 reroll reactions and S1 once synchronize exactly once',async t=>{
+ const r=await room(t);r.guest.run("Math.random=()=>0;installed[0]=[{id:'law1',special:'laws'},{id:'law2',special:'laws'}];dice=[{id:1,value:2,used:false},{id:2,value:1,used:false}];useStdAbility('s1','plan',1);turnClockPublishAction(false)");
+ await r.drain();r.same('commandCounts[1]',2);r.same('powers[0].y',2);r.same('stdAbilityUsed',{s1:true});
+ r.guest.run("useStdAbility('s1','plan',1);turnClockPublishAction(false)");await r.drain();r.same('commandCounts[1]',2);
+});
+test('online: N1 sequential choices survive snapshots; a later player cannot skip the queue',async t=>{
+ const r=await room(t);r.guest.run("deck=Array.from({length:8},(_,i)=>({id:'c'+i,key:'K'+i,name:'card'+i,type:'N'}));market=[];gameSettings.marketTypes=4;resolveOnInstall({special:'paneteria'},1);turnClockPublishAction(false)");await r.drain();
+ r.same('pendingParkPlayers',[1,2,3,0]);
+ r.clients[3].run("turnClockRequestPark(3,market[0].key)");await r.drain();r.same('hands[3].length',0);
+ for(const p of [1,2,3,0]){r.clients[p].run(`turnClockRequestPark(${p},market[0].key)`);await r.drain()}
+ r.same('pendingParkPlayers.length',0);for(const p of [0,1,2,3])r.same(`hands[${p}].length`,1);
+});
+test('online: N11/N14 individual once ledgers and moves survive reconnect snapshots',async t=>{
+ const r=await room(t);r.guest.run("renderGame=()=>{};installed[1]=[{id:'g1',special:'graveyard'},{id:'g2',special:'graveyard'},{id:'m1',special:'publicmarket'}];powers[1]={y:10,p:0,r:0};discard=[{id:'recovered',name:'recovered'}];chooseLegendCard=(title,note,opts,choose)=>choose(opts[0]);useGraveyard(0);q('#legendChoiceCards').children[0].click();market=[{id:'taken',key:'K',name:'taken'}];deck=[];window.__prompts=['1','1'];turnClockPrompt=()=>window.__prompts.shift()??null;usePublicMarket(2);turnClockPublishAction(false)");await r.drain();
+ r.same('graveyardUsed[1]',{g1:true});r.same('publicMarketUsed[1]',{m1:true});r.same('hands[1].map(c=>c.id)',['taken']);
+ const snap=r.host.read('realMainSnapshot()');r.guest.run(`applyRealMainSnapshot(${JSON.stringify(snap)})`);r.same('graveyardUsed[1]',{g1:true});
+});
