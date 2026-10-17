@@ -4,9 +4,37 @@
   "initializationOrder": "src/order.json; one unchanged shared IIFE; epilogue remains outside",
   "functions": [
     {
+      "name": "ruleSettingValue",
+      "file": "game.js",
+      "line": 13,
+      "references": []
+    },
+    {
+      "name": "initialDraftSetupError",
+      "file": "game.js",
+      "line": 17,
+      "references": [
+        {
+          "name": "STD",
+          "file": "decks.js"
+        }
+      ]
+    },
+    {
+      "name": "createInitialDraftDeal",
+      "file": "game.js",
+      "line": 21,
+      "references": [
+        {
+          "name": "STD",
+          "file": "decks.js"
+        }
+      ]
+    },
+    {
       "name": "legendSlotMax",
       "file": "game.js",
-      "line": 12,
+      "line": 26,
       "references": [
         {
           "name": "activeDeckConfig",
@@ -17,13 +45,13 @@
     {
       "name": "fillLegendSlotSelect",
       "file": "game.js",
-      "line": 13,
+      "line": 27,
       "references": []
     },
     {
       "name": "refreshLegendSlotSelectors",
       "file": "game.js",
-      "line": 14,
+      "line": 28,
       "references": [
         {
           "name": "realOnlineDeckId",
@@ -38,13 +66,13 @@
     {
       "name": "clearMarketUndo",
       "file": "game.js",
-      "line": 19,
+      "line": 33,
       "references": []
     },
     {
       "name": "marketUndoEntryAvailable",
       "file": "game.js",
-      "line": 20,
+      "line": 34,
       "references": [
         {
           "name": "realOnlineMainMode",
@@ -55,25 +83,25 @@
     {
       "name": "blockAllMarketUndo",
       "file": "game.js",
-      "line": 21,
+      "line": 35,
       "references": []
     },
     {
       "name": "addCommandUndo",
       "file": "game.js",
-      "line": 25,
+      "line": 39,
       "references": []
     },
     {
       "name": "commandUndoAvailable",
       "file": "game.js",
-      "line": 26,
+      "line": 40,
       "references": []
     },
     {
       "name": "undoCommandAction",
       "file": "game.js",
-      "line": 27,
+      "line": 41,
       "references": [
         {
           "name": "pendingBreadAnyIndex",
@@ -92,7 +120,7 @@
     {
       "name": "undoMarketAcquisition",
       "file": "game.js",
-      "line": 38,
+      "line": 52,
       "references": [
         {
           "name": "renderGame",
@@ -103,37 +131,37 @@
     {
       "name": "sh",
       "file": "game.js",
-      "line": 40,
+      "line": 54,
       "references": []
     },
     {
       "name": "makeBreadDeck",
       "file": "game.js",
-      "line": 41,
+      "line": 55,
       "references": []
     },
     {
       "name": "recycleBreadIfEmpty",
       "file": "game.js",
-      "line": 42,
+      "line": 56,
       "references": []
     },
     {
       "name": "drawBread",
       "file": "game.js",
-      "line": 43,
+      "line": 57,
       "references": []
     },
     {
       "name": "breadLabel",
       "file": "game.js",
-      "line": 44,
+      "line": 58,
       "references": []
     },
     {
       "name": "handLimitNeedsDiscard",
       "file": "game.js",
-      "line": 49,
+      "line": 63,
       "references": [
         {
           "name": "depressionProtectsDebtAtHandLimit",
@@ -144,7 +172,7 @@
     {
       "name": "totalHandCount",
       "file": "game.js",
-      "line": 54,
+      "line": 68,
       "references": [
         {
           "name": "debtIgnoredForHand",
@@ -155,7 +183,7 @@
     {
       "name": "gainResource",
       "file": "game.js",
-      "line": 59,
+      "line": 73,
       "references": [
         {
           "name": "eraGainAllowed",
@@ -166,19 +194,19 @@
     {
       "name": "commandQuantity",
       "file": "game.js",
-      "line": 64,
+      "line": 78,
       "references": []
     },
     {
       "name": "commandPool",
       "file": "game.js",
-      "line": 67,
+      "line": 81,
       "references": []
     },
     {
       "name": "commandDraw",
       "file": "game.js",
-      "line": 74,
+      "line": 88,
       "references": [
         {
           "name": "drawOne",
@@ -189,7 +217,7 @@
     {
       "name": "commandDice",
       "file": "game.js",
-      "line": 83,
+      "line": 97,
       "references": [
         {
           "name": "resolveReactiveRolls",
@@ -200,37 +228,37 @@
     {
       "name": "commandLimit",
       "file": "game.js",
-      "line": 99,
+      "line": 113,
       "references": []
     },
     {
       "name": "commandZone",
       "file": "game.js",
-      "line": 103,
+      "line": 117,
       "references": []
     },
     {
       "name": "commandChoice",
       "file": "game.js",
-      "line": 109,
+      "line": 123,
       "references": []
     },
     {
       "name": "commandMove",
       "file": "game.js",
-      "line": 115,
+      "line": 129,
       "references": []
     },
     {
       "name": "commandStart",
       "file": "game.js",
-      "line": 125,
+      "line": 139,
       "references": []
     },
     {
       "name": "commandPlus",
       "file": "game.js",
-      "line": 138,
+      "line": 152,
       "references": [
         {
           "name": "drawOne",
@@ -245,7 +273,7 @@
     {
       "name": "commandChange",
       "file": "game.js",
-      "line": 144,
+      "line": 158,
       "references": [
         {
           "name": "hasGodBlessingForTurn",
@@ -260,7 +288,7 @@
     {
       "name": "commandCan",
       "file": "game.js",
-      "line": 178,
+      "line": 192,
       "references": [
         {
           "name": "effectiveHireLimit",
@@ -271,19 +299,19 @@
     {
       "name": "commandCount",
       "file": "game.js",
-      "line": 186,
+      "line": 200,
       "references": []
     },
     {
       "name": "commandTrigger",
       "file": "game.js",
-      "line": 191,
+      "line": 205,
       "references": []
     },
     {
       "name": "commandHire",
       "file": "game.js",
-      "line": 202,
+      "line": 216,
       "references": [
         {
           "name": "finalizeHire",
@@ -302,7 +330,7 @@
     {
       "name": "commandToba",
       "file": "game.js",
-      "line": 207,
+      "line": 221,
       "references": [
         {
           "name": "card",
@@ -317,7 +345,7 @@
     {
       "name": "commandInstanceId",
       "file": "game.js",
-      "line": 211,
+      "line": 225,
       "references": [
         {
           "name": "card",
@@ -328,43 +356,43 @@
     {
       "name": "commandOnce",
       "file": "game.js",
-      "line": 215,
+      "line": 229,
       "references": []
     },
     {
       "name": "commandBoost",
       "file": "game.js",
-      "line": 223,
+      "line": 237,
       "references": []
     },
     {
       "name": "commandFunction",
       "file": "game.js",
-      "line": 224,
+      "line": 238,
       "references": []
     },
     {
       "name": "commandRemove",
       "file": "game.js",
-      "line": 230,
+      "line": 244,
       "references": []
     },
     {
       "name": "commandDiscount",
       "file": "game.js",
-      "line": 234,
+      "line": 248,
       "references": []
     },
     {
       "name": "commandRepeat",
       "file": "game.js",
-      "line": 238,
+      "line": 252,
       "references": []
     },
     {
       "name": "commandCopy",
       "file": "game.js",
-      "line": 242,
+      "line": 256,
       "references": [
         {
           "name": "UNIQUE_ABILITY_DEFS",
@@ -379,13 +407,13 @@
     {
       "name": "commandCast",
       "file": "game.js",
-      "line": 247,
+      "line": 261,
       "references": []
     },
     {
       "name": "normalEffectProgram",
       "file": "game.js",
-      "line": 251,
+      "line": 265,
       "references": [
         {
           "name": "card",
@@ -396,25 +424,25 @@
     {
       "name": "commandEnd",
       "file": "game.js",
-      "line": 260,
+      "line": 274,
       "references": []
     },
     {
       "name": "commandTheEnd",
       "file": "game.js",
-      "line": 261,
+      "line": 275,
       "references": []
     },
     {
       "name": "commandRun",
       "file": "game.js",
-      "line": 262,
+      "line": 276,
       "references": []
     },
     {
       "name": "conversionBonus",
       "file": "game.js",
-      "line": 263,
+      "line": 277,
       "references": [
         {
           "name": "abilityProfile",
@@ -429,7 +457,7 @@
     {
       "name": "exchangeRateFor",
       "file": "game.js",
-      "line": 264,
+      "line": 278,
       "references": [
         {
           "name": "CHARACTER_DATA",
@@ -448,13 +476,13 @@
     {
       "name": "commandApi",
       "file": "game.js",
-      "line": 265,
+      "line": 279,
       "references": []
     },
     {
       "name": "installCostOptions",
       "file": "game.js",
-      "line": 283,
+      "line": 297,
       "references": [
         {
           "name": "renderingInstallCosts",
@@ -465,7 +493,7 @@
     {
       "name": "costOptions",
       "file": "game.js",
-      "line": 284,
+      "line": 298,
       "references": [
         {
           "name": "CHARACTER_DATA",
@@ -488,7 +516,7 @@
     {
       "name": "consumeCostChoice",
       "file": "game.js",
-      "line": 295,
+      "line": 309,
       "references": [
         {
           "name": "lordInstallDiceDiscount",
@@ -499,13 +527,13 @@
     {
       "name": "distinctCostChoices",
       "file": "game.js",
-      "line": 303,
+      "line": 317,
       "references": []
     },
     {
       "name": "canAcquireDebt",
       "file": "game.js",
-      "line": 305,
+      "line": 319,
       "references": [
         {
           "name": "specialOwners",
@@ -516,44 +544,40 @@
     {
       "name": "acquireDebt",
       "file": "game.js",
-      "line": 306,
+      "line": 320,
       "references": []
     },
     {
       "name": "distributeLimitedAcquisition",
       "file": "game.js",
-      "line": 318,
+      "line": 332,
       "references": []
     },
     {
       "name": "distributeLimitedByQuota",
       "file": "game.js",
-      "line": 331,
+      "line": 345,
       "references": []
     },
     {
       "name": "distributeDebt",
       "file": "game.js",
-      "line": 343,
+      "line": 357,
       "references": []
     },
     {
       "name": "distributeCommandsByQuota",
       "file": "game.js",
-      "line": 344,
+      "line": 358,
       "references": []
     },
     {
       "name": "start",
       "file": "game.js",
-      "line": 349,
+      "line": 363,
       "references": [
         {
           "name": "DECK_PRESETS",
-          "file": "decks.js"
-        },
-        {
-          "name": "STD",
           "file": "decks.js"
         },
         {
@@ -613,7 +637,7 @@
     {
       "name": "pick",
       "file": "game.js",
-      "line": 355,
+      "line": 369,
       "references": [
         {
           "name": "renderDraft",
@@ -624,7 +648,7 @@
     {
       "name": "setupGame",
       "file": "game.js",
-      "line": 361,
+      "line": 375,
       "references": [
         {
           "name": "initLegends",
@@ -655,19 +679,19 @@
     {
       "name": "resolveGameStartCharacterEffects",
       "file": "game.js",
-      "line": 368,
+      "line": 382,
       "references": []
     },
     {
       "name": "chooseFirstPlayer",
       "file": "game.js",
-      "line": 372,
+      "line": 386,
       "references": []
     },
     {
       "name": "confirmInitialPowers",
       "file": "game.js",
-      "line": 373,
+      "line": 387,
       "references": [
         {
           "name": "refillTo8",
@@ -682,13 +706,13 @@
     {
       "name": "playerScaledGain",
       "file": "game.js",
-      "line": 374,
+      "line": 388,
       "references": []
     },
     {
       "name": "registerInstallation",
       "file": "game.js",
-      "line": 380,
+      "line": 394,
       "references": [
         {
           "name": "resolveOnInstall",
@@ -703,7 +727,7 @@
     {
       "name": "beginTurn",
       "file": "game.js",
-      "line": 386,
+      "line": 400,
       "references": [
         {
           "name": "fusionUsedThisTurn",
@@ -762,7 +786,7 @@
     {
       "name": "continueBeginTurn",
       "file": "game.js",
-      "line": 405,
+      "line": 419,
       "references": [
         {
           "name": "CHARACTER_DATA",
@@ -821,13 +845,13 @@
     {
       "name": "unusedDice",
       "file": "game.js",
-      "line": 441,
+      "line": 455,
       "references": []
     },
     {
       "name": "dieSelect",
       "file": "game.js",
-      "line": 441,
+      "line": 455,
       "references": [
         {
           "name": "makeChoicePicker",
@@ -838,31 +862,31 @@
     {
       "name": "useDie",
       "file": "game.js",
-      "line": 441,
+      "line": 455,
       "references": []
     },
     {
       "name": "colorFor",
       "file": "game.js",
-      "line": 442,
+      "line": 456,
       "references": []
     },
     {
       "name": "fixedVP",
       "file": "game.js",
-      "line": 447,
+      "line": 461,
       "references": []
     },
     {
       "name": "allFieldCards",
       "file": "game.js",
-      "line": 448,
+      "line": 462,
       "references": []
     },
     {
       "name": "totalVP",
       "file": "game.js",
-      "line": 453,
+      "line": 467,
       "references": [
         {
           "name": "cardVP",
@@ -877,7 +901,7 @@
     {
       "name": "checkEndgameTrigger",
       "file": "game.js",
-      "line": 458,
+      "line": 472,
       "references": [
         {
           "name": "renderSharedEndgameStatus",
@@ -888,7 +912,7 @@
     {
       "name": "isViewingOwnTurn",
       "file": "game.js",
-      "line": 466,
+      "line": 480,
       "references": [
         {
           "name": "realOnlineMainMode",
@@ -899,13 +923,13 @@
     {
       "name": "handLimit",
       "file": "game.js",
-      "line": 471,
+      "line": 485,
       "references": []
     },
     {
       "name": "finishTurn",
       "file": "game.js",
-      "line": 471,
+      "line": 485,
       "references": [
         {
           "name": "showHandLimit",
@@ -916,7 +940,7 @@
     {
       "name": "turnClockOriginalCompleteEnd",
       "file": "game.js",
-      "line": 476,
+      "line": 490,
       "references": [
         {
           "name": "broadcastRealGameFinished",
@@ -963,13 +987,13 @@
     {
       "name": "resetGameEndState",
       "file": "game.js",
-      "line": 494,
+      "line": 508,
       "references": []
     },
     {
       "name": "finishGame",
       "file": "game.js",
-      "line": 501,
+      "line": 515,
       "references": [
         {
           "name": "debtFinalVPPerCard",
@@ -996,13 +1020,13 @@
     {
       "name": "updateDebugCommandVisibility",
       "file": "game.js",
-      "line": 517,
+      "line": 531,
       "references": []
     },
     {
       "name": "turnClockConvertNormalDie",
       "file": "game.js",
-      "line": 527,
+      "line": 541,
       "references": [
         {
           "name": "renderGame",
@@ -1013,13 +1037,13 @@
     {
       "name": "turnClockVisible",
       "file": "game.js",
-      "line": 532,
+      "line": 546,
       "references": []
     },
     {
       "name": "turnClockReset",
       "file": "game.js",
-      "line": 533,
+      "line": 547,
       "references": [
         {
           "name": "turnClockNet",
@@ -1038,13 +1062,13 @@
     {
       "name": "turnClockAccount",
       "file": "game.js",
-      "line": 541,
+      "line": 555,
       "references": []
     },
     {
       "name": "turnClockBeginTurn",
       "file": "game.js",
-      "line": 550,
+      "line": 564,
       "references": [
         {
           "name": "turnClockRender",
@@ -1055,7 +1079,7 @@
     {
       "name": "turnClockStop",
       "file": "game.js",
-      "line": 558,
+      "line": 572,
       "references": [
         {
           "name": "turnClockRender",
@@ -1066,13 +1090,13 @@
     {
       "name": "turnClockLeaseValid",
       "file": "game.js",
-      "line": 559,
+      "line": 573,
       "references": []
     },
     {
       "name": "turnClockTick",
       "file": "game.js",
-      "line": 564,
+      "line": 578,
       "references": [
         {
           "name": "realOnlineMainMode",
@@ -1091,19 +1115,19 @@
     {
       "name": "turnClockPrompt",
       "file": "game.js",
-      "line": 570,
+      "line": 584,
       "references": []
     },
     {
       "name": "turnClockConfirm",
       "file": "game.js",
-      "line": 576,
+      "line": 590,
       "references": []
     },
     {
       "name": "turnClockResolvePending",
       "file": "game.js",
-      "line": 582,
+      "line": 596,
       "references": [
         {
           "name": "applyOnlineParkPick",
@@ -1158,7 +1182,7 @@
     {
       "name": "turnClockDiscardOverflow",
       "file": "game.js",
-      "line": 623,
+      "line": 637,
       "references": [
         {
           "name": "depressionDebtLocked",
@@ -1173,7 +1197,7 @@
     {
       "name": "turnClockCloseChoices",
       "file": "game.js",
-      "line": 637,
+      "line": 651,
       "references": [
         {
           "name": "legendPaymentPending",
@@ -1192,7 +1216,7 @@
     {
       "name": "turnClockExpire",
       "file": "game.js",
-      "line": 652,
+      "line": 666,
       "references": [
         {
           "name": "addDialog",
@@ -1243,7 +1267,7 @@
     {
       "name": "completeEnd",
       "file": "game.js",
-      "line": 687,
+      "line": 701,
       "references": [
         {
           "name": "realOnlineMainMode",
@@ -1665,6 +1689,10 @@
         {
           "name": "q",
           "file": "game.js"
+        },
+        {
+          "name": "ruleSettingValue",
+          "file": "game.js"
         }
       ]
     },
@@ -1698,6 +1726,10 @@
         },
         {
           "name": "market",
+          "file": "game.js"
+        },
+        {
+          "name": "ruleSettingValue",
           "file": "game.js"
         },
         {
@@ -3360,6 +3392,10 @@
       "line": 86,
       "references": [
         {
+          "name": "INITIAL_DRAFT",
+          "file": "game.js"
+        },
+        {
           "name": "hands",
           "file": "game.js"
         },
@@ -3454,6 +3490,10 @@
         },
         {
           "name": "q",
+          "file": "game.js"
+        },
+        {
+          "name": "ruleSettingValue",
           "file": "game.js"
         }
       ]
@@ -8900,15 +8940,19 @@
           "file": "characters.js"
         },
         {
-          "name": "STD",
-          "file": "decks.js"
-        },
-        {
           "name": "characterMode",
           "file": "game.js"
         },
         {
           "name": "characters",
+          "file": "game.js"
+        },
+        {
+          "name": "createInitialDraftDeal",
+          "file": "game.js"
+        },
+        {
+          "name": "initialDraftSetupError",
           "file": "game.js"
         },
         {
@@ -8924,10 +8968,6 @@
           "file": "game.js"
         },
         {
-          "name": "sh",
-          "file": "game.js"
-        },
-        {
           "name": "unusedStd",
           "file": "game.js"
         }
@@ -8938,6 +8978,10 @@
       "file": "online.js",
       "line": 102,
       "references": [
+        {
+          "name": "INITIAL_DRAFT",
+          "file": "game.js"
+        },
         {
           "name": "botMatchMode",
           "file": "game.js"
@@ -8965,6 +9009,10 @@
       "file": "online.js",
       "line": 103,
       "references": [
+        {
+          "name": "INITIAL_DRAFT",
+          "file": "game.js"
+        },
         {
           "name": "botMatchMode",
           "file": "game.js"
@@ -9011,6 +9059,10 @@
         {
           "name": "resolveActiveRuleCards",
           "file": "decks.js"
+        },
+        {
+          "name": "ruleSettingValue",
+          "file": "game.js"
         },
         {
           "name": "syncMarketTargetUI",
@@ -9356,6 +9408,10 @@
       "line": 154,
       "references": [
         {
+          "name": "INITIAL_DRAFT",
+          "file": "game.js"
+        },
+        {
           "name": "gameSettings",
           "file": "game.js"
         },
@@ -9612,19 +9668,15 @@
       "line": 285,
       "references": [
         {
-          "name": "STD",
-          "file": "decks.js"
-        },
-        {
           "name": "cloneCustomDeck",
           "file": "decks.js"
         },
         {
-          "name": "packs",
+          "name": "createInitialDraftDeal",
           "file": "game.js"
         },
         {
-          "name": "sh",
+          "name": "packs",
           "file": "game.js"
         }
       ]
@@ -9656,13 +9708,22 @@
       "name": "applyRealDraftPick",
       "file": "online.js",
       "line": 297,
-      "references": []
+      "references": [
+        {
+          "name": "INITIAL_DRAFT",
+          "file": "game.js"
+        }
+      ]
     },
     {
       "name": "maybeStartRealOnlineDraft",
       "file": "online.js",
       "line": 307,
       "references": [
+        {
+          "name": "initialDraftSetupError",
+          "file": "game.js"
+        },
         {
           "name": "q",
           "file": "game.js"
@@ -9672,8 +9733,12 @@
     {
       "name": "renderRealOnlineDraft",
       "file": "online.js",
-      "line": 312,
+      "line": 313,
       "references": [
+        {
+          "name": "INITIAL_DRAFT",
+          "file": "game.js"
+        },
         {
           "name": "card",
           "file": "ui.js"
@@ -9691,19 +9756,19 @@
     {
       "name": "confirmRealOnlineDraftPick",
       "file": "online.js",
-      "line": 320,
+      "line": 321,
       "references": []
     },
     {
       "name": "makeRealResourceInitialState",
       "file": "online.js",
-      "line": 325,
+      "line": 326,
       "references": []
     },
     {
       "name": "applyRealResourceInit",
       "file": "online.js",
-      "line": 329,
+      "line": 330,
       "references": [
         {
           "name": "gameSettings",
@@ -9718,13 +9783,18 @@
     {
       "name": "maybeStartRealOnlineResources",
       "file": "online.js",
-      "line": 337,
-      "references": []
+      "line": 338,
+      "references": [
+        {
+          "name": "INITIAL_DRAFT",
+          "file": "game.js"
+        }
+      ]
     },
     {
       "name": "renderRealOnlineResources",
       "file": "online.js",
-      "line": 343,
+      "line": 344,
       "references": [
         {
           "name": "card",
@@ -9747,7 +9817,7 @@
     {
       "name": "applyRealResourceConfirm",
       "file": "online.js",
-      "line": 356,
+      "line": 357,
       "references": [
         {
           "name": "gameSettings",
@@ -9758,7 +9828,7 @@
     {
       "name": "confirmRealOnlineResources",
       "file": "online.js",
-      "line": 359,
+      "line": 360,
       "references": [
         {
           "name": "gameSettings",
@@ -9769,7 +9839,7 @@
     {
       "name": "realMainSnapshot",
       "file": "online.js",
-      "line": 364,
+      "line": 365,
       "references": [
         {
           "name": "breadDeck",
@@ -9988,7 +10058,7 @@
     {
       "name": "applyRealMainSnapshot",
       "file": "online.js",
-      "line": 367,
+      "line": 368,
       "references": [
         {
           "name": "characters",
@@ -10027,7 +10097,7 @@
     {
       "name": "broadcastRealMainState",
       "file": "online.js",
-      "line": 377,
+      "line": 378,
       "references": [
         {
           "name": "turn",
@@ -10042,13 +10112,13 @@
     {
       "name": "broadcastRealGameFinished",
       "file": "online.js",
-      "line": 382,
+      "line": 383,
       "references": []
     },
     {
       "name": "prepareRealMainGame",
       "file": "online.js",
-      "line": 383,
+      "line": 384,
       "references": [
         {
           "name": "STD",
@@ -10275,7 +10345,7 @@
     {
       "name": "maybeStartRealOnlineMain",
       "file": "online.js",
-      "line": 391,
+      "line": 392,
       "references": [
         {
           "name": "viewer",
@@ -10286,7 +10356,7 @@
     {
       "name": "scheduleRealMainBroadcast",
       "file": "online.js",
-      "line": 421,
+      "line": 422,
       "references": [
         {
           "name": "turn",
@@ -10301,7 +10371,7 @@
     {
       "name": "openRealOnlineCharacterScreen",
       "file": "online.js",
-      "line": 434,
+      "line": 435,
       "references": [
         {
           "name": "q",
@@ -10312,7 +10382,7 @@
     {
       "name": "closeRealOnlineCharacterScreen",
       "file": "online.js",
-      "line": 438,
+      "line": 439,
       "references": [
         {
           "name": "q",
@@ -10323,7 +10393,7 @@
     {
       "name": "refreshRealLobbySubmitDeckSelect",
       "file": "online.js",
-      "line": 439,
+      "line": 440,
       "references": [
         {
           "name": "getSavedDecks",
@@ -10338,7 +10408,7 @@
     {
       "name": "saveSharedDeckLocally",
       "file": "online.js",
-      "line": 444,
+      "line": 445,
       "references": [
         {
           "name": "cloneCustomDeck",
@@ -10361,7 +10431,7 @@
     {
       "name": "submitRealLobbyDeck",
       "file": "online.js",
-      "line": 447,
+      "line": 448,
       "references": [
         {
           "name": "cloneCustomDeck",
@@ -10380,7 +10450,7 @@
     {
       "name": "selectRealLobbyDeck",
       "file": "online.js",
-      "line": 452,
+      "line": 453,
       "references": [
         {
           "name": "DECK_PRESETS",
@@ -10403,7 +10473,7 @@
     {
       "name": "renderRealLobbyDeckCandidates",
       "file": "online.js",
-      "line": 456,
+      "line": 457,
       "references": [
         {
           "name": "q",
@@ -10422,8 +10492,12 @@
     {
       "name": "applyRealOnlineRules",
       "file": "online.js",
-      "line": 460,
+      "line": 461,
       "references": [
+        {
+          "name": "DEFAULT_RULE_SETTINGS",
+          "file": "game.js"
+        },
         {
           "name": "clampedRandomizerCount",
           "file": "decks.js"
@@ -10437,6 +10511,10 @@
           "file": "game.js"
         },
         {
+          "name": "ruleSettingValue",
+          "file": "game.js"
+        },
+        {
           "name": "syncMarketTargetUI",
           "file": "ui.js"
         }
@@ -10445,7 +10523,7 @@
     {
       "name": "renderRealLobbyRules",
       "file": "online.js",
-      "line": 463,
+      "line": 464,
       "references": [
         {
           "name": "clampedRandomizerCount",
@@ -10472,7 +10550,7 @@
     {
       "name": "changeRealLobbyRule",
       "file": "online.js",
-      "line": 467,
+      "line": 468,
       "references": [
         {
           "name": "clampedRandomizerCount",
@@ -10487,13 +10565,13 @@
     {
       "name": "broadcastRealRules",
       "file": "online.js",
-      "line": 470,
+      "line": 471,
       "references": []
     },
     {
       "name": "renderRealLobby",
       "file": "online.js",
-      "line": 471,
+      "line": 472,
       "references": [
         {
           "name": "q",
@@ -10508,19 +10586,19 @@
     {
       "name": "broadcastRealDeckConfig",
       "file": "online.js",
-      "line": 485,
+      "line": 486,
       "references": []
     },
     {
       "name": "sendRealStateSync",
       "file": "online.js",
-      "line": 486,
+      "line": 487,
       "references": []
     },
     {
       "name": "applyRealStateSync",
       "file": "online.js",
-      "line": 494,
+      "line": 495,
       "references": [
         {
           "name": "cloneCustomDeck",
@@ -10539,8 +10617,12 @@
     {
       "name": "enterRealOnlineLobby",
       "file": "online.js",
-      "line": 508,
+      "line": 509,
       "references": [
+        {
+          "name": "DEFAULT_RULE_SETTINGS",
+          "file": "game.js"
+        },
         {
           "name": "clampedRandomizerCount",
           "file": "decks.js"
@@ -10570,6 +10652,10 @@
           "file": "ui.js"
         },
         {
+          "name": "ruleSettingValue",
+          "file": "game.js"
+        },
+        {
           "name": "standardDeckName",
           "file": "decks.js"
         }
@@ -10578,7 +10664,7 @@
     {
       "name": "teardownRealOnlineLobby",
       "file": "online.js",
-      "line": 550,
+      "line": 551,
       "references": [
         {
           "name": "q",
@@ -10589,7 +10675,7 @@
     {
       "name": "leaveRealOnlineLobby",
       "file": "online.js",
-      "line": 555,
+      "line": 556,
       "references": [
         {
           "name": "turnClockConfirm",
@@ -10600,7 +10686,7 @@
     {
       "name": "kickRealLobbyPlayer",
       "file": "online.js",
-      "line": 571,
+      "line": 572,
       "references": [
         {
           "name": "turnClockConfirm",
@@ -10611,7 +10697,7 @@
     {
       "name": "enterOnlineDebugLobby",
       "file": "online.js",
-      "line": 579,
+      "line": 580,
       "references": [
         {
           "name": "botMatchMode",
@@ -10642,7 +10728,7 @@
     {
       "name": "leaveOnlineDebugLobby",
       "file": "online.js",
-      "line": 583,
+      "line": 584,
       "references": [
         {
           "name": "botMatchMode",
@@ -10673,31 +10759,31 @@
     {
       "name": "turnClockResetNet",
       "file": "online.js",
-      "line": 596,
+      "line": 597,
       "references": []
     },
     {
       "name": "turnClockNonce",
       "file": "online.js",
-      "line": 597,
+      "line": 598,
       "references": []
     },
     {
       "name": "turnClockClone",
       "file": "online.js",
-      "line": 598,
+      "line": 599,
       "references": []
     },
     {
       "name": "turnClockInitializeAuthority",
       "file": "online.js",
-      "line": 599,
+      "line": 600,
       "references": []
     },
     {
       "name": "turnClockSnapshot",
       "file": "online.js",
-      "line": 602,
+      "line": 603,
       "references": [
         {
           "name": "turnClockAccount",
@@ -10712,7 +10798,7 @@
     {
       "name": "turnClockValidMetadata",
       "file": "online.js",
-      "line": 608,
+      "line": 609,
       "references": [
         {
           "name": "TURN_CLOCK_INITIAL",
@@ -10723,7 +10809,7 @@
     {
       "name": "turnClockImport",
       "file": "online.js",
-      "line": 614,
+      "line": 615,
       "references": [
         {
           "name": "turnClockState",
@@ -10734,7 +10820,7 @@
     {
       "name": "turnClockAcceptSnapshot",
       "file": "online.js",
-      "line": 619,
+      "line": 620,
       "references": [
         {
           "name": "turnClockCloseChoices",
@@ -10749,7 +10835,7 @@
     {
       "name": "turnClockAfterSnapshot",
       "file": "online.js",
-      "line": 642,
+      "line": 643,
       "references": [
         {
           "name": "q",
@@ -10772,7 +10858,7 @@
     {
       "name": "turnClockRestoreChoice",
       "file": "online.js",
-      "line": 647,
+      "line": 648,
       "references": [
         {
           "name": "continueBeginTurn",
@@ -10807,7 +10893,7 @@
     {
       "name": "turnClockStartOwnTurn",
       "file": "online.js",
-      "line": 657,
+      "line": 658,
       "references": [
         {
           "name": "beginTurn",
@@ -10830,7 +10916,7 @@
     {
       "name": "beginTurnForClockTimeout",
       "file": "online.js",
-      "line": 662,
+      "line": 663,
       "references": [
         {
           "name": "beginTurn",
@@ -10841,25 +10927,25 @@
     {
       "name": "turnClockSend",
       "file": "online.js",
-      "line": 667,
+      "line": 668,
       "references": []
     },
     {
       "name": "turnClockCommit",
       "file": "online.js",
-      "line": 674,
+      "line": 675,
       "references": []
     },
     {
       "name": "turnClockResendState",
       "file": "online.js",
-      "line": 680,
+      "line": 681,
       "references": []
     },
     {
       "name": "turnClockPublishAction",
       "file": "online.js",
-      "line": 684,
+      "line": 685,
       "references": [
         {
           "name": "turn",
@@ -10874,7 +10960,7 @@
     {
       "name": "turnClockRequestEnd",
       "file": "online.js",
-      "line": 691,
+      "line": 692,
       "references": [
         {
           "name": "gameEnded",
@@ -10885,7 +10971,7 @@
     {
       "name": "turnClockReceiveAction",
       "file": "online.js",
-      "line": 695,
+      "line": 696,
       "references": [
         {
           "name": "completeEnd",
@@ -10928,7 +11014,7 @@
     {
       "name": "turnClockRequestPark",
       "file": "online.js",
-      "line": 719,
+      "line": 720,
       "references": [
         {
           "name": "turnClockState",
@@ -10939,7 +11025,7 @@
     {
       "name": "turnClockReceivePark",
       "file": "online.js",
-      "line": 724,
+      "line": 725,
       "references": [
         {
           "name": "applyOnlineParkPick",
@@ -10970,7 +11056,7 @@
     {
       "name": "turnClockReceiveState",
       "file": "online.js",
-      "line": 730,
+      "line": 731,
       "references": [
         {
           "name": "turnClockState",
@@ -10981,7 +11067,7 @@
     {
       "name": "turnClockReceivePulse",
       "file": "online.js",
-      "line": 746,
+      "line": 747,
       "references": [
         {
           "name": "turnClockRender",
@@ -10996,7 +11082,7 @@
     {
       "name": "turnClockHostChanged",
       "file": "online.js",
-      "line": 758,
+      "line": 759,
       "references": [
         {
           "name": "turnClockAccount",
@@ -11007,7 +11093,7 @@
     {
       "name": "turnClockNetworkTick",
       "file": "online.js",
-      "line": 766,
+      "line": 767,
       "references": [
         {
           "name": "gameEnded",
@@ -11291,6 +11377,10 @@
       "line": 143,
       "references": [
         {
+          "name": "INITIAL_DRAFT",
+          "file": "game.js"
+        },
+        {
           "name": "botMatchMode",
           "file": "game.js"
         },
@@ -11367,6 +11457,10 @@
         },
         {
           "name": "q",
+          "file": "game.js"
+        },
+        {
+          "name": "ruleSettingValue",
           "file": "game.js"
         }
       ]
@@ -11830,6 +11924,11 @@
     "q": "game.js",
     "mk": "game.js",
     "copies": "game.js",
+    "DEFAULT_RULE_SETTINGS": "game.js",
+    "INITIAL_DRAFT": "game.js",
+    "ruleSettingValue": "game.js",
+    "initialDraftSetupError": "game.js",
+    "createInitialDraftDeal": "game.js",
     "gameSettings": "game.js",
     "legendSlotMax": "game.js",
     "fillLegendSlotSelect": "game.js",

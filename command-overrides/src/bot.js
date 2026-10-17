@@ -160,7 +160,7 @@ function queueBotDraft(){
   onlineDraftActivePlayer=0;
   onlineDraftPendingIndex=null;
   if(onlineDraftSelected.every(Boolean)){
-   if(onlineDraftRound===2){startOnlineResourceSelection();queueBotResources();return;}
+   if(onlineDraftRound>=INITIAL_DRAFT.picks-1){startOnlineResourceSelection();queueBotResources();return;}
    const next=Array.from({length:onlineDebugPlayers.length},()=>[]);
    for(let p=0;p<onlineDebugPlayers.length;p++)next[(p+1)%onlineDebugPlayers.length]=onlineDraftPacks[p].slice();
    onlineDraftPacks=next;
@@ -175,7 +175,7 @@ function queueBotResources(){if(!botMatchMode)return;setTimeout(()=>{
   let p=onlineResourceActivePlayer,v={y:0,p:0,r:0};
   let best=(onlineDraftHands[p]||[]).slice().sort((a,b)=>botScoreCard(b)-botScoreCard(a))[0];
   let color=/兵力/.test(best?.costText||'')?'r':/食料/.test(best?.costText||'')?'p':'y';
-  v[color]=Math.max(0,gameSettings.initialResources-2);v.y+=1;v.r+=1;onlineResourceChoices[p]=v;
+  const total=ruleSettingValue('initialResources',gameSettings.initialResources);v[color]=Math.max(0,total-2);if(total>0)v.y+=1;if(total>1)v.r+=1;onlineResourceChoices[p]=v;
   confirmOnlineResources();
  }
 },100)}

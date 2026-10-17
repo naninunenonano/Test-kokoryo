@@ -24,7 +24,8 @@ for relative,digest in metadata['files'].items():
 version=metadata['version']
 now=datetime.now(ZoneInfo('Asia/Tokyo'))
 timestamp=now.replace(second=(now.second//2)*2).timetuple()[:6]
-entries={str(p.relative_to(site)):p for p in site.rglob('*') if p.is_file()}
+entries={relative:site/relative for relative in metadata['files']}
+entries['test-build.json']=site/'test-build.json'
 for folder in ['tools','docs','tests']:
     for p in (root/folder).rglob('*'):
         if p.is_file() and '__pycache__' not in p.parts:

@@ -219,7 +219,7 @@ function showDebugEraLegendDiagnosis(){
  });
  const totalDebt=commandCounts.reduce((a,n)=>a+(n||0),0);
  const pw=powers[turn]||{};
- const report={version:'0.3.224',trace:economyAcquireTrace.slice(),turnPlayer:turn+1,viewerPlayer:viewer+1,
+ const report={version:'0.3.225',trace:economyAcquireTrace.slice(),turnPlayer:turn+1,viewerPlayer:viewer+1,
   localDebug:!!debugLocalMode,onlineDebug:!!onlineDebugMode,realOnline:!!realOnlineMainMode,
   legendTakenThisTurn:!!legendTakenThisTurn,depressionLegendLocked:!!depressionLegendLocked(turn),
   money:pw.y||0,food:pw.p||0,military:pw.r||0,
@@ -337,8 +337,8 @@ function playLogChanges(reason){
  }catch(_){/* ログの失敗でゲームを止めない */}
 }
 function playLogExport(){
- try{playLogChanges('export');const data={schema:'kokoryo-playlog',schemaVersion:PLAYLOG_VERSION,gameVersion:'0.3.224',startedAt:playLogStart,exportedAt:new Date().toISOString(),finished:!!gameEnded,settings:{deckId:gameSettings.deckId,deckName:activeDeckConfig(gameSettings.deckId)?.name||gameSettings.deckId,winVP:gameSettings.winVP,playerCount,enabledPacks:[...(gameSettings.enabledPacks||[])],enabledRulePacks:[...(gameSettings.enabledRulePacks||[])],activeRules:(gameSettings.activeRuleCards||[]).map(x=>x.id||x.key||''),randomizerEnabled:!!gameSettings.randomizerEnabled,randomizerCount:gameSettings.randomizerCount,deckComposition:(typeof normalCardsForDeck==='function'?normalCardsForDeck(gameSettings.deckId):[]).map(playLogCard)},events:playLogEvents,latestState:playLogSnapshot()};
- const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='kokoryo_playlog_0.3.224_'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
+ try{playLogChanges('export');const data={schema:'kokoryo-playlog',schemaVersion:PLAYLOG_VERSION,gameVersion:'0.3.225',startedAt:playLogStart,exportedAt:new Date().toISOString(),finished:!!gameEnded,settings:{deckId:gameSettings.deckId,deckName:activeDeckConfig(gameSettings.deckId)?.name||gameSettings.deckId,winVP:gameSettings.winVP,playerCount,enabledPacks:[...(gameSettings.enabledPacks||[])],enabledRulePacks:[...(gameSettings.enabledRulePacks||[])],activeRules:(gameSettings.activeRuleCards||[]).map(x=>x.id||x.key||''),randomizerEnabled:!!gameSettings.randomizerEnabled,randomizerCount:gameSettings.randomizerCount,deckComposition:(typeof normalCardsForDeck==='function'?normalCardsForDeck(gameSettings.deckId):[]).map(playLogCard)},events:playLogEvents,latestState:playLogSnapshot()};
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='kokoryo_playlog_0.3.225_'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
  }catch(err){console.error('Playlog export error',err);alert('プレイログの保存に失敗しました。')}
 }
 function playLogDownloadButton(){const b=document.createElement('button');b.type='button';b.className='secondary';b.textContent='プレイログを保存';b.onclick=playLogExport;return b}
