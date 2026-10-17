@@ -21,3 +21,9 @@ class CommandBuildTests(unittest.TestCase):
    self.assertIn('const cardCommands=',(Path(tmp)/'src/game.js').read_text())
    self.assertFalse((Path(tmp)/'src/order.json').exists())
    self.assertEqual([c.args[0] for c in run.call_args_list],[['npm','ci','--ignore-scripts'],['npm','run','build'],['npm','run','analyze'],['npm','test']])
+ def test_pull_request_validation_cannot_deploy(self):
+  workflow=(ROOT/'.github/workflows/preview.yml').read_text()
+  self.assertIn('  pull_request:\n    branches: [main]',workflow)
+  self.assertIn("  deploy:\n    if: github.event_name != 'pull_request'",workflow)
+  self.assertIn("      - name: Configure test Pages\n        if: github.event_name != 'pull_request'",workflow)
+  self.assertIn("      - uses: actions/upload-pages-artifact@v4\n        if: github.event_name != 'pull_request'",workflow)
