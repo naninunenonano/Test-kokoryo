@@ -91,7 +91,7 @@ function commandDice(operation,{count=1,dieId,value,delta=0,source='effect'}={})
   return added
  }
  const d=dice.find(x=>x.id===+dieId&&!x.used);if(!d)return [];
- if(operation==='reroll')d.value=1+Math.floor(Math.random()*6);
+ if(operation==='reroll'){d.value=1+Math.floor(Math.random()*6);resolveReactiveRolls([d],false)}
  else if(operation==='adjust')d.value=Math.max(1,Math.min(6,d.value+delta));
  else d.value=value;
  return [d]
@@ -101,7 +101,92 @@ function commandLimit(target,delta,{base=gameSettings.handLimit,count=1}={}){
  if(!Number.isSafeInteger(delta)||!Number.isSafeInteger(base))throw new RangeError('Invalid limit');
  return base+delta*commandQuantity(count)
 }
-const cardCommands=Object.freeze({pool:commandPool,draw:commandDraw,dice:commandDice,limit:commandLimit});
+// Commands use explicit zones, stateless event descriptors, and existing saved ledgers.
+function commandZone(target,owner=turn){
+ if(Array.isArray(target))return target;
+ const zone=typeof target==='string'?target:target?.zone,p=typeof target==='object'&&!Array.isArray(target)?target.owner??owner:owner;
+ const list=({hand:hands[p],installed:installed[p],temporary:temporary[p],market,discard,deck})[zone];
+ if(!Array.isArray(list))throw new RangeError('Unknown card zone');return list
+}
+function commandChoice(target,quantity,{owner=turn,where=()=>true,select=null}={}){
+ const candidates=commandZone(target,owner).filter(where),n=quantity==='all'?candidates.length:commandQuantity(quantity);
+ const chosen=select===null?candidates.slice(0,n):select.map(i=>typeof i==='number'?candidates[i]:i);
+ if(chosen.length>n||new Set(chosen).size!==chosen.length||chosen.some(c=>!candidates.includes(c)))throw new RangeError('Invalid card selection');
+ return chosen.slice()
+}
+function commandMove(cards,from,to,{replaceSource=false}={}){
+ const chosen=Array.isArray(cards)?cards.slice():[cards],source=commandZone(from),destination=commandZone(to);
+ if(source===destination)throw new RangeError('Move requires different zones');
+ if(new Set(chosen).size!==chosen.length||chosen.some(c=>!source.includes(c)))throw new RangeError('Card not in explicit source');
+ if(replaceSource){
+  if(from!=='market'&&from?.zone!=='market')throw new RangeError('Replacement source must be market');
+  market=source.filter(c=>!chosen.includes(c));
+ }else for(const c of chosen)source.splice(source.indexOf(c),1);
+ destination.push(...chosen);return chosen
+}
+function commandStart(owner,quantity='all',{queue=null,step=null}={}){
+ const n=quantity==='all'?playerCount:commandQuantity(quantity);
+ if(!Number.isInteger(owner)||owner<0||owner>=playerCount||n>playerCount)throw new RangeError('Invalid player order');
+ if(queue){
+  if(!n||!step||!queue.length||queue[0]!==owner)return false;
+  // One committed choice per call; the existing synchronized queue owns the wait.
+  if(step(owner)===false)return false;queue.shift();return true
+ }
+ const order=Array.from({length:n},(_,i)=>(owner+i)%playerCount);
+ if(!step)return order;
+ for(const p of order)if(step(p)===false)break;
+ return order
+}
+function commandPlus(target,quantity='max'){
+ if(target!=='market')throw new RangeError('Unknown refill target');
+ if(quantity==='max'){refillMarket();return market}
+ const limit=commandQuantity(quantity),keys=new Set(market.map(c=>c.key));
+ while(keys.size<limit){const c=drawOne();if(!c)break;market.push(c);keys.add(c.key)}return market
+}
+function commandChange(target,quantity='all'){
+ if(target!=='market')throw new RangeError('Unknown change target');
+ const cards=commandChoice(target,quantity);commandMove(cards,target,'discard',{replaceSource:true});commandPlus(target);return cards
+}
+function commandCan(target,condition,{owner=turn,value}={}){
+ if(typeof condition==='function')return !!condition(target);
+ if(condition==='installed')return (installed[owner]||[]).includes(target);
+ if(condition==='temporary')return (temporary[owner]||[]).includes(target);
+ if(condition==='special')return !!target&&target.special===value;
+ if(condition==='hire-space')return (employees[owner]||[]).length<effectiveHireLimit();
+ throw new RangeError('Unknown condition')
+}
+function commandCount(target,condition=()=>true,{owner=turn}={}){
+ if(target==='players')return Array.from({length:playerCount},(_,p)=>p).filter(condition).length;
+ if(target==='resources')return Object.entries(powers[owner]||{}).filter(([k,n])=>condition(n,k)).reduce((sum,[,n])=>sum+n,0);
+ return commandZone(target,owner).filter(condition).length
+}
+function commandTrigger(event,context,{event:expected=event,targets,when=()=>true,instances=()=>1,match=()=>true,aggregate=false,effect}={}){
+ if(event!==expected)return [];
+ const hits=context.items?context.items.filter(match).length:1,results=[];if(!hits)return results;
+ for(const owner of targets||Array.from({length:playerCount},(_,i)=>i)){
+  if(!when(owner,context))continue;const count=commandQuantity(instances(owner,context));if(!count)continue;
+  const hit={...context,owner,hits,count,occurrences:hits*count};
+  if(aggregate)results.push(effect(hit));
+  else for(let i=0;i<hits*count;i++)results.push(effect({...hit,hits:1,count:1,occurrences:1,index:i}));
+ }
+ return results
+}
+function commandHire(mode,quantity,{accept=e=>finalizeHire(e),canHire=()=>cardCommands.can(null,'hire-space')}={}){
+ if(mode!=='gacha')throw new RangeError('Unknown hiring mode');const n=commandQuantity(quantity),hired=[];
+ for(let i=0;i<n;i++){if(!canHire())break;const e=gachaCast();if(!e)break;accept(e);hired.push(e)}return hired
+}
+function commandToba({owner=turn}={}){
+ const card=drawOne();if(card)registerInstallation(owner,card);return card
+}
+function commandOnce(limit,period,{cardId,usage,owner=null,consume=false}={}){
+ const max=commandQuantity(limit);if(!['turn','game'].includes(period))throw new RangeError('Unknown usage period');
+ if(!usage||cardId===undefined||cardId===null)throw new RangeError('Missing usage ledger or card ID');
+ if(owner!==null&&usage[owner]===true)return false;
+ const ledger=owner===null?usage:usage[owner],raw=ledger?.[cardId],used=raw===true?1:Number(raw)||0;
+ if(used>=max)return false;
+ if(consume){const store=owner===null?usage:(usage[owner]||={});store[cardId]=max===1?true:used+1}return true
+}
+const cardCommands=Object.freeze({pool:commandPool,draw:commandDraw,dice:commandDice,limit:commandLimit,choice:commandChoice,move:commandMove,start:commandStart,change:commandChange,can:commandCan,count:commandCount,plus:commandPlus,trigger:commandTrigger,hire:commandHire,toba:commandToba,once:commandOnce});
 // @kokoryo-end-section S0026
 
 // @kokoryo-section S0029

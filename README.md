@@ -85,3 +85,8 @@ Pages設定とワークフローは **Test-kokoryoだけ** で使用してくだ
 `preview-target.json` の `commandOverrides: true` を指定すると、既存Actionsの実行またはTEST mainへの対象設定更新により、この差分を使って公開します。手動で別PRを指定する場合も基準コミットが異なれば停止します。全カード効果の全面再設計、N/レジェンド/雇用への移行は含みません。
 
 ローカル検証: ゲーム103件、TESTビルド・隔離22件、JS13本の構文、オフライン/Bot起動、TEST時計33件が成功。実Supabase複数端末・iPhone Safari実機・全カード全組み合わせは未検証です。
+
+
+## TEST Ver.0.3.223: 第2段階
+
+command-overrides/は基準Ver.0.3.221からの累積18ファイル。新しい11コマンドとN1〜N15、S1〜S4のonceが対象です。src/order.jsonと既存パック/画像は変更しません。本番への書込みは行いません。S1の振り直し時にN8〜N10が発動する点は、調査後にユーザーが明示的に指定した修正です。コマンド一覧と全カード移行経路はcommand-overrides/docs/COMMANDS.mdに記載しています。同期は4クライアントを模擬し、実SupabaseとSafari実機は未確認です。
