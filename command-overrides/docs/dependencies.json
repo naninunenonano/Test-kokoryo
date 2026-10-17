@@ -718,13 +718,13 @@
     {
       "name": "chooseFirstPlayer",
       "file": "game.js",
-      "line": 424,
+      "line": 426,
       "references": []
     },
     {
       "name": "confirmInitialPowers",
       "file": "game.js",
-      "line": 425,
+      "line": 427,
       "references": [
         {
           "name": "refillTo8",
@@ -739,13 +739,13 @@
     {
       "name": "playerScaledGain",
       "file": "game.js",
-      "line": 426,
+      "line": 428,
       "references": []
     },
     {
       "name": "registerInstallation",
       "file": "game.js",
-      "line": 432,
+      "line": 434,
       "references": [
         {
           "name": "resolveOnInstall",
@@ -760,7 +760,7 @@
     {
       "name": "beginTurn",
       "file": "game.js",
-      "line": 438,
+      "line": 440,
       "references": [
         {
           "name": "fusionUsedThisTurn",
@@ -819,7 +819,7 @@
     {
       "name": "continueBeginTurn",
       "file": "game.js",
-      "line": 457,
+      "line": 459,
       "references": [
         {
           "name": "CHARACTER_DATA",
@@ -878,13 +878,13 @@
     {
       "name": "unusedDice",
       "file": "game.js",
-      "line": 493,
+      "line": 495,
       "references": []
     },
     {
       "name": "dieSelect",
       "file": "game.js",
-      "line": 493,
+      "line": 495,
       "references": [
         {
           "name": "makeChoicePicker",
@@ -895,31 +895,31 @@
     {
       "name": "useDie",
       "file": "game.js",
-      "line": 493,
+      "line": 495,
       "references": []
     },
     {
       "name": "colorFor",
       "file": "game.js",
-      "line": 494,
+      "line": 496,
       "references": []
     },
     {
       "name": "fixedVP",
       "file": "game.js",
-      "line": 499,
+      "line": 501,
       "references": []
     },
     {
       "name": "allFieldCards",
       "file": "game.js",
-      "line": 500,
+      "line": 502,
       "references": []
     },
     {
       "name": "totalVP",
       "file": "game.js",
-      "line": 505,
+      "line": 507,
       "references": [
         {
           "name": "cardVP",
@@ -934,7 +934,7 @@
     {
       "name": "checkEndgameTrigger",
       "file": "game.js",
-      "line": 510,
+      "line": 512,
       "references": [
         {
           "name": "renderSharedEndgameStatus",
@@ -945,7 +945,7 @@
     {
       "name": "isViewingOwnTurn",
       "file": "game.js",
-      "line": 518,
+      "line": 520,
       "references": [
         {
           "name": "realOnlineMainMode",
@@ -956,13 +956,13 @@
     {
       "name": "handLimit",
       "file": "game.js",
-      "line": 523,
+      "line": 525,
       "references": []
     },
     {
       "name": "finishTurn",
       "file": "game.js",
-      "line": 523,
+      "line": 525,
       "references": [
         {
           "name": "showHandLimit",
@@ -973,7 +973,7 @@
     {
       "name": "turnClockOriginalCompleteEnd",
       "file": "game.js",
-      "line": 528,
+      "line": 530,
       "references": [
         {
           "name": "broadcastRealGameFinished",
@@ -1020,13 +1020,13 @@
     {
       "name": "resetGameEndState",
       "file": "game.js",
-      "line": 546,
+      "line": 548,
       "references": []
     },
     {
       "name": "finishGame",
       "file": "game.js",
-      "line": 553,
+      "line": 555,
       "references": [
         {
           "name": "debtFinalVPPerCard",
@@ -1053,13 +1053,13 @@
     {
       "name": "updateDebugCommandVisibility",
       "file": "game.js",
-      "line": 569,
+      "line": 571,
       "references": []
     },
     {
       "name": "turnClockConvertNormalDie",
       "file": "game.js",
-      "line": 579,
+      "line": 581,
       "references": [
         {
           "name": "renderGame",
@@ -1070,13 +1070,13 @@
     {
       "name": "turnClockVisible",
       "file": "game.js",
-      "line": 584,
+      "line": 586,
       "references": []
     },
     {
       "name": "turnClockReset",
       "file": "game.js",
-      "line": 585,
+      "line": 587,
       "references": [
         {
           "name": "turnClockNet",
@@ -1095,13 +1095,13 @@
     {
       "name": "turnClockAccount",
       "file": "game.js",
-      "line": 593,
+      "line": 595,
       "references": []
     },
     {
       "name": "turnClockBeginTurn",
       "file": "game.js",
-      "line": 602,
+      "line": 604,
       "references": [
         {
           "name": "turnClockRender",
@@ -1112,7 +1112,7 @@
     {
       "name": "turnClockStop",
       "file": "game.js",
-      "line": 610,
+      "line": 612,
       "references": [
         {
           "name": "turnClockRender",
@@ -1123,13 +1123,13 @@
     {
       "name": "turnClockLeaseValid",
       "file": "game.js",
-      "line": 611,
+      "line": 613,
       "references": []
     },
     {
       "name": "turnClockTick",
       "file": "game.js",
-      "line": 616,
+      "line": 618,
       "references": [
         {
           "name": "realOnlineMainMode",
@@ -1148,19 +1148,19 @@
     {
       "name": "turnClockPrompt",
       "file": "game.js",
-      "line": 622,
+      "line": 624,
       "references": []
     },
     {
       "name": "turnClockConfirm",
       "file": "game.js",
-      "line": 628,
+      "line": 630,
       "references": []
     },
     {
       "name": "turnClockResolvePending",
       "file": "game.js",
-      "line": 634,
+      "line": 636,
       "references": [
         {
           "name": "applyOnlineParkPick",
@@ -1215,7 +1215,7 @@
     {
       "name": "turnClockDiscardOverflow",
       "file": "game.js",
-      "line": 675,
+      "line": 677,
       "references": [
         {
           "name": "depressionDebtLocked",
@@ -1230,7 +1230,7 @@
     {
       "name": "turnClockCloseChoices",
       "file": "game.js",
-      "line": 689,
+      "line": 691,
       "references": [
         {
           "name": "legendPaymentPending",
@@ -1249,7 +1249,7 @@
     {
       "name": "turnClockExpire",
       "file": "game.js",
-      "line": 704,
+      "line": 706,
       "references": [
         {
           "name": "addDialog",
@@ -1300,7 +1300,7 @@
     {
       "name": "completeEnd",
       "file": "game.js",
-      "line": 739,
+      "line": 741,
       "references": [
         {
           "name": "realOnlineMainMode",
@@ -10414,6 +10414,10 @@
         {
           "name": "resolveActiveRuleCards",
           "file": "decks.js"
+        },
+        {
+          "name": "resolveGameStartCharacterEffects",
+          "file": "game.js"
         },
         {
           "name": "saveDebugInitialMarketSnapshot",

@@ -1,3 +1,7 @@
+# TEST Ver.0.3.227
+
+初期手札を10枚（既存ドラフト5枚＋山札5枚）、ターン開始時の領主共通資源を3個へ修正。固有能力の追加分とカード効果は維持。本番は変更しない。詳細は `command-overrides/docs/VER227_REPORT.md`。
+
 # TEST Ver.0.3.226
 
 スタンダード1の30種類を調整。詳細：`command-overrides/docs/VER226_REPORT.md`。本番Ver.0.3.220は変更しない。

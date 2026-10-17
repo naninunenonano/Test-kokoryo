@@ -418,6 +418,8 @@ let initialPowerPlayer=0;
 // @kokoryo-section S0049
 
 function resolveGameStartCharacterEffects(){
+ // ドラフトで選んだ5枚を維持し、山札から追加して初期手札を10枚にする。
+ for(let p=0;p<playerCount;p++)cardCommands.draw('deck',Math.max(0,10-hands[p].length),{owner:p});
  // 現在の領主固有能力はゲーム開始時に直接処理しない。
  // 《神算鬼謀》の初回ボーナスは、その能力を持つ領主／キャストごとに最初のターン開始時に独立して処理する。
 }
@@ -473,7 +475,7 @@ function continueBeginTurn(){
  dice=[];for(let i=0;i<3+randomBonus;i++)cardCommands.dice('roll',{count:1,source:i<3?'base':(i<3+(lord.extraDice||0)?'lord':'employee')});
  elekiterUsed[turn]=false;q('#limit').classList.add('hidden');
  resolveReactiveRolls();
- pendingLordResource=1+(lord.extraLordResource||0)+(abilityProfile(copiedAbility)?.extraLordResource||0);
+ pendingLordResource=3+(lord.extraLordResource||0)+(abilityProfile(copiedAbility)?.extraLordResource||0);
  runRuleHook('turnStart',{player:turn});resolveTurnStartEffects();runInstalledPackHooks('turnStart',turn);
  let deadLord=CHARACTER_DATA[charOf(turn)];if(deadLord?.deadMansTrigger){cardCommands.draw('deck',deadLord.deadMansDraw||2);cardCommands.draw('command',deadLord.deadMansBread||2)}
  let hasGuild=installed[turn].some(c=>c.special==='naroppaGuild'); if(hasGuild){}

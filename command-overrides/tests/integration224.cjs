@@ -99,7 +99,7 @@ test('224 CUR1–CUR6 and lords use the same strengthened definitions; common ch
  const h=await setup(t);
  for(const id of ['CUR1','CUR2','CUR3','CUR4','CUR5','CUR6'])assert.equal(h.run(`CAST_TYPES.${id}.chooseDie`),true);
  for(const name of ['神の贈り物','神算鬼謀','オーバークロック','神の見えざる手'])assert.equal(h.run(`Object.values(CHARACTER_DATA).filter(x=>x.uniqueAbility==='${name}').every(x=>Object.entries(UNIQUE_ABILITY_DEFS['${name}'].props).every(([k,v])=>x[k]===v))`),true);
- h.run("characters[0]='P1';employees[0]=[applyUniqueAbilityDef({...CAST_TYPES.CUR1})];beginTurn()");assert.equal(h.run('dice.length'),7);assert.equal(h.run('pendingLordResource'),4);assert.deepEqual(h.read('pendingCastResourceChoices.map(x=>x.amount)'),[3]);assert.equal(h.run('pendingSSRBonus'),1);
+ h.run("characters[0]='P1';employees[0]=[applyUniqueAbilityDef({...CAST_TYPES.CUR1})];beginTurn()");assert.equal(h.run('dice.length'),7);assert.equal(h.run('pendingLordResource'),6);assert.deepEqual(h.read('pendingCastResourceChoices.map(x=>x.amount)'),[3]);assert.equal(h.run('pendingSSRBonus'),1);
 });
 test('224 N/R/SR/SSR resource and dice families use common commands without duplicated implementation',async t=>{
  const h=await setup(t);
