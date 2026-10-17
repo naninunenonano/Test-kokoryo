@@ -34,7 +34,7 @@ async function fixture(t,options={}){
  lordOracleUsed=[];lordTributeUsed=[];elekiterUsed=[];debugVP=Array(4).fill(0);graveyardUsed=[];publicMarketUsed=[];
  triggerNotices=[];pendingParkPlayers=[];pendingParkTaken=[];pendingOverclockChoices=[];pendingCastResourceChoices=[];
  pendingLordResource=0;pendingNanban=0;pendingTenkuCat=0;pendingSSRBonus=0;turnStartPostPending=false;
- turn=0;viewer=0;endgameStarter=null;endgameRemaining=0;gameEnded=false;komePlace=100;gameSettings.handLimit=6;
+ turn=0;viewer=0;endgameStarter=null;endgameRemaining=0;gameEnded=false;komePlace=100;Object.assign(gameSettings,{"winVP":20,"marketTypes":8,"initialResources":4,"hireLimit":3,"legendSlots":3,"handLimit":6});
  q('#game').classList.remove('hidden');q('#entryScreen').classList.add('hidden');q('#mainApp').classList.remove('entry-locked');
  turnClockReset();turnClockBeginTurn();
  `);

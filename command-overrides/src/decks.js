@@ -153,13 +153,13 @@ function hasActiveRule(id){return activeRuleCards().some(rc=>rc.id===id)}
 function captureLocalRuleSettings(){
  let chosenDeck=q('#deckPreset')?.value||'standard1';
  let maxLegend=legendSlotMax(chosenDeck);
- gameSettings.winVP=Math.max(1,Math.floor(Number(q('#settingWinVP')?.value)||20));
+ gameSettings.winVP=ruleSettingValue('winVP',q('#settingWinVP')?.value);
  if(q('#settingWinVP'))q('#settingWinVP').value=String(gameSettings.winVP);
- gameSettings.marketTypes=Math.max(1,Math.floor(Number(q('#settingMarketTypes')?.value)||8));
- gameSettings.initialResources=Math.max(0,Math.floor(Number(q('#settingInitialResources')?.value)||0));
+ gameSettings.marketTypes=ruleSettingValue('marketTypes',q('#settingMarketTypes')?.value);
+ gameSettings.initialResources=ruleSettingValue('initialResources',q('#settingInitialResources')?.value);
  gameSettings.handLimit=Math.max(1,Math.floor(Number(q('#settingHandLimit')?.value)||6));
- gameSettings.hireLimit=Math.max(0,Math.floor(Number(q('#settingHireLimit')?.value)||0));
- gameSettings.legendSlots=Math.max(1,Math.min(maxLegend,Math.floor(Number(q('#settingLegendSlots')?.value)||3)));
+ gameSettings.hireLimit=ruleSettingValue('hireLimit',q('#settingHireLimit')?.value);
+ gameSettings.legendSlots=Math.min(maxLegend,ruleSettingValue('legendSlots',q('#settingLegendSlots')?.value));
  gameSettings.deckId=chosenDeck;
  return chosenDeck
 }
@@ -173,7 +173,7 @@ function drawOne(){if(!deck.length&&discard.length){deck=sh(discard);discard=[]}
 // @kokoryo-section S0044
 
 function refillMarket(){
- let target=Math.max(1,Math.floor(Number(gameSettings.marketTypes)||8));
+ let target=ruleSettingValue('marketTypes',gameSettings.marketTypes);
  gameSettings.marketTypes=target;
  syncMarketTargetUI();
  let keys=new Set(market.map(c=>c.key));

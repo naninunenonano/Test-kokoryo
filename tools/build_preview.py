@@ -76,6 +76,8 @@ def patch_html(source, pr, commit, source_split=False):
             build['features'].append('generic-commands-phase2')
         if 'discount:commandDiscount' in source:
             build['features'].append('generic-effects-224')
+        if 'const INITIAL_DRAFT=' in source:
+            build['features'].append('initial-settings-225')
     source = source.replace(source_version, version)
     source = once(source, '<html lang="ja"><head>', '<html lang="ja"><head>' +
         '<meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39;; script-src &#39;self&#39; &#39;unsafe-inline&#39; &#39;unsafe-eval&#39;; style-src &#39;self&#39; &#39;unsafe-inline&#39;; img-src &#39;self&#39; data:; connect-src &#39;none&#39;; object-src &#39;none&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;">')
@@ -179,7 +181,7 @@ def build(source_dir, output, pr, commit):
     for folder in ['packs', 'images']:
         if not (source_dir / folder).is_dir():
             raise ValueError(f'Missing source folder: {folder}')
-        shutil.copytree(source_dir / folder, output / folder, dirs_exist_ok=True)
+        shutil.copytree(source_dir / folder, output / folder, dirs_exist_ok=True, ignore=shutil.ignore_patterns('.*'))
     for script in ['pack1.js', 'pack2.js', 'rules_pack1.js']:
         if not (output / 'packs' / script).is_file():
             raise ValueError('Missing required pack: ' + script)
@@ -201,11 +203,11 @@ def build(source_dir, output, pr, commit):
 
 def apply_command_overrides(directory, overrides, commit):
     if commit != '1ca6ccfcf7c5f9cddea8c508f472b0af04a9167a':
-        raise ValueError('Ver224 cumulative cumulative overrides require the pinned Ver.0.3.221 baseline')
-    allowed = {'tests/commands.cjs', 'tests/split.cjs', 'src/debug.js', 'docs/COMMANDS.md', 'tests/regression.cjs', 'src/game.js', 'src/online.js', 'tests/online.cjs', 'tests/normal_commands.cjs', 'tests/clock.cjs', 'tests/fixtures/scope_223.json', 'tests/fixtures/legends_223.json', 'tests/integration224.cjs', 'src/characters.js', 'src/bot.js', 'package.json', 'tests/fixtures/standard_221.json', 'index.html', 'docs/dependencies.json', 'docs/VER224_REPORT.md', 'src/decks.js', 'src/card_effects.js', 'src/ui.js', 'README.md', 'docs/DEPENDENCIES.md', 'tests/fixtures/normal_222.json', 'src/bootstrap.js', 'tools/package_test.py'}
+        raise ValueError('Cumulative overrides require the pinned Ver.0.3.221 baseline')
+    allowed = {'tests/startup.cjs', 'tests/setup225.cjs', 'tests/scope225.cjs', 'tests/fixtures/scope_224.json', 'docs/VER225_REPORT.md', 'tests/commands.cjs', 'tests/split.cjs', 'src/debug.js', 'docs/COMMANDS.md', 'tests/regression.cjs', 'src/game.js', 'src/online.js', 'tests/online.cjs', 'tests/normal_commands.cjs', 'tests/clock.cjs', 'tests/fixtures/scope_223.json', 'tests/fixtures/legends_223.json', 'tests/integration224.cjs', 'src/characters.js', 'src/bot.js', 'package.json', 'tests/fixtures/standard_221.json', 'index.html', 'docs/dependencies.json', 'docs/VER224_REPORT.md', 'src/decks.js', 'src/card_effects.js', 'src/ui.js', 'README.md', 'docs/DEPENDENCIES.md', 'tests/fixtures/normal_222.json', 'src/bootstrap.js', 'tools/package_test.py'}
     files = {str(p.relative_to(overrides)): p for p in overrides.rglob('*') if p.is_file()}
     if set(files) != allowed:
-        raise ValueError('Unexpected or missing Ver224 cumulative override files')
+        raise ValueError('Unexpected or missing Ver225 cumulative override files')
     for relative, source in files.items():
         if source.is_symlink():
             raise ValueError('Override symlinks are forbidden')

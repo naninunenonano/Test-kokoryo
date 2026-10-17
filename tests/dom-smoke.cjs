@@ -62,14 +62,14 @@ async function open(){
  const local=await open();
  local.click('#testOfflineStart');local.visible('#setup');
  local.click('#start');local.visible('#draft');
- for(let i=0;i<12;i++)local.click('#cards .card');
+ for(let i=0;i<20;i++)local.click('#cards .card');
  local.visible('#initialPowerSetup');
  for(let p=0;p<4;p++){
-  for(let i=0;i<4;i++)local.click('#initialPowerSetup .turnstart-buttons button');
+  for(let i=0;i<10;i++)local.click('#initialPowerSetup .turnstart-buttons button');
   local.click('#initialPowerSetup .row button.primary');
  }
  local.visible('#game');
- local.finish();console.log('PASS: offline setup → 12 draft picks → resource selection → game; production storage untouched, no connections');
+ local.finish();console.log('PASS: offline setup → 20 draft picks → resource selection → game; production storage untouched, no connections');
  const bot=await open();
  bot.click('#testBotStart');bot.visible('#onlineDebugLobby');
  assert.ok(bot.q('#addDummyPlayer').disabled);
@@ -79,16 +79,16 @@ async function open(){
  bot.click('#onlineCharOptions .online-gender-choice button');
  assert.equal(bot.dom.window.document.querySelectorAll('#onlineCharPlayers .done').length,4);
  bot.click('#onlineCharNext');bot.visible('#onlineDraftScreen');
- for(let i=0;i<3;i++){
+ for(let i=0;i<5;i++){
   bot.click('#onlineDraftCards .online-draft-card');bot.click('#onlineDraftConfirm');
-  await waitUntil(()=>i<2
+  await waitUntil(()=>i<4
    ? Number(bot.q('#onlineDraftRound').textContent)===i+2
    : !bot.q('#onlineResourceScreen').classList.contains('hidden'));
  }
  bot.visible('#onlineResourceScreen');
- for(let i=0;i<4;i++)bot.click('#onlineResourceChoices .turnstart-buttons button');
+ for(let i=0;i<10;i++)bot.click('#onlineResourceChoices .turnstart-buttons button');
  bot.click('#onlineResourceConfirm');
  await waitUntil(()=>!bot.q('#game').classList.contains('hidden'));
  bot.visible('#game');
- bot.finish();console.log('PASS: Bot lobby → human/Bot character selection → 3-round draft → resource selection → game; no connections');
+ bot.finish();console.log('PASS: Bot lobby → human/Bot character selection → 5-round draft → resource selection → game; no connections');
 })().catch(e=>{console.error(e);process.exit(1)});

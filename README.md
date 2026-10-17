@@ -1,3 +1,9 @@
+# TEST Ver.0.3.225
+
+初期設定のみ更新。勝利30VP・初期資源10・雇用5・公開場12・レジェンド上下5・8枚提示から5枚選択。詳細は `command-overrides/docs/VER225_REPORT.md`。現行S40枚での6人8枚提示は枚数不足のため、将来の増量まで開始前に明示する。本番Ver.0.3.220とカード効果は変更しない。
+
+以下は以前の版の記録。
+
 # TEST Ver.0.3.224
 
 現行の変更・検証は `command-overrides/docs/VER224_REPORT.md`、コマンド仕様は `command-overrides/docs/COMMANDS.md` のVer.0.3.224節を参照。基準TEST Ver.0.3.223。公開対象はTest-kokoryoのみ、本番mainは変更しない。通常のダイス変換は3、命令書は2、交換は3:1（等価交換1:1）。

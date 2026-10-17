@@ -6,7 +6,7 @@
 
 | 編集用ファイル | 関数宣言数 | 他ファイルへの参照候補 |
 | --- | ---: | --- |
-| game.js | 100 | bot.js, card_effects.js, characters.js, debug.js, decks.js, online.js, ui.js |
+| game.js | 103 | bot.js, card_effects.js, characters.js, debug.js, decks.js, online.js, ui.js |
 | decks.js | 34 | card_effects.js, characters.js, debug.js, game.js, ui.js |
 | characters.js | 81 | card_effects.js, debug.js, decks.js, game.js, online.js, ui.js |
 | ui.js | 78 | bot.js, card_effects.js, characters.js, debug.js, decks.js, game.js, online.js |
