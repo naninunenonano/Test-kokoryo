@@ -183,3 +183,8 @@ cardCommands.change('market',2); // 指定枚数の交換も可能
 
 154件のNode自動テスト（既存回帰・新旧比較・DOM操作・4クライアント模擬同期）が合格。具体的な項目と未確認事項はVER224_REPORT.mdを参照。
 実Supabase接続・iPhone Safari実機・人間による初期設定から終局までの通し対戦・全カードの全組合せ・旧版の進行中セーブ引継ぎは未確認。TEST公開版のオンライン通信禁止は維持する。
+
+
+## Ver.0.3.226 バランス定義
+
+コマンド登録・構文・Pack APIは維持する。S/Nカードの開始時プログラムと人数別獲得量を更新。LU2はonce 3/turnで3回の独立したcastを行う。N1のchange/start/choice/moveを2セット実行し、N3は2回のtobaを設置時効果の完了後に続ける。中断可能な処理はJSON可能なinstallEffectStackで保持する。新旧効果を二重実行しない。

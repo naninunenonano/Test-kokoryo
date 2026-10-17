@@ -71,7 +71,7 @@ function botScoreCard(c){
   +Math.max(0,+c.vp||0)*(stage===2?8:2);
 }
 // 目標カードを毎回再評価し、設置に不足する資源を優先する。
-function botCardNeeds(c){
+function botCardNeeds(c){if(balancedInstallCost(c))return balancedInstallCost(c).resources;
  const fixed={mine:{y:2},farm:{p:2},barracks:{r:2},commandroom:{y:3,r:1},church:{y:3,p:1},plan:{r:2},adjust:{r:4},restrict:{r:3},permit:{r:3},swordhunt:{r:4},graveyard:{p:1,r:2},landgrab:{y:2,p:2,r:2},bandit:{y:4,p:3},publicmarket:{y:1,p:1,r:1},famine:{p:3},laws:{y:5},scout:{y:2,p:2,r:2},swordhunt:{r:4},graveyard:{p:1,r:2},landgrab:{y:2,p:2,r:2},bandit:{y:4,p:3},publicmarket:{y:1,p:1,r:1}};
  return fixed[c?.special]||{y:0,p:0,r:0};
 }
@@ -252,6 +252,11 @@ function botTryInstall(){
  let h=hands[turn]||[],ps=powers[turn];
  let order=h.map((c,i)=>({c,i,v:botScoreCard(c)})).sort((a,b)=>b.v-a.v);
  for(let {c,i} of order){
+  if(balancedInstallCost(c)){
+   const choices=balancedCostChoices(c),base={greatermine:'mine',greaterfarm:'farm',greaterbarracks:'barracks',greatercommand:'commandroom'}[c.special];
+   const index=base?installed[turn].findIndex(x=>x.special===base):-1;
+   if(index>=0&&installBalancedCard(i,[],index)||choices&&installBalancedCard(i,choices)){botLog(c.name+'を設置');return true}continue
+  }
   if(c.type==='S'){
    let need={y:0,r:0,p:0},vals=null;
    if(c.special==='plan')need.r=2;else if(c.special==='adjust')need.r=4;

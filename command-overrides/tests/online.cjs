@@ -154,15 +154,15 @@ test('online: stale owner proposal cannot undo an accepted other-player Park pic
 
 test('online: N8–N10 reroll reactions and S1 once synchronize exactly once',async t=>{
  const r=await room(t);r.guest.run("Math.random=()=>0;installed[0]=[{id:'law1',special:'laws'},{id:'law2',special:'laws'}];dice=[{id:1,value:2,used:false},{id:2,value:1,used:false}];useStdAbility('s1','plan',1);turnClockPublishAction(false)");
- await r.drain();r.same('commandCounts[1]',2);r.same('powers[0].y',2);r.same('stdAbilityUsed',{s1:true});
- r.guest.run("useStdAbility('s1','plan',1);turnClockPublishAction(false)");await r.drain();r.same('commandCounts[1]',2);
+ await r.drain();r.same('commandCounts[1]',4);r.same('powers[0].y',6);r.same('stdAbilityUsed',{s1:true});
+ r.guest.run("useStdAbility('s1','plan',1);turnClockPublishAction(false)");await r.drain();r.same('commandCounts[1]',4);
 });
 test('online: N1 sequential choices survive snapshots; a later player cannot skip the queue',async t=>{
  const r=await room(t);r.guest.run("deck=Array.from({length:8},(_,i)=>({id:'c'+i,key:'K'+i,name:'card'+i,type:'N'}));market=[];gameSettings.marketTypes=4;resolveOnInstall({special:'paneteria'},1);turnClockPublishAction(false)");await r.drain();
  r.same('pendingParkPlayers',[1,2,3,0]);
  r.clients[3].run("turnClockRequestPark(3,market[0].key)");await r.drain();r.same('hands[3].length',0);
- for(const p of [1,2,3,0]){r.clients[p].run(`turnClockRequestPark(${p},market[0].key)`);await r.drain()}
- r.same('pendingParkPlayers.length',0);for(const p of [0,1,2,3])r.same(`hands[${p}].length`,1);
+ for(const p of [1,2,3,0,1,2,3,0]){r.clients[p].run(`turnClockRequestPark(${p},market[0].key)`);await r.drain()}
+ r.same('pendingParkPlayers.length',0);for(const p of [0,1,2,3])r.same(`hands[${p}].length`,2);
 });
 test('online: N11/N14 individual once ledgers and moves survive reconnect snapshots',async t=>{
  const r=await room(t);r.guest.run("renderGame=()=>{};installed[1]=[{id:'g1',special:'graveyard'},{id:'g2',special:'graveyard'},{id:'m1',special:'publicmarket'}];powers[1]={y:10,p:0,r:0};discard=[{id:'recovered',name:'recovered'}];chooseLegendCard=(title,note,opts,choose)=>choose(opts[0]);useGraveyard(0);q('#legendChoiceCards').children[0].click();market=[{id:'taken',key:'K',name:'taken'}];deck=[];window.__prompts=['1','1'];turnClockPrompt=()=>window.__prompts.shift()??null;usePublicMarket(2);turnClockPublishAction(false)");await r.drain();
@@ -175,8 +175,21 @@ test('online Ver224: strengthened profiles, first-use flags, conversion and cast
 });
 test('online Ver224: Genesis waits for all remote Park picks, then resumes the saved repeat index',async t=>{
  const r=await room(t);r.guest.run("deck=Array.from({length:30},(_,i)=>({id:'c'+i,key:'K'+i,name:'card',type:'N'}));gameSettings.marketTypes=4;hands[1]=[{id:'park',key:'N1',type:'N',special:'paneteria',name:'park'},{id:'plain',key:'S1',type:'S',name:'plain'}];window.__pick=null;chooseLegendCard=(title,note,opts,choose,cancel)=>window.__pick={opts,choose,cancel};resolveEggHarp(1);window.__pick.choose(window.__pick.opts[0]);turnClockPublishAction(false)");await r.drain();r.same('turnClockChoice.waiting','park');r.same('turnClockChoice.n',1);
- for(let i=0;i<4;i++){
+ for(let i=0;i<8;i++){
   const p=r.host.read('pendingParkPlayers[0]'),key=r.host.read('market[0].key');r.clients[p].run(`turnClockRequestPark(${p},${JSON.stringify(key)})`);await r.drain();
  }
  r.same('pendingParkPlayers.length',0);r.same('turnClockChoice.n',1);r.same('temporary[1].length',1);
+});
+
+test('online Ver226: N3 continuation waits for both N1 rounds on all four clients and rejects replayed first-round pick',async t=>{
+ const r=await room(t);r.guest.run("gameSettings.marketTypes=4;deck=[{key:'N1',id:'park',special:'paneteria',type:'N',name:'park'},...Array.from({length:40},(_,i)=>({key:'K'+i,id:'card'+i,type:'N',name:'card'}))];market=[];discard=[];resolveOnInstall({special:'blackcasino'},1);turnClockPublishAction(false)");await r.drain();r.same('temporary[1].length',1);r.same('installEffectStack.length',2);
+ let replay;
+ for(let i=0;i<8;i++){
+  const p=r.host.read('pendingParkPlayers[0]');r.clients[p].run(`turnClockRequestPark(${p},market[0].key)`);
+  if(i===0)replay=JSON.parse(JSON.stringify(r.queue[0]));
+  await r.drain();
+  if(i===3){r.same('temporary[1].length',1);const count=r.host.read('hands[1].length');r.deliver(replay,0);await r.drain();r.same('hands[1].length',count);r.same('pendingParkPlayers[0]',1)}
+ }
+ r.same('temporary[1].length',2);r.same('installEffectStack.length',0);r.same('pendingParkPlayers.length',0);
+ const state=r.host.read('realMainSnapshot()');r.guest.run(`applyRealMainSnapshot(${JSON.stringify(state)})`);r.same('temporary[1].length',2);
 });
