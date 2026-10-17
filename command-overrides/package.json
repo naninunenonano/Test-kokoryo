@@ -6,7 +6,7 @@
     "build": "node tools/build.cjs",
     "build:check": "node tools/build.cjs --check",
     "analyze": "node tools/analyze.cjs",
-    "test": "npm run build:check && node --test tests/regression.cjs tests/clock.cjs tests/online.cjs tests/split.cjs tests/startup.cjs tests/commands.cjs tests/normal_commands.cjs tests/integration224.cjs tests/scope225.cjs tests/setup225.cjs"
+    "test": "npm run build:check && node --test tests/regression.cjs tests/clock.cjs tests/online.cjs tests/split.cjs tests/startup.cjs tests/commands.cjs tests/normal_commands.cjs tests/integration224.cjs tests/scope225.cjs tests/setup225.cjs tests/balance226.cjs"
   },
   "devDependencies": {
     "acorn": "8.15.0",

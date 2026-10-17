@@ -77,21 +77,8 @@ test('S1–S4 differential: all faces, operations, boundaries and two physical c
  same(p,"stdAbilityUsed={};dice=[{id:1,value:3,used:true}];useStdAbility('a','plan',1);useStdAbility('a','permit',99)");
  assert.deepEqual(p[0].read('stdAbilityUsed'),{});
 });
-test('S5–S10 differential: duplicates, boosts, empty/recycled supplies and start/repeat restrictions',async t=>{
- const p=await pair(t);
- for(const copies of [0,1,3])for(const boost of [false,true])for(const supply of ['full','recycle','empty'])for(const blocked of [false,true]){
-  const init=`powers=Array.from({length:4},()=>({y:0,p:0,r:0}));hands=Array.from({length:4},()=>[]);breadHands=Array.from({length:4},()=>[]);triggerNotices=[];
-   installed[0]=['mine','farm','barracks','commandroom','church'].flatMap(s=>Array.from({length:${copies}},(_,i)=>({id:s+i,name:s,special:s})));
-   ${boost?"installed[0].push(...['legendmine','legendfarm','legendbarracks','legendmine'].map(s=>({special:s})))":''};
-   let cards=Array.from({length:5},(_,i)=>({id:'c'+i,name:'card'+i})),orders=Array.from({length:5},(_,i)=>({id:'b'+i,value:i+1}));
-   deck=${supply==='full'?'cards':'[]'};discard=${supply==='recycle'?'cards':'[]'};breadDeck=${supply==='full'?'orders':'[]'};breadDiscard=${supply==='recycle'?'orders':'[]'};
-   eraGainAllowed=()=>${!blocked};depressionStartSuppressed=${blocked};`;
-  for(const h of p)h.run(init);
-  same(p,'resolveTurnStartEffects()');
-  assert.deepEqual(p[0].read('powers[0]'),{y:copies*(boost?4:1),p:copies*(boost?4:1),r:copies*(boost?4:1)});
-  for(const special of ['mine','farm','barracks','commandroom','church'])same(p,`repeatTurnStartEffect({special:'${special}'},2)`);
- }
-});
+// Updated balance behavior is covered by balance226.cjs.
+
 test('S9 differential: stacking, temporary installation, removal and JSON restore recalculate limits',async t=>{
  const p=await pair(t);
  for(const script of ["installed[0]=[{id:'w1',special:'warehouse'},{id:'w2',special:'warehouse'}];temporary[0]=[{id:'w3',special:'warehouse'}]",'installed[0].shift()','temporary[0]=[]','installed=JSON.parse(JSON.stringify(installed))','installed[0]=[]']){

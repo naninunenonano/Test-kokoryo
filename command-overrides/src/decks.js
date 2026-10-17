@@ -30,25 +30,25 @@ const STD_BASE=[
 {key:'S2',name:'人員調整書',type:'S',special:'adjust',vp:0,costText:'兵力4'},
 {key:'S3',name:'制限令',type:'S',special:'restrict',vp:0,costText:'兵力3'},
 {key:'S4',name:'特別許可書',type:'S',special:'permit',vp:0,costText:'兵力3'},
-{key:'S5',name:'鉱山',type:'S',special:'mine',vp:1,costText:'🎲1/2＋資金2'},
-{key:'S6',name:'農場',type:'S',special:'farm',vp:1,costText:'🎲3/4＋食料2'},
-{key:'S7',name:'兵舎',type:'S',special:'barracks',vp:1,costText:'🎲5/6＋兵力2'},
-{key:'S8',name:'司令室',type:'S',special:'commandroom',vp:1,costText:'🎲3/4＋資金3＋兵力1'},
+{key:'S5',name:'鉱山',type:'S',special:'mine',vp:1,costText:'🎲1/2＋資金4'},
+{key:'S6',name:'農場',type:'S',special:'farm',vp:1,costText:'🎲3/4＋食料4'},
+{key:'S7',name:'兵舎',type:'S',special:'barracks',vp:1,costText:'🎲5/6＋兵力4'},
+{key:'S8',name:'司令室',type:'S',special:'commandroom',vp:2,costText:'🎲3/4＋資金4＋兵力2'},
 {key:'S9',name:'倉庫',type:'S',special:'warehouse',vp:1,costText:'🎲1/3/5'},
-{key:'S10',name:'教会',type:'S',special:'church',vp:1,costText:'🎲1/4＋資金3＋食料1'}
+{key:'S10',name:'教会',type:'S',special:'church',vp:2,costText:'🎲1/4＋資金4＋食料2'}
 ];
-const NORMAL_BASE=mk('N','通常 ',15).map(c=>({...c,implemented:false})); NORMAL_BASE[0]={key:'N1',name:'ナーロッパランド',type:'N',special:'paneteria',vp:1}; NORMAL_BASE[1]={key:'N2',name:'領主会議',type:'N',special:'lordmeeting',vp:1,costText:'🎲1/6＋資金4'}; NORMAL_BASE[2]={key:'N3',name:'開拓ラッシュ',type:'N',special:'blackcasino',vp:1,costText:'🎲2＋🎲5＋食料5'};
-NORMAL_BASE[3]={key:'N4',name:'大鉱山',type:'N',special:'greatermine',vp:2,costText:'🎲1＋🎲2＋資金5'};
-NORMAL_BASE[4]={key:'N5',name:'大農園',type:'N',special:'greaterfarm',vp:2,costText:'🎲3＋🎲4＋食料5'};
-NORMAL_BASE[5]={key:'N6',name:'要塞',type:'N',special:'greaterbarracks',vp:2,costText:'🎲5＋🎲6＋兵力5'};
-NORMAL_BASE[6]={key:'N7',name:'大司令部',type:'N',special:'greatercommand',vp:2,costText:'🎲3＋🎲4＋資金4＋兵力2'};
-NORMAL_BASE[7]={key:'N8',name:'飢饉',type:'N',special:'famine',vp:3,costText:'🎲3＋🎲3＋🎲3＋食料3'};
-NORMAL_BASE[8]={key:'N9',name:'徴兵令',type:'N',special:'swordhunt',vp:2,costText:'🎲6＋兵力4'};
-NORMAL_BASE[9]={key:'N10',name:'ナロパカルタ',type:'N',special:'laws',vp:1,costText:'資金5'};
-NORMAL_BASE[10]={key:'N11',name:'オルフェンズ',type:'N',special:'graveyard',vp:0,costText:'🎲4/5＋食料1＋兵力2'};
-NORMAL_BASE[11]={key:'N12',name:'納税',type:'N',special:'landgrab',vp:2,costText:'🎲2＋🎲5＋資金2＋食料2＋兵力2'};
-NORMAL_BASE[12]={key:'N13',name:'義賊',type:'N',special:'bandit',vp:3,costText:'🎲ANY＋🎲ANY＋🎲ANY＋資金4＋食料3'};
-NORMAL_BASE[13]={key:'N14',name:'交易場',type:'N',special:'publicmarket',vp:0,costText:'🎲ANY＋資金1＋食料1＋兵力1'};
+const NORMAL_BASE=mk('N','通常 ',15).map(c=>({...c,implemented:false})); NORMAL_BASE[0]={key:'N1',name:'ナーロッパランド',type:'N',special:'paneteria',vp:1}; NORMAL_BASE[1]={key:'N2',name:'領主会議',type:'N',special:'lordmeeting',vp:2,costText:'🎲1/6＋資金6'}; NORMAL_BASE[2]={key:'N3',name:'開拓ラッシュ',type:'N',special:'blackcasino',vp:1,costText:'🎲2＋🎲5＋食料5'};
+NORMAL_BASE[3]={key:'N4',name:'大鉱山',type:'N',special:'greatermine',vp:3,costText:'🎲1＋🎲2＋資金7'};
+NORMAL_BASE[4]={key:'N5',name:'大農園',type:'N',special:'greaterfarm',vp:3,costText:'🎲3＋🎲4＋食料7'};
+NORMAL_BASE[5]={key:'N6',name:'要塞',type:'N',special:'greaterbarracks',vp:3,costText:'🎲5＋🎲6＋兵力7'};
+NORMAL_BASE[6]={key:'N7',name:'大司令部',type:'N',special:'greatercommand',vp:3,costText:'🎲3＋🎲4＋資金4＋兵力3'};
+NORMAL_BASE[7]={key:'N8',name:'飢饉',type:'N',special:'famine',vp:4,costText:'🎲3×3＋食料6'};
+NORMAL_BASE[8]={key:'N9',name:'徴兵令',type:'N',special:'swordhunt',vp:3,costText:'🎲6＋兵力7'};
+NORMAL_BASE[9]={key:'N10',name:'ナロパカルタ',type:'N',special:'laws',vp:2,costText:'資金8'};
+NORMAL_BASE[10]={key:'N11',name:'オルフェンズ',type:'N',special:'graveyard',vp:1,costText:'🎲4/5＋食料1＋兵力2'};
+NORMAL_BASE[11]={key:'N12',name:'納税',type:'N',special:'landgrab',vp:3,costText:'🎲2＋🎲5＋資金3＋食料3＋兵力3'};
+NORMAL_BASE[12]={key:'N13',name:'義賊',type:'N',special:'bandit',vp:4,costText:'🎲ANY×3＋資金7＋食料5'};
+NORMAL_BASE[13]={key:'N14',name:'交易場',type:'N',special:'publicmarket',vp:1,costText:'🎲ANY＋資金1＋食料1＋兵力1'};
 NORMAL_BASE[14]={key:'N15',name:'スカウト',type:'N',special:'scout',vp:2,costText:'資金2＋食料2＋兵力2'};
 NORMAL_BASE.slice(0,15).forEach(c=>c.implemented=true);
 // Nカードのターン開始時フェイズ。効果のないカードには開始時フラグを付けない。
@@ -184,18 +184,18 @@ function refillMarket(){
 }
 function refillTo8(){refillMarket()}
 const LEGEND_CATALOG=[
-{id:'LU1',tier:'upper',name:'クラレント',vp:-5,special:'amanomurakumo',effectText:'このカードを設置したとき、即座にゲームを終了する。'},
-{id:'LU2',tier:'upper',name:'ユグドラシル',vp:8,special:'mayqueen',effectText:'ターン開始時、自分の場にあるターン開始時効果を持つカードを1枚選んで、その効果を発動する。この効果を2回行う。'},
+{id:'LU1',tier:'upper',name:'クラレント',vp:-8,special:'amanomurakumo',effectText:'このカードを設置したとき、即座にゲームを終了する。'},
+{id:'LU2',tier:'upper',name:'ユグドラシル',vp:8,special:'mayqueen',effectText:'ターン開始時、自分の場にあるターン開始時効果を持つカードを1枚選んで、その効果を発動する。この効果を合計3回行う。'},
 {id:'LU3',tier:'upper',name:'創世記',vp:0,special:'eggharp',effectText:'このカードを設置したとき、手札または公開カードから好きなカードを1枚選んで、コストを支払わずに設置する。この効果を4回行う。'},
-{id:'LU4',tier:'upper',name:'シークレット・サーティーン',vp:3,special:'changeOfHeart',effectText:'このカードを設置したとき、他のプレイヤーの雇用キャラクターを1人選んで、自分の雇用キャラクターにする。このカードが場にある限り、雇用上限を1増やす。',cost:{y:24,r:0,p:0}},
-{id:'LU5',tier:'upper',name:'神々の黄昏',vp:5,special:'resourceWipe',effectText:'ターン開始時、このカードの真下に下位レジェンドがない場合、コストを支払わずにこのカードを設置する。このカードを設置したとき、全てのプレイヤーは資源を全て捨てる。その後、このカードを設置したプレイヤーのターンを終了する。'},
-{id:'LU6',tier:'upper',name:'パーフェクト・イミテーション',vp:10,special:'abilityCopy',effectText:'ターン開始時、場にいるキャラクターの固有能力を1つ選んで、このターン使用できる。ただし、初回限定の効果は発動しない。',allFaces:true,cost:{y:4,r:4,p:4}},
-{id:'LL1',tier:'lower',name:'ミスリルラッシュ',vp:5,special:'legendmine',faces:[1,2],target:'鉱山',resource:'資金'},
-{id:'LL2',tier:'lower',name:'ゴールデンフィールド',vp:5,special:'legendfarm',faces:[3,4],target:'農場',resource:'食料'},
-{id:'LL3',tier:'lower',name:'エインヘリヤル',vp:5,special:'legendbarracks',faces:[5,6],target:'兵舎',resource:'兵力'},
-{id:'LL4',tier:'lower',name:'ビギニング・オブ・レジェンド',vp:1,special:'talentRecruit',anyDice:4,cost:{y:20,r:0,p:0}},
-{id:'LL5',tier:'lower',name:'ジェネシスワールド',vp:8,special:'scorchedEarth',allFaces:true,cost:{y:4,r:4,p:4}},
-{id:'LL6',tier:'lower',name:'メモリークラッシュ',vp:2,special:'greatRefresh',anyDice:4,cost:{y:3,r:3,p:3}}
+{id:'LU4',tier:'upper',name:'シークレット・サーティーン',vp:5,special:'changeOfHeart',effectText:'このカードを設置したとき、他のプレイヤーの雇用キャラクターを1人選んで、自分の雇用キャラクターにする。このカードが場にある限り、雇用上限を1増やす。',cost:{y:18,r:0,p:0}},
+{id:'LU5',tier:'upper',name:'神々の黄昏',vp:8,special:'resourceWipe',effectText:'ターン開始時、このカードの真下に下位レジェンドがない場合、コストを支払わずにこのカードを設置する。このカードを設置したとき、全てのプレイヤーは資源を全て捨てる。その後、このカードを設置したプレイヤーのターンを終了する。'},
+{id:'LU6',tier:'upper',name:'パーフェクト・イミテーション',vp:8,special:'abilityCopy',effectText:'ターン開始時、場にいるキャラクターの固有能力を1つ選んで、このターン使用できる。ただし、初回限定の効果は発動しない。',distinctFaces:4,cost:{y:4,r:4,p:4}},
+{id:'LL1',tier:'lower',name:'ミスリルラッシュ',vp:6,special:'legendmine',faces:[1,2],target:'鉱山',resource:'資金'},
+{id:'LL2',tier:'lower',name:'ゴールデンフィールド',vp:6,special:'legendfarm',faces:[3,4],target:'農場',resource:'食料'},
+{id:'LL3',tier:'lower',name:'エインヘリヤル',vp:6,special:'legendbarracks',faces:[5,6],target:'兵舎',resource:'兵力'},
+{id:'LL4',tier:'lower',name:'ビギニング・オブ・レジェンド',vp:4,special:'talentRecruit',anyDice:3,cost:{y:15,r:0,p:0}},
+{id:'LL5',tier:'lower',name:'ジェネシスワールド',vp:8,special:'scorchedEarth',distinctFaces:4,cost:{y:4,r:4,p:4}},
+{id:'LL6',tier:'lower',name:'メモリークラッシュ',vp:5,special:'greatRefresh',anyDice:4,cost:{y:6,r:6,p:6}}
 ];
 Object.values(KOKORYO_PACKS).forEach(pack=>(pack.legends||[]).forEach(L=>LEGEND_CATALOG.push({...L,packId:pack.id})));
 function initLegends(){

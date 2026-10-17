@@ -131,37 +131,37 @@
     {
       "name": "sh",
       "file": "game.js",
-      "line": 54,
+      "line": 55,
       "references": []
     },
     {
       "name": "makeBreadDeck",
       "file": "game.js",
-      "line": 55,
+      "line": 56,
       "references": []
     },
     {
       "name": "recycleBreadIfEmpty",
       "file": "game.js",
-      "line": 56,
+      "line": 57,
       "references": []
     },
     {
       "name": "drawBread",
       "file": "game.js",
-      "line": 57,
+      "line": 58,
       "references": []
     },
     {
       "name": "breadLabel",
       "file": "game.js",
-      "line": 58,
+      "line": 59,
       "references": []
     },
     {
       "name": "handLimitNeedsDiscard",
       "file": "game.js",
-      "line": 63,
+      "line": 64,
       "references": [
         {
           "name": "depressionProtectsDebtAtHandLimit",
@@ -172,7 +172,7 @@
     {
       "name": "totalHandCount",
       "file": "game.js",
-      "line": 68,
+      "line": 69,
       "references": [
         {
           "name": "debtIgnoredForHand",
@@ -183,7 +183,7 @@
     {
       "name": "gainResource",
       "file": "game.js",
-      "line": 73,
+      "line": 74,
       "references": [
         {
           "name": "eraGainAllowed",
@@ -194,19 +194,19 @@
     {
       "name": "commandQuantity",
       "file": "game.js",
-      "line": 78,
+      "line": 79,
       "references": []
     },
     {
       "name": "commandPool",
       "file": "game.js",
-      "line": 81,
+      "line": 82,
       "references": []
     },
     {
       "name": "commandDraw",
       "file": "game.js",
-      "line": 88,
+      "line": 89,
       "references": [
         {
           "name": "drawOne",
@@ -217,7 +217,7 @@
     {
       "name": "commandDice",
       "file": "game.js",
-      "line": 97,
+      "line": 98,
       "references": [
         {
           "name": "resolveReactiveRolls",
@@ -228,37 +228,37 @@
     {
       "name": "commandLimit",
       "file": "game.js",
-      "line": 113,
+      "line": 114,
       "references": []
     },
     {
       "name": "commandZone",
       "file": "game.js",
-      "line": 117,
+      "line": 118,
       "references": []
     },
     {
       "name": "commandChoice",
       "file": "game.js",
-      "line": 123,
+      "line": 124,
       "references": []
     },
     {
       "name": "commandMove",
       "file": "game.js",
-      "line": 129,
+      "line": 130,
       "references": []
     },
     {
       "name": "commandStart",
       "file": "game.js",
-      "line": 139,
+      "line": 140,
       "references": []
     },
     {
       "name": "commandPlus",
       "file": "game.js",
-      "line": 152,
+      "line": 153,
       "references": [
         {
           "name": "drawOne",
@@ -273,7 +273,7 @@
     {
       "name": "commandChange",
       "file": "game.js",
-      "line": 158,
+      "line": 159,
       "references": [
         {
           "name": "hasGodBlessingForTurn",
@@ -288,7 +288,7 @@
     {
       "name": "commandCan",
       "file": "game.js",
-      "line": 192,
+      "line": 193,
       "references": [
         {
           "name": "effectiveHireLimit",
@@ -299,19 +299,19 @@
     {
       "name": "commandCount",
       "file": "game.js",
-      "line": 200,
+      "line": 201,
       "references": []
     },
     {
       "name": "commandTrigger",
       "file": "game.js",
-      "line": 205,
+      "line": 206,
       "references": []
     },
     {
       "name": "commandHire",
       "file": "game.js",
-      "line": 216,
+      "line": 217,
       "references": [
         {
           "name": "finalizeHire",
@@ -330,7 +330,7 @@
     {
       "name": "commandToba",
       "file": "game.js",
-      "line": 221,
+      "line": 222,
       "references": [
         {
           "name": "card",
@@ -345,7 +345,7 @@
     {
       "name": "commandInstanceId",
       "file": "game.js",
-      "line": 225,
+      "line": 226,
       "references": [
         {
           "name": "card",
@@ -356,43 +356,43 @@
     {
       "name": "commandOnce",
       "file": "game.js",
-      "line": 229,
+      "line": 230,
       "references": []
     },
     {
       "name": "commandBoost",
       "file": "game.js",
-      "line": 237,
+      "line": 238,
       "references": []
     },
     {
       "name": "commandFunction",
       "file": "game.js",
-      "line": 238,
+      "line": 239,
       "references": []
     },
     {
       "name": "commandRemove",
       "file": "game.js",
-      "line": 244,
+      "line": 245,
       "references": []
     },
     {
       "name": "commandDiscount",
       "file": "game.js",
-      "line": 248,
+      "line": 249,
       "references": []
     },
     {
       "name": "commandRepeat",
       "file": "game.js",
-      "line": 252,
+      "line": 253,
       "references": []
     },
     {
       "name": "commandCopy",
       "file": "game.js",
-      "line": 256,
+      "line": 257,
       "references": [
         {
           "name": "UNIQUE_ABILITY_DEFS",
@@ -407,13 +407,46 @@
     {
       "name": "commandCast",
       "file": "game.js",
-      "line": 261,
+      "line": 262,
       "references": []
+    },
+    {
+      "name": "balancedInstallCost",
+      "file": "game.js",
+      "line": 269,
+      "references": []
+    },
+    {
+      "name": "balancedCostValid",
+      "file": "game.js",
+      "line": 270,
+      "references": []
+    },
+    {
+      "name": "balancedCostChoices",
+      "file": "game.js",
+      "line": 279,
+      "references": []
+    },
+    {
+      "name": "installBalancedCard",
+      "file": "game.js",
+      "line": 288,
+      "references": [
+        {
+          "name": "consumeOneOf",
+          "file": "card_effects.js"
+        },
+        {
+          "name": "renderGame",
+          "file": "ui.js"
+        }
+      ]
     },
     {
       "name": "normalEffectProgram",
       "file": "game.js",
-      "line": 265,
+      "line": 303,
       "references": [
         {
           "name": "card",
@@ -424,25 +457,25 @@
     {
       "name": "commandEnd",
       "file": "game.js",
-      "line": 274,
+      "line": 312,
       "references": []
     },
     {
       "name": "commandTheEnd",
       "file": "game.js",
-      "line": 275,
+      "line": 313,
       "references": []
     },
     {
       "name": "commandRun",
       "file": "game.js",
-      "line": 276,
+      "line": 314,
       "references": []
     },
     {
       "name": "conversionBonus",
       "file": "game.js",
-      "line": 277,
+      "line": 315,
       "references": [
         {
           "name": "abilityProfile",
@@ -457,7 +490,7 @@
     {
       "name": "exchangeRateFor",
       "file": "game.js",
-      "line": 278,
+      "line": 316,
       "references": [
         {
           "name": "CHARACTER_DATA",
@@ -476,13 +509,13 @@
     {
       "name": "commandApi",
       "file": "game.js",
-      "line": 279,
+      "line": 317,
       "references": []
     },
     {
       "name": "installCostOptions",
       "file": "game.js",
-      "line": 297,
+      "line": 335,
       "references": [
         {
           "name": "renderingInstallCosts",
@@ -493,7 +526,7 @@
     {
       "name": "costOptions",
       "file": "game.js",
-      "line": 298,
+      "line": 336,
       "references": [
         {
           "name": "CHARACTER_DATA",
@@ -516,7 +549,7 @@
     {
       "name": "consumeCostChoice",
       "file": "game.js",
-      "line": 309,
+      "line": 347,
       "references": [
         {
           "name": "lordInstallDiceDiscount",
@@ -527,13 +560,13 @@
     {
       "name": "distinctCostChoices",
       "file": "game.js",
-      "line": 317,
+      "line": 355,
       "references": []
     },
     {
       "name": "canAcquireDebt",
       "file": "game.js",
-      "line": 319,
+      "line": 357,
       "references": [
         {
           "name": "specialOwners",
@@ -544,37 +577,37 @@
     {
       "name": "acquireDebt",
       "file": "game.js",
-      "line": 320,
+      "line": 358,
       "references": []
     },
     {
       "name": "distributeLimitedAcquisition",
       "file": "game.js",
-      "line": 332,
+      "line": 370,
       "references": []
     },
     {
       "name": "distributeLimitedByQuota",
       "file": "game.js",
-      "line": 345,
+      "line": 383,
       "references": []
     },
     {
       "name": "distributeDebt",
       "file": "game.js",
-      "line": 357,
+      "line": 395,
       "references": []
     },
     {
       "name": "distributeCommandsByQuota",
       "file": "game.js",
-      "line": 358,
+      "line": 396,
       "references": []
     },
     {
       "name": "start",
       "file": "game.js",
-      "line": 363,
+      "line": 401,
       "references": [
         {
           "name": "DECK_PRESETS",
@@ -637,7 +670,7 @@
     {
       "name": "pick",
       "file": "game.js",
-      "line": 369,
+      "line": 407,
       "references": [
         {
           "name": "renderDraft",
@@ -648,7 +681,7 @@
     {
       "name": "setupGame",
       "file": "game.js",
-      "line": 375,
+      "line": 413,
       "references": [
         {
           "name": "initLegends",
@@ -679,19 +712,19 @@
     {
       "name": "resolveGameStartCharacterEffects",
       "file": "game.js",
-      "line": 382,
+      "line": 420,
       "references": []
     },
     {
       "name": "chooseFirstPlayer",
       "file": "game.js",
-      "line": 386,
+      "line": 424,
       "references": []
     },
     {
       "name": "confirmInitialPowers",
       "file": "game.js",
-      "line": 387,
+      "line": 425,
       "references": [
         {
           "name": "refillTo8",
@@ -706,13 +739,13 @@
     {
       "name": "playerScaledGain",
       "file": "game.js",
-      "line": 388,
+      "line": 426,
       "references": []
     },
     {
       "name": "registerInstallation",
       "file": "game.js",
-      "line": 394,
+      "line": 432,
       "references": [
         {
           "name": "resolveOnInstall",
@@ -727,7 +760,7 @@
     {
       "name": "beginTurn",
       "file": "game.js",
-      "line": 400,
+      "line": 438,
       "references": [
         {
           "name": "fusionUsedThisTurn",
@@ -786,7 +819,7 @@
     {
       "name": "continueBeginTurn",
       "file": "game.js",
-      "line": 419,
+      "line": 457,
       "references": [
         {
           "name": "CHARACTER_DATA",
@@ -845,13 +878,13 @@
     {
       "name": "unusedDice",
       "file": "game.js",
-      "line": 455,
+      "line": 493,
       "references": []
     },
     {
       "name": "dieSelect",
       "file": "game.js",
-      "line": 455,
+      "line": 493,
       "references": [
         {
           "name": "makeChoicePicker",
@@ -862,31 +895,31 @@
     {
       "name": "useDie",
       "file": "game.js",
-      "line": 455,
+      "line": 493,
       "references": []
     },
     {
       "name": "colorFor",
       "file": "game.js",
-      "line": 456,
+      "line": 494,
       "references": []
     },
     {
       "name": "fixedVP",
       "file": "game.js",
-      "line": 461,
+      "line": 499,
       "references": []
     },
     {
       "name": "allFieldCards",
       "file": "game.js",
-      "line": 462,
+      "line": 500,
       "references": []
     },
     {
       "name": "totalVP",
       "file": "game.js",
-      "line": 467,
+      "line": 505,
       "references": [
         {
           "name": "cardVP",
@@ -901,7 +934,7 @@
     {
       "name": "checkEndgameTrigger",
       "file": "game.js",
-      "line": 472,
+      "line": 510,
       "references": [
         {
           "name": "renderSharedEndgameStatus",
@@ -912,7 +945,7 @@
     {
       "name": "isViewingOwnTurn",
       "file": "game.js",
-      "line": 480,
+      "line": 518,
       "references": [
         {
           "name": "realOnlineMainMode",
@@ -923,13 +956,13 @@
     {
       "name": "handLimit",
       "file": "game.js",
-      "line": 485,
+      "line": 523,
       "references": []
     },
     {
       "name": "finishTurn",
       "file": "game.js",
-      "line": 485,
+      "line": 523,
       "references": [
         {
           "name": "showHandLimit",
@@ -940,7 +973,7 @@
     {
       "name": "turnClockOriginalCompleteEnd",
       "file": "game.js",
-      "line": 490,
+      "line": 528,
       "references": [
         {
           "name": "broadcastRealGameFinished",
@@ -987,13 +1020,13 @@
     {
       "name": "resetGameEndState",
       "file": "game.js",
-      "line": 508,
+      "line": 546,
       "references": []
     },
     {
       "name": "finishGame",
       "file": "game.js",
-      "line": 515,
+      "line": 553,
       "references": [
         {
           "name": "debtFinalVPPerCard",
@@ -1020,13 +1053,13 @@
     {
       "name": "updateDebugCommandVisibility",
       "file": "game.js",
-      "line": 531,
+      "line": 569,
       "references": []
     },
     {
       "name": "turnClockConvertNormalDie",
       "file": "game.js",
-      "line": 541,
+      "line": 579,
       "references": [
         {
           "name": "renderGame",
@@ -1037,13 +1070,13 @@
     {
       "name": "turnClockVisible",
       "file": "game.js",
-      "line": 546,
+      "line": 584,
       "references": []
     },
     {
       "name": "turnClockReset",
       "file": "game.js",
-      "line": 547,
+      "line": 585,
       "references": [
         {
           "name": "turnClockNet",
@@ -1062,13 +1095,13 @@
     {
       "name": "turnClockAccount",
       "file": "game.js",
-      "line": 555,
+      "line": 593,
       "references": []
     },
     {
       "name": "turnClockBeginTurn",
       "file": "game.js",
-      "line": 564,
+      "line": 602,
       "references": [
         {
           "name": "turnClockRender",
@@ -1079,7 +1112,7 @@
     {
       "name": "turnClockStop",
       "file": "game.js",
-      "line": 572,
+      "line": 610,
       "references": [
         {
           "name": "turnClockRender",
@@ -1090,13 +1123,13 @@
     {
       "name": "turnClockLeaseValid",
       "file": "game.js",
-      "line": 573,
+      "line": 611,
       "references": []
     },
     {
       "name": "turnClockTick",
       "file": "game.js",
-      "line": 578,
+      "line": 616,
       "references": [
         {
           "name": "realOnlineMainMode",
@@ -1115,19 +1148,19 @@
     {
       "name": "turnClockPrompt",
       "file": "game.js",
-      "line": 584,
+      "line": 622,
       "references": []
     },
     {
       "name": "turnClockConfirm",
       "file": "game.js",
-      "line": 590,
+      "line": 628,
       "references": []
     },
     {
       "name": "turnClockResolvePending",
       "file": "game.js",
-      "line": 596,
+      "line": 634,
       "references": [
         {
           "name": "applyOnlineParkPick",
@@ -1182,7 +1215,7 @@
     {
       "name": "turnClockDiscardOverflow",
       "file": "game.js",
-      "line": 637,
+      "line": 675,
       "references": [
         {
           "name": "depressionDebtLocked",
@@ -1197,7 +1230,7 @@
     {
       "name": "turnClockCloseChoices",
       "file": "game.js",
-      "line": 651,
+      "line": 689,
       "references": [
         {
           "name": "legendPaymentPending",
@@ -1216,7 +1249,7 @@
     {
       "name": "turnClockExpire",
       "file": "game.js",
-      "line": 666,
+      "line": 704,
       "references": [
         {
           "name": "addDialog",
@@ -1267,7 +1300,7 @@
     {
       "name": "completeEnd",
       "file": "game.js",
-      "line": 701,
+      "line": 739,
       "references": [
         {
           "name": "realOnlineMainMode",
@@ -2266,6 +2299,18 @@
       "file": "characters.js",
       "line": 280,
       "references": [
+        {
+          "name": "balancedCostChoices",
+          "file": "game.js"
+        },
+        {
+          "name": "balancedCostValid",
+          "file": "game.js"
+        },
+        {
+          "name": "balancedInstallCost",
+          "file": "game.js"
+        },
         {
           "name": "employees",
           "file": "game.js"
@@ -4303,6 +4348,10 @@
           "file": "characters.js"
         },
         {
+          "name": "balancedInstallCost",
+          "file": "game.js"
+        },
+        {
           "name": "cardCommands",
           "file": "game.js"
         },
@@ -4437,9 +4486,44 @@
       ]
     },
     {
+      "name": "renderBalancedInstall",
+      "file": "ui.js",
+      "line": 381,
+      "references": [
+        {
+          "name": "balancedCostChoices",
+          "file": "game.js"
+        },
+        {
+          "name": "balancedCostValid",
+          "file": "game.js"
+        },
+        {
+          "name": "balancedInstallCost",
+          "file": "game.js"
+        },
+        {
+          "name": "installBalancedCard",
+          "file": "game.js"
+        },
+        {
+          "name": "installCostOptions",
+          "file": "game.js"
+        },
+        {
+          "name": "installed",
+          "file": "game.js"
+        },
+        {
+          "name": "turn",
+          "file": "game.js"
+        }
+      ]
+    },
+    {
       "name": "renderNewNormalInstall",
       "file": "ui.js",
-      "line": 380,
+      "line": 400,
       "references": [
         {
           "name": "effectiveHireLimit",
@@ -4470,7 +4554,7 @@
     {
       "name": "renderPackInstall",
       "file": "ui.js",
-      "line": 397,
+      "line": 417,
       "references": [
         {
           "name": "installPackCard",
@@ -4493,7 +4577,7 @@
     {
       "name": "renderPackFieldAction",
       "file": "ui.js",
-      "line": 410,
+      "line": 430,
       "references": [
         {
           "name": "castDisplayName",
@@ -4536,7 +4620,7 @@
     {
       "name": "renderPack2InstalledActions",
       "file": "ui.js",
-      "line": 415,
+      "line": 435,
       "references": [
         {
           "name": "effectiveHireLimit",
@@ -4579,7 +4663,7 @@
     {
       "name": "renderNewNormalInstalledActions",
       "file": "ui.js",
-      "line": 421,
+      "line": 441,
       "references": [
         {
           "name": "discard",
@@ -4638,7 +4722,7 @@
     {
       "name": "renderParkChoice",
       "file": "ui.js",
-      "line": 435,
+      "line": 455,
       "references": [
         {
           "name": "addDialog",
@@ -4701,6 +4785,10 @@
           "file": "online.js"
         },
         {
+          "name": "resumeDeferredInstall",
+          "file": "card_effects.js"
+        },
+        {
           "name": "totalHandCount",
           "file": "game.js"
         },
@@ -4721,7 +4809,7 @@
     {
       "name": "renderFranAction",
       "file": "ui.js",
-      "line": 481,
+      "line": 501,
       "references": [
         {
           "name": "charOf",
@@ -4756,7 +4844,7 @@
     {
       "name": "renderSoraAction",
       "file": "ui.js",
-      "line": 493,
+      "line": 513,
       "references": [
         {
           "name": "charOf",
@@ -4783,7 +4871,7 @@
     {
       "name": "renderBoardHand",
       "file": "ui.js",
-      "line": 499,
+      "line": 519,
       "references": [
         {
           "name": "handCardLikelyInstallable",
@@ -4806,7 +4894,7 @@
     {
       "name": "openHandCardDetail",
       "file": "ui.js",
-      "line": 518,
+      "line": 538,
       "references": [
         {
           "name": "handCardLikelyInstallable",
@@ -4829,7 +4917,7 @@
     {
       "name": "openSelectedInstall",
       "file": "ui.js",
-      "line": 519,
+      "line": 539,
       "references": [
         {
           "name": "hands",
@@ -4848,7 +4936,7 @@
     {
       "name": "showHandCards",
       "file": "ui.js",
-      "line": 520,
+      "line": 540,
       "references": [
         {
           "name": "breadHands",
@@ -4879,7 +4967,7 @@
     {
       "name": "showHireCardList",
       "file": "ui.js",
-      "line": 521,
+      "line": 541,
       "references": [
         {
           "name": "CAST_TYPES",
@@ -4902,7 +4990,7 @@
     {
       "name": "showCardList",
       "file": "ui.js",
-      "line": 544,
+      "line": 564,
       "references": [
         {
           "name": "LEGEND_CATALOG",
@@ -4937,31 +5025,31 @@
     {
       "name": "costTextForCard",
       "file": "ui.js",
-      "line": 574,
+      "line": 594,
       "references": []
     },
     {
       "name": "cleanCardEffect",
       "file": "ui.js",
-      "line": 590,
+      "line": 610,
       "references": []
     },
     {
       "name": "iconizeEffectText",
       "file": "ui.js",
-      "line": 600,
+      "line": 620,
       "references": []
     },
     {
       "name": "cardInfoSections",
       "file": "ui.js",
-      "line": 614,
+      "line": 634,
       "references": []
     },
     {
       "name": "showDiscardPile",
       "file": "ui.js",
-      "line": 620,
+      "line": 640,
       "references": [
         {
           "name": "discard",
@@ -4976,7 +5064,7 @@
     {
       "name": "deckEditorCard",
       "file": "ui.js",
-      "line": 622,
+      "line": 642,
       "references": [
         {
           "name": "selected",
@@ -4987,7 +5075,7 @@
     {
       "name": "openDeckEditor",
       "file": "ui.js",
-      "line": 630,
+      "line": 650,
       "references": [
         {
           "name": "q",
@@ -5002,7 +5090,7 @@
     {
       "name": "renderDeckEditor",
       "file": "ui.js",
-      "line": 631,
+      "line": 651,
       "references": [
         {
           "name": "LEGEND_CATALOG",
@@ -5025,7 +5113,7 @@
     {
       "name": "renderMarket",
       "file": "ui.js",
-      "line": 639,
+      "line": 659,
       "references": [
         {
           "name": "breadDeck",
@@ -5088,7 +5176,7 @@
     {
       "name": "openPlayerBoard",
       "file": "ui.js",
-      "line": 640,
+      "line": 660,
       "references": [
         {
           "name": "breadHands",
@@ -5135,7 +5223,7 @@
     {
       "name": "showPlayerCharacter",
       "file": "ui.js",
-      "line": 664,
+      "line": 684,
       "references": [
         {
           "name": "CHARACTER_DATA",
@@ -5158,7 +5246,7 @@
     {
       "name": "renderPlayers",
       "file": "ui.js",
-      "line": 665,
+      "line": 685,
       "references": [
         {
           "name": "CHARACTER_DATA",
@@ -5221,7 +5309,7 @@
     {
       "name": "addFieldCardPreview",
       "file": "ui.js",
-      "line": 677,
+      "line": 697,
       "references": [
         {
           "name": "turn",
@@ -5232,7 +5320,7 @@
     {
       "name": "renderConversionActions",
       "file": "ui.js",
-      "line": 683,
+      "line": 703,
       "references": [
         {
           "name": "breadHands",
@@ -5275,7 +5363,7 @@
     {
       "name": "renderCharacterAnyResourceConversion",
       "file": "ui.js",
-      "line": 693,
+      "line": 713,
       "references": [
         {
           "name": "cardCommands",
@@ -5306,7 +5394,7 @@
     {
       "name": "openHireDiceModal",
       "file": "ui.js",
-      "line": 704,
+      "line": 724,
       "references": [
         {
           "name": "effectiveHireLimit",
@@ -5353,7 +5441,7 @@
     {
       "name": "openEndTurnConfirm",
       "file": "ui.js",
-      "line": 715,
+      "line": 735,
       "references": [
         {
           "name": "effectiveHireLimit",
@@ -5400,7 +5488,7 @@
     {
       "name": "renderInvisibleHandActions",
       "file": "ui.js",
-      "line": 728,
+      "line": 748,
       "references": [
         {
           "name": "hands",
@@ -5427,7 +5515,7 @@
     {
       "name": "renderResourceExchange",
       "file": "ui.js",
-      "line": 729,
+      "line": 749,
       "references": [
         {
           "name": "cardCommands",
@@ -5454,7 +5542,7 @@
     {
       "name": "showHandLimit",
       "file": "ui.js",
-      "line": 738,
+      "line": 758,
       "references": [
         {
           "name": "breadDiscard",
@@ -5521,7 +5609,7 @@
     {
       "name": "setupCompactUI",
       "file": "ui.js",
-      "line": 744,
+      "line": 764,
       "references": [
         {
           "name": "groups",
@@ -5540,7 +5628,7 @@
     {
       "name": "openCardImage",
       "file": "ui.js",
-      "line": 767,
+      "line": 787,
       "references": [
         {
           "name": "legendTakenThisTurn",
@@ -5583,7 +5671,7 @@
     {
       "name": "turnClockRender",
       "file": "ui.js",
-      "line": 797,
+      "line": 817,
       "references": [
         {
           "name": "TURN_CLOCK_INITIAL",
@@ -6670,7 +6758,7 @@
     {
       "name": "payLegendResources",
       "file": "card_effects.js",
-      "line": 43,
+      "line": 50,
       "references": [
         {
           "name": "powers",
@@ -6685,7 +6773,7 @@
     {
       "name": "consumeLegendItems",
       "file": "card_effects.js",
-      "line": 44,
+      "line": 51,
       "references": [
         {
           "name": "breadDiscard",
@@ -6712,7 +6800,7 @@
     {
       "name": "legendSameFaceChoices",
       "file": "card_effects.js",
-      "line": 49,
+      "line": 56,
       "references": [
         {
           "name": "breadHands",
@@ -6731,7 +6819,7 @@
     {
       "name": "chooseNamedHireForLegend",
       "file": "card_effects.js",
-      "line": 50,
+      "line": 57,
       "references": [
         {
           "name": "cardCommands",
@@ -6770,7 +6858,7 @@
     {
       "name": "fieldDestroyCandidates",
       "file": "card_effects.js",
-      "line": 62,
+      "line": 69,
       "references": [
         {
           "name": "installed",
@@ -6785,7 +6873,7 @@
     {
       "name": "destroyChosenFieldCard",
       "file": "card_effects.js",
-      "line": 63,
+      "line": 70,
       "references": [
         {
           "name": "cardCommands",
@@ -6800,7 +6888,7 @@
     {
       "name": "resolveScorchedEarth",
       "file": "card_effects.js",
-      "line": 64,
+      "line": 71,
       "references": [
         {
           "name": "cardCommands",
@@ -6811,7 +6899,7 @@
     {
       "name": "resolveGreatRefresh",
       "file": "card_effects.js",
-      "line": 65,
+      "line": 72,
       "references": [
         {
           "name": "cardCommands",
@@ -6822,7 +6910,7 @@
     {
       "name": "selectLegendPayment",
       "file": "card_effects.js",
-      "line": 73,
+      "line": 80,
       "references": [
         {
           "name": "breadHands",
@@ -6853,7 +6941,7 @@
     {
       "name": "takeLegend",
       "file": "card_effects.js",
-      "line": 105,
+      "line": 112,
       "references": [
         {
           "name": "breadHands",
@@ -6936,7 +7024,7 @@
     {
       "name": "chooseLegendCard",
       "file": "card_effects.js",
-      "line": 145,
+      "line": 152,
       "references": [
         {
           "name": "effectText",
@@ -6983,7 +7071,7 @@
     {
       "name": "resolveEggHarp",
       "file": "card_effects.js",
-      "line": 153,
+      "line": 160,
       "references": [
         {
           "name": "blockAllMarketUndo",
@@ -7010,7 +7098,7 @@
     {
       "name": "triggerLandGrab",
       "file": "card_effects.js",
-      "line": 171,
+      "line": 178,
       "references": [
         {
           "name": "cardCommands",
@@ -7025,7 +7113,7 @@
     {
       "name": "gainNanban",
       "file": "card_effects.js",
-      "line": 182,
+      "line": 189,
       "references": [
         {
           "name": "gainResource",
@@ -7048,7 +7136,7 @@
     {
       "name": "gainTenkuCat",
       "file": "card_effects.js",
-      "line": 183,
+      "line": 190,
       "references": [
         {
           "name": "gainResource",
@@ -7071,7 +7159,7 @@
     {
       "name": "offerFreeResourceWipeLegend",
       "file": "card_effects.js",
-      "line": 184,
+      "line": 191,
       "references": [
         {
           "name": "cardCommands",
@@ -7114,13 +7202,13 @@
     {
       "name": "normalTurnStartCandidate",
       "file": "card_effects.js",
-      "line": 200,
+      "line": 207,
       "references": []
     },
     {
       "name": "repeatTurnStartEffect",
       "file": "card_effects.js",
-      "line": 207,
+      "line": 214,
       "references": [
         {
           "name": "breadLabel",
@@ -7159,7 +7247,7 @@
     {
       "name": "resolveMayQueen",
       "file": "card_effects.js",
-      "line": 219,
+      "line": 226,
       "references": [
         {
           "name": "cardCommands",
@@ -7206,7 +7294,7 @@
     {
       "name": "resolveTurnStartEffects",
       "file": "card_effects.js",
-      "line": 234,
+      "line": 241,
       "references": [
         {
           "name": "CHARACTER_DATA",
@@ -7269,7 +7357,7 @@
     {
       "name": "syncEconomyLegendUnlock",
       "file": "card_effects.js",
-      "line": 272,
+      "line": 279,
       "references": [
         {
           "name": "installed",
@@ -7284,7 +7372,7 @@
     {
       "name": "traceEconomyAcquire",
       "file": "card_effects.js",
-      "line": 283,
+      "line": 290,
       "references": [
         {
           "name": "commandCounts",
@@ -7319,7 +7407,7 @@
     {
       "name": "runTurnStartSpecialAcquirePhase",
       "file": "card_effects.js",
-      "line": 293,
+      "line": 300,
       "references": [
         {
           "name": "onlineDebugMode",
@@ -7346,7 +7434,7 @@
     {
       "name": "ensureDepressionDebtSupply",
       "file": "card_effects.js",
-      "line": 303,
+      "line": 310,
       "references": [
         {
           "name": "commandCounts",
@@ -7369,7 +7457,7 @@
     {
       "name": "eraLegendCondition",
       "file": "card_effects.js",
-      "line": 304,
+      "line": 311,
       "references": [
         {
           "name": "commandCounts",
@@ -7392,7 +7480,7 @@
     {
       "name": "blockOtherEraLegend",
       "file": "card_effects.js",
-      "line": 313,
+      "line": 320,
       "references": [
         {
           "name": "legends",
@@ -7403,7 +7491,7 @@
     {
       "name": "resolveEraAcquire",
       "file": "card_effects.js",
-      "line": 317,
+      "line": 324,
       "references": [
         {
           "name": "acquireDebt",
@@ -7462,7 +7550,7 @@
     {
       "name": "offerEraLegendAtTurnStart",
       "file": "card_effects.js",
-      "line": 334,
+      "line": 341,
       "references": [
         {
           "name": "legends",
@@ -7493,7 +7581,7 @@
     {
       "name": "dynamicSpecialVP",
       "file": "card_effects.js",
-      "line": 351,
+      "line": 358,
       "references": [
         {
           "name": "powers",
@@ -7504,7 +7592,7 @@
     {
       "name": "cardVP",
       "file": "card_effects.js",
-      "line": 352,
+      "line": 359,
       "references": [
         {
           "name": "allFieldCards",
@@ -7535,7 +7623,7 @@
     {
       "name": "installNightEscape",
       "file": "card_effects.js",
-      "line": 373,
+      "line": 380,
       "references": [
         {
           "name": "breadDiscard",
@@ -7626,7 +7714,7 @@
     {
       "name": "consumeOneOf",
       "file": "card_effects.js",
-      "line": 392,
+      "line": 399,
       "references": [
         {
           "name": "breadDiscard",
@@ -7657,10 +7745,18 @@
     {
       "name": "installStandard",
       "file": "card_effects.js",
-      "line": 393,
+      "line": 400,
       "references": [
         {
+          "name": "balancedInstallCost",
+          "file": "game.js"
+        },
+        {
           "name": "hands",
+          "file": "game.js"
+        },
+        {
+          "name": "installBalancedCard",
           "file": "game.js"
         },
         {
@@ -7684,7 +7780,7 @@
     {
       "name": "useStdAbility",
       "file": "card_effects.js",
-      "line": 399,
+      "line": 405,
       "references": [
         {
           "name": "cardCommands",
@@ -7707,7 +7803,7 @@
     {
       "name": "installedDisplayList",
       "file": "card_effects.js",
-      "line": 404,
+      "line": 410,
       "references": [
         {
           "name": "card",
@@ -7726,7 +7822,7 @@
     {
       "name": "useRecreation",
       "file": "card_effects.js",
-      "line": 409,
+      "line": 415,
       "references": [
         {
           "name": "cardCommands",
@@ -7765,7 +7861,7 @@
     {
       "name": "consumeThreeAny",
       "file": "card_effects.js",
-      "line": 432,
+      "line": 438,
       "references": [
         {
           "name": "consumeCostChoice",
@@ -7776,8 +7872,12 @@
     {
       "name": "installNewNormal",
       "file": "card_effects.js",
-      "line": 437,
+      "line": 443,
       "references": [
+        {
+          "name": "balancedInstallCost",
+          "file": "game.js"
+        },
         {
           "name": "cardCommands",
           "file": "game.js"
@@ -7788,6 +7888,10 @@
         },
         {
           "name": "hands",
+          "file": "game.js"
+        },
+        {
+          "name": "installBalancedCard",
           "file": "game.js"
         },
         {
@@ -7811,7 +7915,7 @@
     {
       "name": "normalCardActionUsed",
       "file": "card_effects.js",
-      "line": 453,
+      "line": 454,
       "references": [
         {
           "name": "card",
@@ -7830,7 +7934,7 @@
     {
       "name": "useGraveyard",
       "file": "card_effects.js",
-      "line": 454,
+      "line": 455,
       "references": [
         {
           "name": "cardCommands",
@@ -7869,7 +7973,7 @@
     {
       "name": "usePublicMarket",
       "file": "card_effects.js",
-      "line": 482,
+      "line": 483,
       "references": [
         {
           "name": "addDialog",
@@ -7920,7 +8024,7 @@
     {
       "name": "useScout",
       "file": "card_effects.js",
-      "line": 509,
+      "line": 510,
       "references": [
         {
           "name": "cardCommands",
@@ -7979,7 +8083,7 @@
     {
       "name": "installPackCard",
       "file": "card_effects.js",
-      "line": 514,
+      "line": 515,
       "references": [
         {
           "name": "breadHands",
@@ -8022,7 +8126,7 @@
     {
       "name": "consumePackFaceCostDry",
       "file": "card_effects.js",
-      "line": 526,
+      "line": 527,
       "references": [
         {
           "name": "breadDiscard",
@@ -8052,41 +8156,6 @@
     },
     {
       "name": "installElekiter",
-      "file": "card_effects.js",
-      "line": 531,
-      "references": [
-        {
-          "name": "consumeCostChoice",
-          "file": "game.js"
-        },
-        {
-          "name": "distinctCostChoices",
-          "file": "game.js"
-        },
-        {
-          "name": "hands",
-          "file": "game.js"
-        },
-        {
-          "name": "powers",
-          "file": "game.js"
-        },
-        {
-          "name": "registerInstallation",
-          "file": "game.js"
-        },
-        {
-          "name": "renderGame",
-          "file": "ui.js"
-        },
-        {
-          "name": "turn",
-          "file": "game.js"
-        }
-      ]
-    },
-    {
-      "name": "installNanban",
       "file": "card_effects.js",
       "line": 532,
       "references": [
@@ -8121,9 +8190,44 @@
       ]
     },
     {
-      "name": "installNinjaGuild",
+      "name": "installNanban",
       "file": "card_effects.js",
       "line": 533,
+      "references": [
+        {
+          "name": "consumeCostChoice",
+          "file": "game.js"
+        },
+        {
+          "name": "distinctCostChoices",
+          "file": "game.js"
+        },
+        {
+          "name": "hands",
+          "file": "game.js"
+        },
+        {
+          "name": "powers",
+          "file": "game.js"
+        },
+        {
+          "name": "registerInstallation",
+          "file": "game.js"
+        },
+        {
+          "name": "renderGame",
+          "file": "ui.js"
+        },
+        {
+          "name": "turn",
+          "file": "game.js"
+        }
+      ]
+    },
+    {
+      "name": "installNinjaGuild",
+      "file": "card_effects.js",
+      "line": 534,
       "references": [
         {
           "name": "breadDiscard",
@@ -8170,7 +8274,7 @@
     {
       "name": "installTenkuCat",
       "file": "card_effects.js",
-      "line": 534,
+      "line": 535,
       "references": [
         {
           "name": "consumeCostChoice",
@@ -8213,7 +8317,7 @@
     {
       "name": "installCursedClock",
       "file": "card_effects.js",
-      "line": 535,
+      "line": 536,
       "references": [
         {
           "name": "breadDiscard",
@@ -8260,7 +8364,7 @@
     {
       "name": "installTreasureShip",
       "file": "card_effects.js",
-      "line": 537,
+      "line": 538,
       "references": [
         {
           "name": "hands",
@@ -8287,7 +8391,7 @@
     {
       "name": "installInadamashii",
       "file": "card_effects.js",
-      "line": 538,
+      "line": 539,
       "references": [
         {
           "name": "discard",
@@ -8322,23 +8426,11 @@
     {
       "name": "resolveOnInstall",
       "file": "card_effects.js",
-      "line": 539,
+      "line": 540,
       "references": [
-        {
-          "name": "addDialog",
-          "file": "debug.js"
-        },
         {
           "name": "applyUniqueAbilityDef",
           "file": "characters.js"
-        },
-        {
-          "name": "blockAllMarketUndo",
-          "file": "game.js"
-        },
-        {
-          "name": "cardCommands",
-          "file": "game.js"
         },
         {
           "name": "castDisplayName",
@@ -8373,6 +8465,10 @@
           "file": "game.js"
         },
         {
+          "name": "installEffectStack",
+          "file": "game.js"
+        },
+        {
           "name": "nextHireMinRarity",
           "file": "characters.js"
         },
@@ -8383,14 +8479,6 @@
         {
           "name": "packCastPool",
           "file": "characters.js"
-        },
-        {
-          "name": "pendingParkPlayers",
-          "file": "game.js"
-        },
-        {
-          "name": "pendingParkTaken",
-          "file": "game.js"
         },
         {
           "name": "playerCount",
@@ -8421,7 +8509,7 @@
     {
       "name": "installPaneteria",
       "file": "card_effects.js",
-      "line": 554,
+      "line": 555,
       "references": [
         {
           "name": "consumeCostChoice",
@@ -8448,7 +8536,7 @@
     {
       "name": "resolveLordMeetingInstall",
       "file": "card_effects.js",
-      "line": 555,
+      "line": 556,
       "references": [
         {
           "name": "cardCommands",
@@ -8463,30 +8551,10 @@
     {
       "name": "installLordMeeting",
       "file": "card_effects.js",
-      "line": 556,
+      "line": 557,
       "references": [
         {
-          "name": "consumeCostChoice",
-          "file": "game.js"
-        },
-        {
-          "name": "hands",
-          "file": "game.js"
-        },
-        {
-          "name": "powers",
-          "file": "game.js"
-        },
-        {
-          "name": "registerInstallation",
-          "file": "game.js"
-        },
-        {
-          "name": "renderGame",
-          "file": "ui.js"
-        },
-        {
-          "name": "turn",
+          "name": "installBalancedCard",
           "file": "game.js"
         }
       ]
@@ -8494,34 +8562,10 @@
     {
       "name": "installBlackCasino",
       "file": "card_effects.js",
-      "line": 557,
+      "line": 558,
       "references": [
         {
-          "name": "consumeCostChoice",
-          "file": "game.js"
-        },
-        {
-          "name": "distinctCostChoices",
-          "file": "game.js"
-        },
-        {
-          "name": "hands",
-          "file": "game.js"
-        },
-        {
-          "name": "powers",
-          "file": "game.js"
-        },
-        {
-          "name": "registerInstallation",
-          "file": "game.js"
-        },
-        {
-          "name": "renderGame",
-          "file": "ui.js"
-        },
-        {
-          "name": "turn",
+          "name": "installBalancedCard",
           "file": "game.js"
         }
       ]
@@ -8529,39 +8573,15 @@
     {
       "name": "installGreaterAcquisition",
       "file": "card_effects.js",
-      "line": 558,
+      "line": 559,
       "references": [
-        {
-          "name": "cardCommands",
-          "file": "game.js"
-        },
-        {
-          "name": "consumeCostChoice",
-          "file": "game.js"
-        },
-        {
-          "name": "distinctCostChoices",
-          "file": "game.js"
-        },
         {
           "name": "hands",
           "file": "game.js"
         },
         {
-          "name": "installed",
+          "name": "installBalancedCard",
           "file": "game.js"
-        },
-        {
-          "name": "powers",
-          "file": "game.js"
-        },
-        {
-          "name": "registerInstallation",
-          "file": "game.js"
-        },
-        {
-          "name": "renderGame",
-          "file": "ui.js"
         },
         {
           "name": "turn",
@@ -8570,9 +8590,56 @@
       ]
     },
     {
+      "name": "drainInstallEffects",
+      "file": "card_effects.js",
+      "line": 562,
+      "references": [
+        {
+          "name": "addDialog",
+          "file": "debug.js"
+        },
+        {
+          "name": "blockAllMarketUndo",
+          "file": "game.js"
+        },
+        {
+          "name": "cardCommands",
+          "file": "game.js"
+        },
+        {
+          "name": "gameEnded",
+          "file": "game.js"
+        },
+        {
+          "name": "installEffectRunning",
+          "file": "game.js"
+        },
+        {
+          "name": "installEffectStack",
+          "file": "game.js"
+        },
+        {
+          "name": "market",
+          "file": "game.js"
+        },
+        {
+          "name": "parkChoiceRevision",
+          "file": "game.js"
+        },
+        {
+          "name": "pendingParkPlayers",
+          "file": "game.js"
+        },
+        {
+          "name": "pendingParkTaken",
+          "file": "game.js"
+        }
+      ]
+    },
+    {
       "name": "parkSelectionOrder",
       "file": "card_effects.js",
-      "line": 561,
+      "line": 581,
       "references": [
         {
           "name": "cardCommands",
@@ -8583,8 +8650,12 @@
     {
       "name": "resumeDeferredInstall",
       "file": "card_effects.js",
-      "line": 562,
+      "line": 582,
       "references": [
+        {
+          "name": "installEffectStack",
+          "file": "game.js"
+        },
         {
           "name": "pendingParkPlayers",
           "file": "game.js"
@@ -8598,7 +8669,7 @@
     {
       "name": "finishEmptyParkChoices",
       "file": "card_effects.js",
-      "line": 563,
+      "line": 583,
       "references": [
         {
           "name": "addDialog",
@@ -8617,7 +8688,7 @@
     {
       "name": "applyOnlineParkPick",
       "file": "card_effects.js",
-      "line": 572,
+      "line": 592,
       "references": [
         {
           "name": "addDialog",
@@ -8625,6 +8696,10 @@
         },
         {
           "name": "cardCommands",
+          "file": "game.js"
+        },
+        {
+          "name": "parkChoiceRevision",
           "file": "game.js"
         },
         {
@@ -8644,7 +8719,7 @@
     {
       "name": "useElekiter",
       "file": "card_effects.js",
-      "line": 584,
+      "line": 604,
       "references": [
         {
           "name": "breadLabel",
@@ -8679,13 +8754,13 @@
     {
       "name": "debtFinalVPPerCard",
       "file": "card_effects.js",
-      "line": 589,
+      "line": 609,
       "references": []
     },
     {
       "name": "debtRepayMultiplier",
       "file": "card_effects.js",
-      "line": 590,
+      "line": 610,
       "references": []
     },
     {
@@ -9152,6 +9227,10 @@
           "file": "decks.js"
         },
         {
+          "name": "installEffectStack",
+          "file": "game.js"
+        },
+        {
           "name": "installed",
           "file": "game.js"
         },
@@ -9205,6 +9284,10 @@
         },
         {
           "name": "packs",
+          "file": "game.js"
+        },
+        {
+          "name": "parkChoiceRevision",
           "file": "game.js"
         },
         {
@@ -9938,6 +10021,10 @@
           "file": "game.js"
         },
         {
+          "name": "installEffectStack",
+          "file": "game.js"
+        },
+        {
           "name": "installed",
           "file": "game.js"
         },
@@ -9991,6 +10078,10 @@
         },
         {
           "name": "organizationUsed",
+          "file": "game.js"
+        },
+        {
+          "name": "parkChoiceRevision",
           "file": "game.js"
         },
         {
@@ -10217,6 +10308,10 @@
           "file": "decks.js"
         },
         {
+          "name": "installEffectStack",
+          "file": "game.js"
+        },
+        {
           "name": "installed",
           "file": "game.js"
         },
@@ -10266,6 +10361,10 @@
         },
         {
           "name": "packs",
+          "file": "game.js"
+        },
+        {
+          "name": "parkChoiceRevision",
           "file": "game.js"
         },
         {
@@ -11017,6 +11116,10 @@
       "line": 720,
       "references": [
         {
+          "name": "parkChoiceRevision",
+          "file": "game.js"
+        },
+        {
           "name": "turnClockState",
           "file": "game.js"
         }
@@ -11033,6 +11136,10 @@
         },
         {
           "name": "gameEnded",
+          "file": "game.js"
+        },
+        {
+          "name": "parkChoiceRevision",
           "file": "game.js"
         },
         {
@@ -11056,7 +11163,7 @@
     {
       "name": "turnClockReceiveState",
       "file": "online.js",
-      "line": 731,
+      "line": 732,
       "references": [
         {
           "name": "turnClockState",
@@ -11067,7 +11174,7 @@
     {
       "name": "turnClockReceivePulse",
       "file": "online.js",
-      "line": 747,
+      "line": 748,
       "references": [
         {
           "name": "turnClockRender",
@@ -11082,7 +11189,7 @@
     {
       "name": "turnClockHostChanged",
       "file": "online.js",
-      "line": 759,
+      "line": 760,
       "references": [
         {
           "name": "turnClockAccount",
@@ -11093,7 +11200,7 @@
     {
       "name": "turnClockNetworkTick",
       "file": "online.js",
-      "line": 767,
+      "line": 768,
       "references": [
         {
           "name": "gameEnded",
@@ -11173,7 +11280,12 @@
       "name": "botCardNeeds",
       "file": "bot.js",
       "line": 74,
-      "references": []
+      "references": [
+        {
+          "name": "balancedInstallCost",
+          "file": "game.js"
+        }
+      ]
     },
     {
       "name": "botTargetCard",
@@ -11659,6 +11771,14 @@
       "line": 251,
       "references": [
         {
+          "name": "balancedCostChoices",
+          "file": "game.js"
+        },
+        {
+          "name": "balancedInstallCost",
+          "file": "game.js"
+        },
+        {
           "name": "breadHands",
           "file": "game.js"
         },
@@ -11679,6 +11799,10 @@
           "file": "game.js"
         },
         {
+          "name": "installBalancedCard",
+          "file": "game.js"
+        },
+        {
           "name": "installNewNormal",
           "file": "card_effects.js"
         },
@@ -11689,6 +11813,10 @@
         {
           "name": "installStandard",
           "file": "card_effects.js"
+        },
+        {
+          "name": "installed",
+          "file": "game.js"
         },
         {
           "name": "powers",
@@ -11715,7 +11843,7 @@
     {
       "name": "botDiscardOverflow",
       "file": "bot.js",
-      "line": 307,
+      "line": 312,
       "references": [
         {
           "name": "breadDiscard",
@@ -11762,7 +11890,7 @@
     {
       "name": "botWaitForParkChoice",
       "file": "bot.js",
-      "line": 317,
+      "line": 322,
       "references": [
         {
           "name": "botMatchMode",
@@ -11789,7 +11917,7 @@
     {
       "name": "botExecuteTurn",
       "file": "bot.js",
-      "line": 324,
+      "line": 329,
       "references": [
         {
           "name": "TURN_CLOCK_CANCEL",
@@ -11880,7 +12008,7 @@
     {
       "name": "queueBotTurn",
       "file": "bot.js",
-      "line": 401,
+      "line": 406,
       "references": [
         {
           "name": "botMatchMode",
@@ -11907,7 +12035,7 @@
     {
       "name": "turnClockBotValid",
       "file": "bot.js",
-      "line": 412,
+      "line": 417,
       "references": [
         {
           "name": "turnClockLeaseValid",
@@ -11943,6 +12071,9 @@
     "commandUndoAvailable": "game.js",
     "undoCommandAction": "game.js",
     "undoMarketAcquisition": "game.js",
+    "installEffectStack": "game.js",
+    "installEffectRunning": "game.js",
+    "parkChoiceRevision": "game.js",
     "nightEscapePostAvailable": "game.js",
     "nightEscapeResetNext": "game.js",
     "stdAbilityUsed": "game.js",
@@ -12027,6 +12158,11 @@
     "commandRepeat": "game.js",
     "commandCopy": "game.js",
     "commandCast": "game.js",
+    "BALANCED_INSTALL_COSTS": "game.js",
+    "balancedInstallCost": "game.js",
+    "balancedCostValid": "game.js",
+    "balancedCostChoices": "game.js",
+    "installBalancedCard": "game.js",
     "normalEffectProgram": "game.js",
     "commandEnd": "game.js",
     "commandTheEnd": "game.js",
@@ -12286,6 +12422,7 @@
     "optionSelect": "ui.js",
     "appendInstalledCardGrid": "ui.js",
     "renderCardActions": "ui.js",
+    "renderBalancedInstall": "ui.js",
     "renderNewNormalInstall": "ui.js",
     "renderPackInstall": "ui.js",
     "renderPackFieldAction": "ui.js",
@@ -12444,6 +12581,7 @@
     "installLordMeeting": "card_effects.js",
     "installBlackCasino": "card_effects.js",
     "installGreaterAcquisition": "card_effects.js",
+    "drainInstallEffects": "card_effects.js",
     "parkSelectionOrder": "card_effects.js",
     "resumeDeferredInstall": "card_effects.js",
     "finishEmptyParkChoices": "card_effects.js",

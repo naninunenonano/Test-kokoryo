@@ -52,48 +52,23 @@ test('direct once: individual cards, read/consume split, 2 per turn and game-own
  }
  h.run('window.__turnUsage={}');assert.equal(h.run("cardCommands.once(2,'game',{cardId:'a',usage:window.__gameUsage})"),false);
 });
-test('N1 differential: public reset, all owner orders, grouped picks, no refill between players, empty deck',async t=>{
- const hs=await pair(t);
- for(const owner of [0,1,3]){
-  same(hs,`${supply()}market=[{key:'old',id:'old',name:'old'}];discard=[];hands=Array.from({length:4},()=>[]);turn=${owner};resolveOnInstall({special:'paneteria'},${owner});`);
-  for(let n=0;n<4;n++)same(hs,"if(market.length)applyOnlineParkPick(pendingParkPlayers[0],market[0].key);else finishEmptyParkChoices()");
-  assert.equal(hs[0].run('pendingParkPlayers.length'),0);
- }
- same(hs,"deck=[];discard=[];market=[];resolveOnInstall({special:'paneteria'},0);finishEmptyParkChoices()");
-});
-test('N2 differential: quotas, owner wrap, supply exhaustion and no duplicate physical orders',async t=>{
- const hs=await pair(t);
- for(const owner of [0,2,3])for(const n of [0,1,2,3,4,6,10])same(hs,`breadHands=Array.from({length:4},()=>[]);breadDiscard=[];breadDeck=Array.from({length:${n}},(_,i)=>({id:'b'+i,value:1}));resolveLordMeetingInstall(${owner})`);
-});
-test('N3 differential: recycling, chained installations and installation reactions',async t=>{
- const hs=await pair(t);
- for(const nested of [false,true])same(hs,`deck=[${nested?"{id:'nested',name:'nested',special:'blackcasino'},":''}{id:'drawn',name:'drawn',special:'lordmeeting'}];breadDeck=[{id:'b',value:1}];discard=[];installed[1]=[{id:'tax',special:'landgrab'}];resolveOnInstall({special:'blackcasino'},0)`);
- same(hs,"deck=[];discard=[{id:'recycled',name:'recycled'}];resolveOnInstall({special:'blackcasino'},0)");
- same(hs,"deck=[];discard=[];resolveOnInstall({special:'blackcasino'},0)");
-});
-test('N4–N7 differential: normal/upgraded installations, temporary bases rejected, costs unchanged',async t=>{
- const hs=await pair(t);
- for(const [special,base,a,b]of [['greatermine','mine',1,2],['greaterfarm','farm',3,4],['greaterbarracks','barracks',5,6],['greatercommand','commandroom',3,4]])for(const mode of ['normal','up:0','temporary','resource-fail','dice-fail']){
-  const init=`powers[0]={y:20,p:20,r:20};hands[0]=[{id:'up',name:'up',special:'${special}'}];installed[0]=[{id:'base',name:'base',special:'${base}'}];temporary[0]=[];dice=[{id:1,value:${a},used:false},{id:2,value:${b},used:false}];`;
-  same(hs,init+(mode==='temporary'?"temporary[0]=installed[0];installed[0]=[];":mode==='resource-fail'?"powers[0]={y:0,p:0,r:0};":mode==='dice-fail'?"dice=[];":'')+`installGreaterAcquisition(0,'${special}','d:1','d:2','${mode==='temporary'?'up:0':mode.startsWith('up')?mode:'normal'}')`);
- }
-});
-test('N4–N7/N13 differential: turn-start duplicates, restrictions, resource thresholds, repeat effects',async t=>{
- const hs=await pair(t);
- for(const count of [0,1,3])for(const blocked of [true,false]){
-  same(hs,`${supply()}powers=[{y:0,p:0,r:0},{y:4,p:0,r:0},{y:5,p:0,r:0},{y:2,p:2,r:1}];installed=Array.from({length:4},()=>[]);installed[0]=['greatermine','greaterfarm','greaterbarracks','greatercommand','bandit'].flatMap(s=>Array.from({length:${count}},(_,i)=>({id:s+i,special:s})));eraGainAllowed=()=>${!blocked};resolveTurnStartEffects()`);
-  for(const special of ['greatermine','greaterfarm','greaterbarracks','greatercommand','bandit'])same(hs,`repeatTurnStartEffect({special:'${special}'},2)`);
- }
-});
-test('N8–N10 differential: five matching dice × duplicate instances, every face and 2–6 players',async t=>{
- const hs=await pair(t);
- for(const count of [2,3,4,6])for(const face of [1,3,6])for(const stock of [0,3,100])same(hs,`playerCount=${count};temporary=Array.from({length:${count}},()=>[]);employees=Array.from({length:${count}},()=>[]);characters=Array(${count}).fill('P1');powers=Array.from({length:${count}},()=>({y:0,p:0,r:0}));installed=Array.from({length:${count}},(_,p)=>p===0?[]:['laws','famine','swordhunt'].flatMap(s=>[0,1].map(i=>({id:s+i,special:s}))));commandCounts=Array(${count}).fill(0);komePlace=${stock};dice=Array.from({length:5},(_,i)=>({id:i+1,value:${face},used:false}));resolveReactiveRolls()`);
-});
+// Updated balance behavior is covered by balance226.cjs.
+
+// Updated balance behavior is covered by balance226.cjs.
+
+// Updated balance behavior is covered by balance226.cjs.
+
+// Updated balance behavior is covered by balance226.cjs.
+
+// Updated balance behavior is covered by balance226.cjs.
+
+// Updated balance behavior is covered by balance226.cjs.
+
 test('N8–N10: S1 reroll emits only its one die, set/adjust/consume do not emit; S copies remain independent',async t=>{
  const h=await fixture(t);h.run(setup+`Math.random=()=>0;installed[1]=[{id:'l1',special:'laws'},{id:'l2',special:'laws'}];dice=[{id:1,value:1,used:false},{id:2,value:1,used:false}];triggerNotices=['previous'];useStdAbility('s1-a','plan',1)`);
- assert.equal(h.run('commandCounts[0]'),2);assert.equal(h.run('powers[1].y'),2);assert.equal(h.run('triggerNotices[0]'),'previous');
- h.run("useStdAbility('s1-a','plan',1);useStdAbility('s1-b','plan',2)");assert.equal(h.run('commandCounts[0]'),4);
- h.run("useStdAbility('s2','adjust',1,1);useStdAbility('s3','restrict',1);useStdAbility('s4','permit',2);useDie(1)");assert.equal(h.run('commandCounts[0]'),4);
+ assert.equal(h.run('commandCounts[0]'),4);assert.equal(h.run('powers[1].y'),6);assert.equal(h.run('triggerNotices[0]'),'previous');
+ h.run("useStdAbility('s1-a','plan',1);useStdAbility('s1-b','plan',2)");assert.equal(h.run('commandCounts[0]'),8);
+ h.run("useStdAbility('s2','adjust',1,1);useStdAbility('s3','restrict',1);useStdAbility('s4','permit',2);useDie(1)");assert.equal(h.run('commandCounts[0]'),8);
  assert.deepEqual(h.read('stdAbilityUsed'),{'s1-a':true,'s1-b':true,s2:true,s3:true,s4:true});
 });
 test('N11 differential: selection and costs, cancel and stale callback, per-card once, reordering',async t=>{

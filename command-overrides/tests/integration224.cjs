@@ -42,7 +42,7 @@ test('224 repeat: serial waiting, exactly-once next, arbitrary non-card body',as
 });
 test('224 move/toba: no install hook on movement; free install runs hooks and becomes temporary',async t=>{
  const h=await setup(t);h.run("hands[0]=[{id:'plain',special:'lordmeeting',type:'N',name:'meeting'}];cardCommands.move(hands[0][0],'hand','temporary')");assert.equal(h.run('breadHands.flat().length'),0);
- h.run("cardCommands.move(temporary[0][0],'temporary','hand');cardCommands.toba({card:hands[0][0],from:'hand'})");assert.equal(h.run('temporary[0][0].id'),'plain');assert.equal(h.run('breadHands[0].length'),3);assert.equal(h.run('breadHands[1].length'),1);
+ h.run("cardCommands.move(temporary[0][0],'temporary','hand');cardCommands.toba({card:hands[0][0],from:'hand'})");assert.equal(h.run('temporary[0][0].id'),'plain');assert.equal(h.run('breadHands[0].length'),5);assert.equal(h.run('breadHands[1].length'),2);
 });
 test('224 discount: install availability and actual cost use common discount; separate sources stack as before',async t=>{
  const h=await setup(t);h.run("characters[0]='P7';powers[0]={y:10,p:10,r:10};hands[0]=[{id:'free',key:'N1',name:'park',type:'N',special:'paneteria'}];");
@@ -55,7 +55,7 @@ test('224 LL1–LL3: boosts and VP follow live installed/temporary board without
  const h=await setup(t);
  for(const [base,legend,key]of [['mine','legendmine','y'],['farm','legendfarm','p'],['barracks','legendbarracks','r']]){
   h.run(`installed[0]=[{id:'base',special:'${base}',vp:2},{id:'legend',special:'${legend}',vp:5}];temporary[0]=[];discard=[];powers[0]={y:0,p:0,r:0};resolveTurnStartEffects()`);
-  assert.equal(h.run(`powers[0].${key}`),4);assert.equal(h.run('cardVP(installed[0][0],0)'),4);
+  assert.equal(h.run(`powers[0].${key}`),6);assert.equal(h.run('cardVP(installed[0][0],0)'),5);
   h.run('cardCommands.move(installed[0][1],"installed","discard")');assert.equal(h.run('cardVP(installed[0][0],0)'),2);
   assert.equal(h.run("cardCommands.function({target:'discard',where:c=>c.id==='legend',value:c=>c.vp})"),5);
  }
@@ -73,9 +73,9 @@ test('224 LL5/LL6 differential: selections, destruction, recycling, players and 
  `Math.random=()=>0.5;hands=Array.from({length:4},(_,p)=>Array.from({length:p},(_,i)=>({id:p+'n'+i,name:'normal',key:p+'n'+i})));breadHands=Array.from({length:4},(_,p)=>[{id:'bread'+p,value:1}]);commandCounts=[1,2,3,4];resolveGreatRefresh()`];
  for(const script of scripts){for(const h of [current,old])h.run(script);assert.deepEqual(current.read(state),old.read(state))}
 });
-test('224 LU2: each of two Yggdrasil copies offers two independent selections and uses cast',async t=>{
+test('224 LU2: each of two Yggdrasil copies offers three independent selections and uses cast',async t=>{
  const h=await setup(t);h.run("installed[0]=[{id:'q1',special:'mayqueen'},{id:'q2',special:'mayqueen'},{id:'mine',special:'mine',name:'mine'}];window.__choice=null;chooseLegendCard=(title,note,opts,choose,cancel)=>window.__choice={opts,choose,cancel};resolveMayQueen()");
- for(let i=0;i<4;i++)h.run('window.__choice.choose(window.__choice.opts[0])');assert.equal(h.run('powers[0].y'),4);assert.deepEqual(h.read('stdAbilityUsed'),{'cast:q1':2,'cast:q2':2});h.run('resolveMayQueen()');assert.equal(h.run('powers[0].y'),4);
+ for(let i=0;i<6;i++)h.run('window.__choice.choose(window.__choice.opts[0])');assert.equal(h.run('powers[0].y'),18);assert.deepEqual(h.read('stdAbilityUsed'),{'cast:q1':3,'cast:q2':3});h.run('resolveMayQueen()');assert.equal(h.run('powers[0].y'),18);
 });
 test('224 LU3: four serial free installs; N1 pick waits before next choice and snapshot can resume',async t=>{
  const h=await setup(t);h.run("gameSettings.marketTypes=4;hands[0]=[{id:'park',key:'N1',type:'N',special:'paneteria',name:'park'},...Array.from({length:3},(_,i)=>({id:'simple'+i,key:'S1',type:'S',name:'plain'}))];window.__choice=null;chooseLegendCard=(title,note,opts,choose,cancel)=>window.__choice={opts,choose,cancel};resolveEggHarp(0);window.__choice.choose(window.__choice.opts[0])");
@@ -145,8 +145,8 @@ test('224 Tribute once: each lord/staff/copy remains independent and movement pr
  const h=await setup(t);h.run("employees[0]=[applyUniqueAbilityDef({id:'t1',uniqueAbility:'貢ぎ物'}),applyUniqueAbilityDef({id:'t2',uniqueAbility:'貢ぎ物'})];hands[0]=[{id:'a'},{id:'b'},{id:'c'}];useTributeInstall('employee',0,0);useTributeInstall('employee',0,0);useTributeInstall('employee',1,0)");assert.equal(h.run('temporary[0].length'),2);assert.equal(h.run('breadHands[0].length'),2);assert.equal(h.run('employees[0][0].tributeUsedTurn'),true);
 });
 test('224 ID-less effect copies receive distinct synchronized identities; stale selections do not cast twice',async t=>{
- const h=await setup(t);h.run("installed[0]=[{special:'mayqueen'},{special:'mayqueen'},{id:'mine',name:'mine',special:'mine'}];resolveMayQueen();window.__oldPick=q('#legendChoiceCards .selectable-card').onclick;window.__oldPick();window.__oldPick()");assert.equal(h.run('powers[0].y'),1);assert.equal(h.run("stdAbilityUsed['cast:'+installed[0][0]._commandId]"),1);
- for(let i=0;i<3;i++)h.run("q('#legendChoiceCards .selectable-card').click()");assert.equal(h.run('powers[0].y'),4);assert.notEqual(h.run('installed[0][0]._commandId'),h.run('installed[0][1]._commandId'));
+ const h=await setup(t);h.run("installed[0]=[{special:'mayqueen'},{special:'mayqueen'},{id:'mine',name:'mine',special:'mine'}];resolveMayQueen();window.__oldPick=q('#legendChoiceCards .selectable-card').onclick;window.__oldPick();window.__oldPick()");assert.equal(h.run('powers[0].y'),3);assert.equal(h.run("stdAbilityUsed['cast:'+installed[0][0]._commandId]"),1);
+ for(let i=0;i<5;i++)h.run("q('#legendChoiceCards .selectable-card').click()");assert.equal(h.run('powers[0].y'),18);assert.notEqual(h.run('installed[0][0]._commandId'),h.run('installed[0][1]._commandId'));
  h.run('installed=JSON.parse(JSON.stringify(installed))');assert.equal(h.run('Object.keys(stdAbilityUsed).length'),2);
 });
 test('224 Recreation UI accepts ±2, excludes ±3 and both forms of legend cards',async t=>{

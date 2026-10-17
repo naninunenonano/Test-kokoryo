@@ -6,12 +6,12 @@
 
 | 編集用ファイル | 関数宣言数 | 他ファイルへの参照候補 |
 | --- | ---: | --- |
-| game.js | 103 | bot.js, card_effects.js, characters.js, debug.js, decks.js, online.js, ui.js |
+| game.js | 107 | bot.js, card_effects.js, characters.js, debug.js, decks.js, online.js, ui.js |
 | decks.js | 34 | card_effects.js, characters.js, debug.js, game.js, ui.js |
 | characters.js | 81 | card_effects.js, debug.js, decks.js, game.js, online.js, ui.js |
-| ui.js | 78 | bot.js, card_effects.js, characters.js, debug.js, decks.js, game.js, online.js |
+| ui.js | 79 | bot.js, card_effects.js, characters.js, debug.js, decks.js, game.js, online.js |
 | debug.js | 30 | bot.js, card_effects.js, characters.js, decks.js, game.js, online.js, ui.js |
-| card_effects.js | 81 | characters.js, debug.js, decks.js, game.js, online.js, ui.js |
+| card_effects.js | 82 | characters.js, debug.js, decks.js, game.js, online.js, ui.js |
 | bootstrap.js | 2 | bot.js, debug.js, decks.js, game.js, online.js |
 | online.js | 109 | bot.js, card_effects.js, characters.js, debug.js, decks.js, game.js, ui.js |
 | bot.js | 24 | card_effects.js, characters.js, debug.js, decks.js, game.js, online.js, ui.js |

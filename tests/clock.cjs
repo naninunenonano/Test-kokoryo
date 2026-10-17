@@ -127,7 +127,7 @@ test('mandatory copy choice continues start effects safely and removes old selec
 });
 test('Yggdrasil repeat choice and extra resources resolve without pausing at a modal',async t=>{
  const h=await fixture(t);h.run("installed[0]=[{id:'q',special:'mayqueen'},{id:'m',special:'mine'}];resolveMayQueen()");
- await h.expire();assert.equal(h.read('powers[0].y'),2);assert.equal(h.read('turn'),1);
+ await h.expire();assert.equal(h.read('powers[0].y'),9);assert.equal(h.read('turn'),1);
 });
 test('Bot copy choice rendered disabled for the human viewer still resolves on timeout',async t=>{
  const h=await fixture(t);h.run("botMatchMode=true;onlineDebugMode=true;onlineDebugPlayers=['human','bot1','bot2','bot3'];turn=1;viewer=0;testClockState.active=null;installed[1]=[{id:'copy',special:'abilityCopy',type:'LEGEND'}];beginTurn()");

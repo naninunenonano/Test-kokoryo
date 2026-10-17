@@ -50,6 +50,7 @@ function undoCommandAction(id){
 // @kokoryo-section S0020
 
 function undoMarketAcquisition(id){let e=marketUndoHistory.find(x=>x.id===id);if(!marketUndoEntryAvailable(e))return alert('この市場獲得は戻せません。獲得した山のカードを設置・移動したか、市場を変更する効果を使用しています。');for(let c of e.cards){let i=hands[turn].indexOf(c);if(i<0)return alert('獲得したカードが手札に揃っていないため戻せません。');hands[turn].splice(i,1)}market.push(...e.cards);let d=dice.find(x=>x.id===e.dieId);if(d)d.used=false;e.blocked=true;selectedMarketKey=null;renderGame()}
+let installEffectStack=[],installEffectRunning=false,parkChoiceRevision=0;
 let nightEscapePostAvailable=false,nightEscapeResetNext=[],stdAbilityUsed={},pendingLordResource=0,playerCount=4,lordOracleUsed=[],lordTributeUsed=[],unusedStd=[],packs=[],hands=[],selected=[],round=0,viewer=0,deck=[],market=[],discard=[],turn=0,dice=[],powers=[],installed=[],temporary=[],elekiterUsed=[],pendingNanban=0,pendingTenkuCat=0,commandCounts=[],komePlace=100,pendingParkPlayers=[],pendingParkTaken=[],characterMode='P1',characters=[],legends=[],legendTakenThisTurn=false,endgameStarter=null,endgameRemaining=0,gameEnded=false,breadDeck=[],breadDiscard=[],breadHands=[],employeeDeck=[],employees=[],hiredThisTurn=false,pendingSSRBonus=0,pendingCastResourceChoices=[],lordFirstBreadUsed=[],lordOverclockUsed=[],pendingOverclockChoices=[],debugVP=[],copiedAbility=null,copiedOracleUsed=false,copiedTributeUsed=false,organizationUsed=[];
 function sh(a){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function makeBreadDeck(){let a=[];for(let v=1;v<=6;v++)for(let i=0;i<4;i++)a.push({kind:'bread',value:v,name:'命令書 '+v,id:'B'+v+'-'+(i+1)});a.push({kind:'bread',value:'any',name:'命令書 ANY',id:'BANY-1'});return sh(a)}
@@ -262,13 +263,50 @@ function commandCast(program,{owner=turn,times=1}={}){
  const instructions=Array.isArray(program)?program:normalEffectProgram(program,owner);if(!instructions)return null;
  const results=[];for(let n=0;n<commandQuantity(times);n++)for(const instruction of instructions){const [name,...args]=instruction;results.push(commandRun(name,...args))}return results
 }
+
+// One balance specification feeds display, availability, payment and Bot planning.
+const BALANCED_INSTALL_COSTS=Object.freeze({"mine":{"faces":[[1,2]],"resources":{"y":4}},"farm":{"faces":[[3,4]],"resources":{"p":4}},"barracks":{"faces":[[5,6]],"resources":{"r":4}},"commandroom":{"faces":[[3,4]],"resources":{"y":4,"r":2}},"church":{"faces":[[1,4]],"resources":{"y":4,"p":2}},"lordmeeting":{"faces":[[1,6]],"resources":{"y":6}},"blackcasino":{"faces":[2,5],"resources":{"p":5}},"greatermine":{"faces":[1,2],"resources":{"y":7}},"greaterfarm":{"faces":[3,4],"resources":{"p":7}},"greaterbarracks":{"faces":[5,6],"resources":{"r":7}},"greatercommand":{"faces":[3,4],"resources":{"y":4,"r":3}},"famine":{"faces":[3,3,3],"resources":{"p":6}},"swordhunt":{"faces":[6],"resources":{"r":7}},"laws":{"faces":[],"resources":{"y":8}},"landgrab":{"faces":[2,5],"resources":{"y":3,"p":3,"r":3}},"bandit":{"faces":[null,null,null],"resources":{"y":7,"p":5}}});
+function balancedInstallCost(c){return BALANCED_INSTALL_COSTS[c?.special]||null}
+function balancedCostValid(c,choices,{upgrade=false}={}){
+ const spec=balancedInstallCost(c);if(!spec||Object.entries(spec.resources).some(([k,n])=>powers[turn][k]<n))return false;
+ const needs=upgrade?[]:spec.faces;if(choices.length!==needs.length||new Set(choices).size!==choices.length)return false;
+ return needs.every((face,i)=>{const [kind,n]=String(choices[i]).split(':'),values=Array.isArray(face)?face:face===null?null:[face];
+  if(kind==='free')return installCostOptions(null).some(o=>o.id===choices[i]);
+  const value=kind==='d'?unusedDice().find(d=>d.id===+n)?.value:kind==='b'?breadHands[turn][+n]?.value:undefined;
+  return value!==undefined&&(value==='any'||!values||values.includes(value))
+ })
+}
+function balancedCostChoices(c){
+ const spec=balancedInstallCost(c);if(!spec)return null;
+ const opts=installCostOptions(null),selected=[],used=new Set();
+ function search(i){if(i===spec.faces.length)return selected.slice();const face=spec.faces[i],values=Array.isArray(face)?face:face===null?null:[face];
+  for(const o of opts){if(used.has(o.id))continue;const [kind,n]=o.id.split(':'),v=kind==='d'?unusedDice().find(d=>d.id===+n)?.value:kind==='b'?breadHands[turn][+n]?.value:'any';
+   if(v===undefined||values&&v!=='any'&&!values.includes(v))continue;used.add(o.id);selected.push(o.id);const result=search(i+1);if(result)return result;selected.pop();used.delete(o.id)
+  }return null
+ }return search(0)
+}
+function installBalancedCard(handIndex,choices,upgradeIndex=null){
+ const c=hands[turn][handIndex],spec=balancedInstallCost(c);if(!spec)return false;
+ const base={greatermine:'mine',greaterfarm:'farm',greaterbarracks:'barracks',greatercommand:'commandroom'}[c.special],upgrade=upgradeIndex!==null;
+ const replaced=upgrade?installed[turn][upgradeIndex]:null;
+ if(upgrade&&(!base||!cardCommands.can(replaced,'installed')||replaced.special!==base))return false;
+ if(!balancedCostValid(c,choices,{upgrade}))return false;
+ // Validate the whole payment before consuming anything; descending indices preserve sheets.
+ choices.map((v,i)=>({v,i})).sort((a,b)=>{const index=x=>x.v.startsWith('b:')?+x.v.split(':')[1]:-1;return index(b)-index(a)}).forEach(({v,i})=>{
+  const face=spec.faces[i];if(Array.isArray(face))consumeOneOf(v,face);else consumeCostChoice(v,face)
+ });
+ for(const [k,n]of Object.entries(spec.resources))powers[turn][k]-=n;
+ if(upgrade)cardCommands.move(replaced,'installed','discard');
+ registerInstallation(turn,hands[turn].splice(handIndex,1)[0]);renderGame();return true
+}
+
 function normalEffectProgram(card,owner=turn){
  const s=card?.special,boosts={mine:['y','legendmine'],farm:['p','legendfarm'],barracks:['r','legendbarracks']},greater={greatermine:'y',greaterfarm:'p',greaterbarracks:'r'};
- if(boosts[s]){const [key,legend]=boosts[s],amount=commandBoost(1,3,{count:installed[owner].some(c=>c.special===legend)?1:0});return [['pool',key,amount,{owner}]]}
- if(greater[s])return [['pool',greater[s],3,{owner}]];
- if(s==='commandroom'||s==='greatercommand')return [['draw','command',s==='greatercommand'?2:1,{owner}]];
- if(s==='church')return [['draw','deck',1,{owner}]];
- if(s==='bandit')return [['pool','y',commandCount('players',p=>p!==owner&&commandCount('resources',()=>true,{owner:p})>=5)*playerScaledGain(),{owner}]];
+ if(boosts[s]){const [key,legend]=boosts[s],amount=commandBoost(3,3,{count:installed[owner].some(c=>c.special===legend)?1:0});return [['pool',key,amount,{owner}]]}
+ if(greater[s])return [['pool',greater[s],5,{owner}]];
+ if(s==='commandroom'||s==='greatercommand')return [['draw','command',s==='greatercommand'?3:2,{owner}]];
+ if(s==='church')return [['draw','deck',2,{owner}]];
+ if(s==='bandit')return [['pool','y',commandCount('players',p=>p!==owner&&commandCount('resources',()=>true,{owner:p})>=8)*playerScaledGain(),{owner}]];
  return null
 }
 function commandEnd(){return completeEnd()}
@@ -361,7 +399,7 @@ function distributeCommandsByQuota(owner,target,quota){return distributeLimitedB
 // @kokoryo-section S0039
 
 function start(){let chosenDeck=captureLocalRuleSettings();const draftError=initialDraftSetupError(+q('#playerCount').value);if(draftError)return alert(draftError);if(DECK_PRESETS[chosenDeck]&&!deckPresetAvailable(chosenDeck))return alert('このデッキに必要なカードが一部使用できないため選択できません。');let slots=gameSettings.legendSlots;if(chosenDeck==='custom'&&customDeck.lowerLegendKeys.length<6)return alert('カスタムデッキはLower Legendを最低6種類採用してください。');if(slots>legendSlotMax(chosenDeck))return alert('下位レジェンド数がデッキの設定上限を超えています。');q('#endturn').disabled=false;q('#reroll').disabled=false;playerCount=+q('#playerCount').value;resolveActiveRuleCards();
- if(gameSettings.deckId==='standard2')gameSettings.enabledPacks=['pack1']; if(gameSettings.deckId==='standard3')gameSettings.enabledPacks=['pack2']; if(gameSettings.deckId==='allcards')gameSettings.enabledPacks=['pack1','pack2'];syncMarketTargetUI();let groups=[...document.querySelectorAll('#characterSelects .char-row')].slice(0,playerCount).map(x=>x.dataset.family);if(new Set(groups).size!==groups.length)return alert('同じキャラクターは選択できません。');characters=selectedCharacterIds().slice(0,playerCount);characterMode=characters[0];resetGameEndState();let deal=createInitialDraftDeal(playerCount);packs=deal.packs;unusedStd=deal.unused;hands=Array.from({length:playerCount},()=>[]);selected=Array(playerCount).fill(false);powers=Array.from({length:playerCount},()=>({y:0,r:0,p:0}));installed=Array.from({length:playerCount},()=>[]);temporary=Array.from({length:playerCount},()=>[]);elekiterUsed=Array(playerCount).fill(false);commandCounts=Array(playerCount).fill(0);komePlace=100;pendingParkPlayers=[];pendingParkTaken=[];breadDeck=makeBreadDeck();breadDiscard=[];breadHands=Array.from({length:playerCount},()=>[]);employeeDeck=[];employees=Array.from({length:playerCount},()=>[]);lordOracleUsed=Array(playerCount).fill(false);lordTributeUsed=Array(playerCount).fill(false);lordFirstBreadUsed=Array(playerCount).fill(false);lordOverclockUsed=Array(playerCount).fill(false);pendingOverclockChoices=[];debugVP=Array(playerCount).fill(0);graveyardUsed=Array(playerCount).fill(false);publicMarketUsed=Array(playerCount).fill(false);hiredThisTurn=false;organizationUsed=[];nightEscapePostAvailable=false;nightEscapeResetNext=Array(playerCount).fill(false);fusionUsedThisTurn=false;pendingSSRBonus=0;pendingCastResourceChoices=[];playLogReset();round=0;viewer=0;deck=[];market=[];discard=[];selectedMarketKey=null;marketUndoHistory=[];commandUndoHistory=[];dialogLog=[];let dlc=q('#dialogLogCount');if(dlc)dlc.textContent='0';turn=0;dice=[];q('#setup').classList.add('hidden');q('#draft').classList.remove('hidden');q('#game').classList.add('hidden');q('#start').textContent='最初から';q('#status').textContent='第1巡：各自8枚から1枚選択。5巡で5枚獲得します。全員終了後に一斉パスします。';renderDraft()}
+ if(gameSettings.deckId==='standard2')gameSettings.enabledPacks=['pack1']; if(gameSettings.deckId==='standard3')gameSettings.enabledPacks=['pack2']; if(gameSettings.deckId==='allcards')gameSettings.enabledPacks=['pack1','pack2'];syncMarketTargetUI();let groups=[...document.querySelectorAll('#characterSelects .char-row')].slice(0,playerCount).map(x=>x.dataset.family);if(new Set(groups).size!==groups.length)return alert('同じキャラクターは選択できません。');characters=selectedCharacterIds().slice(0,playerCount);characterMode=characters[0];resetGameEndState();let deal=createInitialDraftDeal(playerCount);packs=deal.packs;unusedStd=deal.unused;hands=Array.from({length:playerCount},()=>[]);selected=Array(playerCount).fill(false);powers=Array.from({length:playerCount},()=>({y:0,r:0,p:0}));installed=Array.from({length:playerCount},()=>[]);temporary=Array.from({length:playerCount},()=>[]);elekiterUsed=Array(playerCount).fill(false);commandCounts=Array(playerCount).fill(0);komePlace=100;pendingParkPlayers=[];pendingParkTaken=[];installEffectStack=[];parkChoiceRevision=0;breadDeck=makeBreadDeck();breadDiscard=[];breadHands=Array.from({length:playerCount},()=>[]);employeeDeck=[];employees=Array.from({length:playerCount},()=>[]);lordOracleUsed=Array(playerCount).fill(false);lordTributeUsed=Array(playerCount).fill(false);lordFirstBreadUsed=Array(playerCount).fill(false);lordOverclockUsed=Array(playerCount).fill(false);pendingOverclockChoices=[];debugVP=Array(playerCount).fill(0);graveyardUsed=Array(playerCount).fill(false);publicMarketUsed=Array(playerCount).fill(false);hiredThisTurn=false;organizationUsed=[];nightEscapePostAvailable=false;nightEscapeResetNext=Array(playerCount).fill(false);fusionUsedThisTurn=false;pendingSSRBonus=0;pendingCastResourceChoices=[];playLogReset();round=0;viewer=0;deck=[];market=[];discard=[];selectedMarketKey=null;marketUndoHistory=[];commandUndoHistory=[];dialogLog=[];let dlc=q('#dialogLogCount');if(dlc)dlc.textContent='0';turn=0;dice=[];q('#setup').classList.add('hidden');q('#draft').classList.remove('hidden');q('#game').classList.add('hidden');q('#start').textContent='最初から';q('#status').textContent='第1巡：各自8枚から1枚選択。5巡で5枚獲得します。全員終了後に一斉パスします。';renderDraft()}
 // @kokoryo-end-section S0039
 
 // @kokoryo-section S0041
@@ -385,7 +423,7 @@ function resolveGameStartCharacterEffects(){
 }
 function chooseFirstPlayer(){return (debugLocalMode||(onlineDebugMode&&!botMatchMode))?0:Math.floor(Math.random()*playerCount)}
 function confirmInitialPowers(){if(!initialPowerChoices.every(v=>v.y+v.r+v.p===gameSettings.initialResources))return alert('全プレイヤーの初期資源を選んでください。');for(let p=0;p<playerCount;p++)powers[p]={...initialPowerChoices[p]};resolveGameStartCharacterEffects();saveDebugInitialMarketSnapshot();refillTo8();q('#gamestartsetup').classList.add('hidden');q('#game').classList.remove('hidden');q('#status').textContent='ゲーム開始時処理完了。勝利条件 '+gameSettings.winVP+'VP。オープンマーケットを公開しました。';turn=chooseFirstPlayer();beginTurn()}
-function playerScaledGain(){return playerCount===2?3:playerCount===3?2:1}
+function playerScaledGain(){return playerCount===2?5:playerCount===3?4:playerCount===4?3:2}
 // @kokoryo-end-section S0049
 
 // @kokoryo-section S0052
