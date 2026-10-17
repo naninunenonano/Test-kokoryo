@@ -82,7 +82,11 @@ class PreviewTests(unittest.TestCase):
         self.assertIn('previewCommit', self.metadata)
         self.assertIn('function testClockOriginalCompleteEnd(){', self.html)
         self.assertIn('function completeEnd(){', self.html)
-        self.assertIn("gainResource(turn,col,1+bonus,'dieConvert')", self.html)
+        if int(self.metadata['version'].split('.')[-1]) >= 224:
+            self.assertTrue("cardCommands.change('convert',3" in self.html, 'clock uses shared conversion')
+            self.assertTrue("conversionBonus(owner)" in self.html, 'conversion uses shared bonuses')
+        else:
+            self.assertTrue("gainResource(turn,col,1+bonus,'dieConvert')" in self.html)
         self.assertIn('testClockBotValid(actor,clockBotToken)', self.html)
 
     def test_future_normal_conversion_amount_is_shared_automatically(self):

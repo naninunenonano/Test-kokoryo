@@ -1,0 +1,3892 @@
+{
+  "source": "TEST main 35b4384f98cd153873230fa05f95c53a6bd9e1d5",
+  "body": [
+    {
+      "type": "VariableDeclaration",
+      "name": "q,mk,copies",
+      "hash": "c9c3f3ef2b589140ae462b37d9ee659fbda0d7ba339be8c8b8f64d55e1d9a41a"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "CONTENT_ID_LIMITS",
+      "hash": "bf7c6745ba9cd2db977a95ddc6d27c19f756a3c38e835bb98b8223bee522b702"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "isReservedContentId",
+      "hash": "7fb785369d5f7155b10840eb34773b1261ad591d853ae321bd43c9bbd190b538"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "CHARACTER_DATA",
+      "hash": "ce98bb8775d213e0b67d9d574155d2206b3a3477a16acc50e8c578bd22a0954c"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "CHARACTER_FAMILIES",
+      "hash": "84bca6d5e0626b16919d087098066cdd4621e4bc83beb76707262881202c27c1"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "UNIQUE_ABILITY_DEFS",
+      "hash": "d8bf18ed8e4386c8f90546a7cba398388b5797900b7e22fe5332232e6a2edb49"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "ABILITY_ADD_KEYS",
+      "hash": "f26d123fdbc1188e440c9f389d55e1b4a24b50cc70e3166ece1f84fb4f8a6919"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "applyUniqueAbilityDef",
+      "hash": "0794edd25957d9ede67295966af3a4989831b8b5fafd7063fba51a57f6165862"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "isMineGoldLord",
+      "hash": "4bb9bae5d2d6649c2ebb6e753d6e67a02a92f8e21f0c5e4efac2ed6b1bb2039f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "employeeUniqueAbilitiesEnabled",
+      "hash": "6c5489488009e7636c4ba2d0ca0d206b59f8055ec4b5adfef8b010366e1911f8"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "effectiveEmployeeAbility",
+      "hash": "1fc19b7e9e36eee1f45fa8bc1d0c4611b904b75839da93032059cacb9d0e8c8b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "abilityStackLabel",
+      "hash": "2b999850b3c543c627a31d2a9b378202b064358b575d4a1aceb7ca9afcd30650"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "abilityStackTag",
+      "hash": "b5313da830da2b673e549a71d79db82b29d6374c99a62c9f959d437b1993d9a2"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "abilityStackText",
+      "hash": "128d44b87223d5a208dba6404178a097517a58d9d3be5770a2f3f767d37fd45f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "uniqueAbilityText",
+      "hash": "05c11af5b0d79f45d3ea68e921e754204ed74eaab68988eb727e9129c144bb35"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "abilityTextForEntity",
+      "hash": "a3b266bbc7552d566f421b2dac4ea4b4f97a8a260f110b1c04191e8ed449e45c"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "KOKORYO_PACKS",
+      "hash": "00ee41d1cb0eb117b61ee94110fa3e184a5ab5e6c859783275f115a0d408f977"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "3a7ae2f729948a083a8897a61d39cfe4edb1b51bd8564a9e974777bd69893b3a"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "269208473b5efbff240ac01409ea578fca2efcca135163a30200dc7ee222eeaa"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "isPackEnabled",
+      "hash": "4ba4aa11da66d432928ac8474b6659fdf909ae2126136bf8fba3d7f375ce35a4"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "availableCharacterFamilies",
+      "hash": "cc79817b445d4629d4b0e5409b29642579157e8d422d85a9f80e111359b6525e"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "71eeca7ddadf697883dd875ab63d928e80b8a6777745e36e9f0f42282ef43b37"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "3999cf77b502152236ca3016d601d8d0072bed51411340318e722405f59e4682"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "CLR_FUSION_RULES",
+      "hash": "6f7104caae73bc0aa632e6b1c2454e5c162d45fcbf9508b0c7a36788e9e6c142"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "registerCLRFusionRule",
+      "hash": "1495fdb8369e92fe1c0dda567a14810aace6adf266ede22206661602166d71f1"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "clrFusionOptions",
+      "hash": "8a1f101fe5c0f2ed73c41fb939e17fa47df262b8cb702e5132aae1cf7b25d608"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "CLR_TYPES",
+      "hash": "02034743f103e79d85d0a67d35bd68dd2425db093db138835e813af362f1520e"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "2273be69f84c736a164d5e0c6e93b818dfdc71970d10bd4d8e3b8aa22b843296"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "cdd96e089b75205cc42e725a7190df837e27dab2575505779e4172f18bd55cc7"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "CAST_TYPES",
+      "hash": "278433806fd7baef31b6c32369530238f62c83f93883488de49b2e86ef5850f0"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "99f79003099c44cf74c3890cda8341e6b0f9b1d1f7db1fb2a98202a8e9fe1a55"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "004ac22d2262760f00e43b36c0fbdeb7cbbf7514d670c7f08680faf4a4583124"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "4ad7a12c3a34376dfa8d8e690becfb9b77e3c589f17d3b443df6c22623c9475b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "castCopies",
+      "hash": "72e9746ffa1b566fb2760f54bc20df390d28cd3a9aa2f3f44ef7172dd5ee22cc"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "castDisplayName",
+      "hash": "62e4b242947004857ff79d3198534fc79a8c44ea55e0cc0f3ea62c5025dd09fd"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "CONTENT_IMAGE_DIRS",
+      "hash": "d1c778c82dc6530b322658dff88d730240d91be8fd72b5dd00ddba621b129b69"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "contentBaseId",
+      "hash": "28114e3c8e78b33f7a69f097820dcaac27b136222d0cc8c0b8e4935904a67138"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "contentImagePath",
+      "hash": "96205eb24c3091df3571ff175b93fa5cbb38d6574c75ea433ab74fdacf8b6ffe"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "resolvedContentImage",
+      "hash": "c88ff81964bd2675d7c50ea60d7fccf78613a2c6bff9566711469b3b336dade3"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "CAST_GACHA_RATES",
+      "hash": "9eceac077727ba88bff92887a3eb9be623404968fc7012af83c78cdb0ba1ed32"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "STANDARD_CAST_IDS",
+      "hash": "71547f537854fc54e9c289e67c23b569f1e5f76612fb86dca3f98b786e5648f4"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "SYNTHESIS_CAST_IDS",
+      "hash": "e13d12ad20f1692d1ffce383f71a532da801b3ed5e42795949d2be21700e86dc"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "IMPLEMENTED_CAST_IDS",
+      "hash": "5934701145418ca0baa36f6fe873eab48e794f733ce41d60250e80f2125b5c6c"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "ACTIVE_CAST_IDS",
+      "hash": "dad2ac569b443cd0bec4e82167df67966b3510d1e814efb4390e292146cc76c9"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "isUniqueRareAlreadyHired",
+      "hash": "4ac932a6fd834ec301dcce77a60e470346919e9a2c4179f7e4790e470c565b94"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "availableCastPool",
+      "hash": "e3b31e14567e5acb180febd51bb0aac5daeee817e1ade3c8fe9ffb4edaaee399"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "implementedCastPool",
+      "hash": "03aa6c1138ee81f405bed2994ee174963c77843f4a5f9f5f448cd52994b6cac6"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "allImplementedCastPool",
+      "hash": "337e0a462609d3241c926c851e358226a578b6e44bbe6a0f9eab9680cd7cc28c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "addCastPack",
+      "hash": "2720ce94a0e8d00c2ddd208716273191a04fc2c7a86503264a71434df7149747"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "rollCastRarity",
+      "hash": "e49d7a8243558ab93aa4fb32e387355c0d72ca8f1003d2e098013d87f56a8208"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "randomCastOfRarity",
+      "hash": "af12d52dcb815ee816f85816f706570cea0141742d9a8c2d0bb849705d257009"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "gachaCast",
+      "hash": "45d87815b5107d8c79ce53ea9135e670f08df974c53428e8109d5f063457886f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "charOf",
+      "hash": "f770465e45ab64664b1ad404bd6c10220c732739a9b9e8e0f686cee64e18df7c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "lordPortraitPath",
+      "hash": "c4a9c2b8ca97e2575515d9eeed05040b34800171c43a935d33d26ddf41411cfb"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderLordPortrait",
+      "hash": "65c878587c52674aa3d9b92333e9315cac4bc7f0e7fb58e3de2636809b20b92f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "characterFamily",
+      "hash": "c459c1b1f76869e746cfee739a16b4febdb4ccb3d7c176098d7770bf2c63d685"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "characterVersion",
+      "hash": "f8409ba14f2b27a23f705744371be1ac9de1ec9d1de7bcf3996d97b2efea359e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "makeSetupChoiceButton",
+      "hash": "5c8a90994128de34a7f83bc422b722c05d64fcc767b8dbedd99b51bbe744442b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderPlayerCountChoices",
+      "hash": "d74a166019dd446ba944211477d17bca204df9e586bb7e7225e09c2982d1c7fb"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderCharacterSelects",
+      "hash": "5cc0452c4e8652d51df5015e104ae96e7842f189f80e085015a40ef245288e62"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderCharacterRow",
+      "hash": "f38c89db2f133b45de6e6f78bb02cea46c210a4067f643cf2fe975aa71b8352c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "selectedCharacterIds",
+      "hash": "56a6d4050ae0b0b962c3728b6249fc3ef2cb132bf6617282fe040120c1745023"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "updateCharacterSelectAvailability",
+      "hash": "129504387bcc8ab9621f664000974b0dfe303f3a88e6fb25953b1d43cd18f32c"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "STD_BASE",
+      "hash": "4b7402100d385c2cd72e812204f6ce93cf902cca8ef892844fde78fc6677fd66"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "NORMAL_BASE",
+      "hash": "8735958699badb6c51dac48eea2c2dba7ccb6ba333ca3026aea5dd0f0036b8cf"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "27cac33c2a9b92291b98c84ac80dc283e791b280ecc66365c5d370aa70de17e9"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "aedac9e7bc57852e83db4db048123e7216a57bced09106432b3ed2fbf7190988"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "4e7e0faad36c1168002b34eeeb385dde2883ee2a8cc2194d004972f1dfd13460"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "8ea783cc7ebdfb19836b1d469aa1cdfdfdec343fe51765d7509d89b2d8b30e2b"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "3c2d6df34d09400ab279c3c1ffd71fb43e6e657dc74ed31475912ba66fa03713"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "edb01695111bae9a38e2b49ff9ac1a55d06273b91a3c2d13b433fe849140c402"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "00b6587c0fe2db30d66c1572ecff4e40323212d5681591b7d8c7123fc4e92404"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "f54cfe844ef103b603e42814734e7a79b37688247f66f76577f52455300d0896"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "d725f2181067bd9d8d6fb66fe6df1b0084e205b41bddd2d7011d3707e222a7a5"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "973fdb8244af34218bc926b8fccd123e4fc26894960f0dc5bba7bf8438d71b2f"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "d43c7d55161f8b5a0ef5657d327db7535f9a7b49fbd23977d81cd55a451ef510"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "e678388bcce969349e64cb1b07d0ca0ba6201a079ac142dcaff7b0f3e7498284"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "5decc7f78b84490a59fe131e28ce53828bfab9a7a108bce88a4c8278e27bf8c6"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "9a312578f67b70468273f981ecfc710dd708afd3537ff55fed5d4decb713bd5a"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "90b9cd0b9b3005ac6b88706bbc4504770b8df3b7361a6ffb96e089448276c6d7"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "3f56d99b4d1ad360c8606b570edad107ee8734f60926ac1a444b8ef3f933c1d7"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "N_NORMAL_START_SPECIALS",
+      "hash": "78529e7d796ea62cc6eccb132bf9adf41b83cbcf0470d6c1cb757ac31433ad7f"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "7eea04c301fe13ae3ae8ca9eed78402c8f92a23110d1ce2417a5b10f319c8bea"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "8b72819f99823b4f8011114290ecf99aa5c6c635698f5f87fe89e7098f41887f"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "STD,NORMAL",
+      "hash": "7b2308d4930787ce9b1e166cb14bb093e9dfba355635b2a8b8e5a71be62bb511"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "DECK_PRESETS",
+      "hash": "2d88bbe3af077bd2005c41b50c428e58fd74ea78d7b470153387039374e3af76"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "customDeck",
+      "hash": "1fabbbf2af1c1455a7a57b54c2113d3f239a77411917d6997a4ce9a24bd45fb4"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "CUSTOM_DECK_SAVE_KEY",
+      "hash": "159aafd983bd6780c46ccc3a5b5751c894a7de8db775ed595015791d860fd4ec"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "getSavedDecks",
+      "hash": "efa8b850d6bad292ae407e3a66011e3b865440c9a40dd408eae6379598545a54"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "putSavedDecks",
+      "hash": "067b891f4a5c30908a247e85d7b56df6f2cb8d70acd9d430ae51047f1d22d660"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "cloneCustomDeck",
+      "hash": "6da336d138b52bf8f1328eb9e2e5ab39f41052e28d265daa0c2ae3a690a7e479"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "refreshDeckSaveUI",
+      "hash": "19d2f01e5ebd88a8ee35e4547f0e25ef5e04c50fa0948b5932b26509c2d2182c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "saveCustomDeck",
+      "hash": "ce44883f6ac646585aecb0d1784a4e15b76a1c1e1e64b818644a0812e5fcd938"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "loadCustomDeck",
+      "hash": "039c090df74e0cc2f1bce4066f298a72c697c9d8d985babe9349e12dcbd411f1"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "deleteCustomDeck",
+      "hash": "360d3c44214b4c43b01a2993b0d8bbee8e1716a0c95d38e4501e5130bd6d7ffd"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "allCardsDeckConfig",
+      "hash": "f1065b0043517ae6c04544d03eee26c05ac21630db2f2b112405512c4f8400ef"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "activeDeckConfig",
+      "hash": "fe8475364ea8417844f7e352bf4f9a335127cc8a9cd802f93239565f8c452018"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "standardDeckPresets",
+      "hash": "4c4860d2e0790b1baf609a7f3afec74e8e8ab54622696798ed7149824422598d"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "standardDeckName",
+      "hash": "ac9d4a15e0cad186fa0f49e59678ba5425e646b30e51d7e53e0410aa778c0c08"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "deckMissingCards",
+      "hash": "7e5b3d92183f7c388ea73b96c17469e01509f380d5d2525d13d5a41ad8dfd95f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "deckPresetAvailable",
+      "hash": "09af6dc06380f2e0c17ac9876100fae5a80db51f2923c0657fa232f9dafd64ce"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "refreshSetupDeckPreset",
+      "hash": "b300c4f28fd88ff849329c010b4c4a08e60625e82b79aa5c745e135b54488b32"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "populateOnlineDebugDeckPreset",
+      "hash": "f3088c92ab3ed5fa0660735d1b8e504afc4b09efaa734541b5458c12f0368289"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "normalCardsForDeck",
+      "hash": "aa2e321411ac233020aae857238c399f2b93746b54747a3e8fae8fce0cb4f64a"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "implementedNormalCards",
+      "hash": "40e437d47cbfedae23b272b3cbe219b4906eff5d7545599717d0cc9f925f7ae1"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "clampedRandomizerCount",
+      "hash": "bfeacc3bf207ec9c919c6bd7822ce3085e560fe731b05dc39c34f542f606b80b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "makeRandomizerCards",
+      "hash": "da84f27b0f7679e379c8a3cf78e624b8964106223140dc313563408895cbb33e"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "nextHireMinRarity,nextHireExtra,fusionUsedThisTurn",
+      "hash": "4ac5217494dca76903e7a1d31a2f3b17676d039eb4871593e323ac2ba13c5f16"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "gameSettings",
+      "hash": "20a38b8fbba97277c876e0f358da9dffb53560b9cdd50ec9d095c06afaa62e11"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "legendSlotMax",
+      "hash": "42dc71cf3de7e88fd9bbe6317fc7971b6dac827d80f2eab217eb4991dc88460d"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "fillLegendSlotSelect",
+      "hash": "2c82b1dbd2ffabbb1e549e7f964d239010c78590ab1b4c9f7d861ec34cef975c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "refreshLegendSlotSelectors",
+      "hash": "41c1f2e946c7fb008548ff1aadd68be8f1708da6de362bd3b73a8d0646b3e914"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "selectedMarketKey",
+      "hash": "6273a7b49aa653bf58e138a84bc957390db3ff887adaaa6e341003c20df938c2"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "marketUndoHistory",
+      "hash": "22ee546791bbc4d499bae12b802eb86d4b779dda79596f4730e0c8604f8d410a"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "commandUndoHistory",
+      "hash": "c4b7814b2f464528cfeee6e10c7773568b3df28e3452005912e427ff82d085fb"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "clearMarketUndo",
+      "hash": "7c381f561511a946a8dd599514c4f589be67d38802e740291c587ccf69df2872"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "marketUndoEntryAvailable",
+      "hash": "7b891a415af5ff3e2d66c9017b55482cae4fd58a08e478633d77c319afd894ee"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "blockAllMarketUndo",
+      "hash": "a127e314fa7f64fe11f701ee7081545e8e4413779e60db0ab16d5cee1961b44d"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "addCommandUndo",
+      "hash": "3f7fc12db7dad0ab1e2ff2aed2265367e37755d13a6df504e762037cdc7cc63a"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "commandUndoAvailable",
+      "hash": "c9a67c7d0eb07467f44f1b495cd7bc0f367d592fe1274b70c94ff5cb24a023d9"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "undoCommandAction",
+      "hash": "df1d404fc0ee21016206cb0141fec6d235fe567e4aa742e9914bb29d71faf3b3"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderUndoActions",
+      "hash": "f4a81076d5b132292258cf15d376df5db01c3b024e1564c7835f4e0eeda1b6c6"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "undoMarketAcquisition",
+      "hash": "391adf26783243998f3037b988a7d54f71e863de3d21e0f94e2ece21a5155278"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "nightEscapePostAvailable,nightEscapeResetNext,stdAbilityUsed,pendingLordResource,playerCount,lordOracleUsed,lordTributeUsed,unusedStd,packs,hands,selected,round,viewer,deck,market,discard,turn,dice,powers,installed,temporary,elekiterUsed,pendingNanban,pendingTenkuCat,commandCounts,komePlace,pendingParkPlayers,pendingParkTaken,characterMode,characters,legends,legendTakenThisTurn,endgameStarter,endgameRemaining,gameEnded,breadDeck,breadDiscard,breadHands,employeeDeck,employees,hiredThisTurn,pendingSSRBonus,pendingCastResourceChoices,lordFirstBreadUsed,lordOverclockUsed,pendingOverclockChoices,debugVP,copiedAbility,copiedOracleUsed,copiedTributeUsed,organizationUsed",
+      "hash": "9e01d717f395f79de9cd4101c47ee2e5f7345d76485ce4db39e197c9bbdbfb87"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "sh",
+      "hash": "79444d079f25da72ddb00c565dcedf45ee14200d281696663f0ca582d2e2603e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "makeBreadDeck",
+      "hash": "1cd59b741112f29b24df07a4e14cf82dcb8b605cc2e48e02c8d1586ee205c9c7"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "recycleBreadIfEmpty",
+      "hash": "d8f97600c49c9004d306c1a0f80e97ff2e9d4937b42e86e9ebde27bb9a11fa3e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "drawBread",
+      "hash": "044903c7abc65149a2c96b988e06d86957a02a1c33c8fedf160e4af105ca2db5"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "breadLabel",
+      "hash": "28bf8d003e1f379c10cc3ed13b2fdde968080fee08c1b8a54328fa44eab065b7"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "specialEffectId",
+      "hash": "834cd1ad1dde2df1d862c9b8148ac0113d09b7263dd7f0b121c4ff26a48d3178"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "SPECIAL_EFFECT_DEFAULTS",
+      "hash": "96576bd7d6af2d637693013ff06752d524890e708f58ebf0f569e4b6eb476f1b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "mergeSpecialConfig",
+      "hash": "2272c59b43b2f5eb649f08ae4d13285da143fe66b161bbc52a93f99ea6787930"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "specialConfig",
+      "hash": "244155ddae5fe5e3a69f23df64c36a7f92c40c75e5ea7529ad675f6a24025222"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "hasSpecialEffect",
+      "hash": "e9ea3f6ba1ff5a8e67c0a579f945d12b4154ad83f245f5547d58de4fd61fe039"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "hasEraSpecial",
+      "hash": "e94227a922b24fb3b45de8d3b45648263d71820241feabc15e3a240ee63f4b8e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "specialOwners",
+      "hash": "20faf516fd3d268a287696a30e2da6c2992725099b649a6dbeb5cff678b9fae7"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "goldenAgeOwner",
+      "hash": "858cd43b20ab98f4543a3c4367fd46b4fe141fd557945756218532b99fbcb06d"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "greatDepressionOwner",
+      "hash": "f14ddd150821e696b795d0d10de9cc568e5514b00b466216d5cc2ecbf67c41c9"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "depressionDebtLocked",
+      "hash": "70410ef7acc98e4eeb50d09d0fae528627d6c7c661b8ca011fd4812eca996115"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "depressionLegendLocked",
+      "hash": "92131468ca5168218f4f0851b47445d55beb26dc7b735e2fb64b185712491c58"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "depressionProtectsDebtAtHandLimit",
+      "hash": "ccc555efb71686aa87b45783069520e5d3b07f989c24b407e1c422880706a389"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "handLimitNeedsDiscard",
+      "hash": "0f778f9fe45ef72e2538f989aaea9343fdcd1deb845c675fc50792f7246c3371"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "debtIgnoredForHand",
+      "hash": "af25f672dd5dfd49fcb54b135dc3f7a55048a740db4ebd2d946f9c6ec2751287"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "totalHandCount",
+      "hash": "3d73498ee9b72f0a5c8b7c568eee2485862e5f38fe86dd6c85863800bd0ff17f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "eraGainAllowed",
+      "hash": "a8017ede795d91d81baefdd7ff2136c428e48b08a062e03152bf2ef34a742616"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "gainResource",
+      "hash": "1fbcf5738af199ec627752f9a4d2f8d83823e13ca21abb9bfc7c7720dd4d1201"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "commandQuantity",
+      "hash": "e9ee6a4fa834bc6158c9fb07536425b01950e4fcd3dee3ca192f7193fb817fe2"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "commandPool",
+      "hash": "e672c0690f562e9eec41947653bea08f5aaaf1c088c8004f79042e07aeba1dd9"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "commandDraw",
+      "hash": "5819fdeb9499fc6f4b46bc2c2d75f0690151ee940a0c5a7355aa3900c07ad66d"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "commandDice",
+      "hash": "5fdc1b71f0f55c77a43ad81776e932472d30f870b82c78c5f18ac8a560cbede9"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "commandLimit",
+      "hash": "9f38c48aa0537ff85e0a73e06a7169087590c5edeab1ff1c68e9cb7044d4057c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "commandZone",
+      "hash": "3cdfc4a61664c962f83f7cb4cf2d40dac1f85d56c7bea536e9d497d02f6147ab"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "commandChoice",
+      "hash": "8b11df8417f689a2fa96d2f92d4298ec86e891735fa073c013bb382a46ac9c42"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "commandMove",
+      "hash": "e5656c3f0b64eab67c2d021a7be69b78f34d0ebabf2769ff8ac9fb313831dd71"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "commandStart",
+      "hash": "e41a7d2fdb9df0bc95bd6e3456c53a375d780c43b378116ea430b16ba5229562"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "commandPlus",
+      "hash": "f8fb0c3e569f8bcc8cdcec1909b58b698e9e2703eddbffe052e9c7ed2ad6d20c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "commandChange",
+      "hash": "f570adf4a7f64074cfbdbc56af66b1c55e5969cfc753d146a69a3e89a903f620"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "commandCan",
+      "hash": "17549160f5294ac8fecba9a468c7cde4d9d4588f64d898fceaf5454560dc28ae"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "commandCount",
+      "hash": "d0d43066c3c0113ea1e018852f6e05998688da801483648b9884314cb6b62b78"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "commandTrigger",
+      "hash": "10d506f67aaa12471b4334a8777cd3a0d52a3bad1fbdb02393d021cdf7dc245e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "commandHire",
+      "hash": "6b961e52624b660c8281f6a82a13ac9b5bc8f2231c3b82cdccb5ccc01565601f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "commandToba",
+      "hash": "a17bee913f0de7fc96854e758fcac6efc854eb2b8fa464c68eff4fb4dbd61ea3"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "commandOnce",
+      "hash": "ce883c03dfed5b041488ec5ba217b05d4e38d7d496397db7549ba0e1d7d9390b"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "cardCommands",
+      "hash": "ea78d1a878fa5769662043535bc589e54ef65608a2b4a40dde59cac032252fe8"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "renderingInstallCosts",
+      "hash": "c0c922f8f4d2dd92d85d65b04ed64e112fcc4c4cb0689b8d2c928cc5c3a0c676"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "lordInstallDiceDiscount",
+      "hash": "075473889c86b1f5d466b841fdb1aa458e1b453ae0a9aedec2d38a168654d501"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "installCostOptions",
+      "hash": "b8bf63996ba5f282a34e585f02e031c47beec5ecb6398506f5135e9a5087a534"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "costOptions",
+      "hash": "cd81fc37897e35058d170adcaf9a254826e2345e3d97357f9bc9790f0e676f6f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "makeChoicePicker",
+      "hash": "0f02e7554b28cf99514659a60e84d332f8b7dfd3e973c9e538f3e3aefcfb6c46"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "costSelect",
+      "hash": "142b5fa37d5b16b3a714053306060d1cba5180a266061d8b759a523c59a52f60"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "consumeCostChoice",
+      "hash": "5abfd884988efa0242ddb0f42d4fa228b11eef9e63bc4a85e595955cdc9d8666"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "distinctCostChoices",
+      "hash": "e311085874bde14a23d530769bc8f19313696eef4bc1114f0c9f9d599b81de3e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "canAcquireDebt",
+      "hash": "73310a003513c37332a133398a53305a606e1ae9f8dca0d0a836140ebba48b32"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "acquireDebt",
+      "hash": "d7420ea2d67f4f1a20793ce300a2c18fbcfe8e6938721adbcad4051ec99965a0"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "distributeLimitedAcquisition",
+      "hash": "dfad33e4dcd38963bb1948e4e8f108593d61f345e891ab54e4ae9e9024084462"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "distributeLimitedByQuota",
+      "hash": "fd77ee40b63c646b86507667a4ee96efca95b73290d0613ddd4f8343a4e2ff96"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "distributeDebt",
+      "hash": "512ff6fdd606e3656d481b602b2683e198f4c012a745e896a830b841efa3ef00"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "distributeCommandsByQuota",
+      "hash": "e1591a508ab953ce0fac7037370ec8eefd52cf915d4fbd524c52c8a647474fdf"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "packRuntimeApi",
+      "hash": "2cf6c44c0ea1e64960b9420dad106edf2a12f924d46f1c50fb0ff0124a636097"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "runPackCardHook",
+      "hash": "cdec9f2f06bb63aab317d6e05d2dc1beb3bdaca63392ab781cdf4e49b45f6b99"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "runInstalledPackHooks",
+      "hash": "6c8359a8eb00e8abfc65f2c51293f5a84909fb876f322787e98c4cd6285cb87a"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "card",
+      "hash": "499324cf13a63666d2b298402f361e1d2f123bfe3ee7a03a25dd13cce51d55de"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "KOKORYO_RULE_PACKS",
+      "hash": "c9a5fe982778c764d31de43add3a38692449c89dd03179cf67c987403d6f1580"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "enabledRuleCards",
+      "hash": "da4221c41824673f964825833032bc983a7af39421ecb803c277f8cf8174a47f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "resolveActiveRuleCards",
+      "hash": "696528c2a07f6891cd607b7e5a1394ea562606bc0b627e150d081c9f803df09e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "activeRuleCards",
+      "hash": "a21da1364d931176e3a7285f20bf7463d49ff00e25ea9bc973bf29fd7d985ece"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "hasActiveRule",
+      "hash": "7e4857d98241828887f2dc62e7254eaa8cbfe41831c776068b72bc96a7eb74af"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "effectiveHireLimit",
+      "hash": "512c6a006c9bf6021d4cea4f5223e63d138e5f961fad277ad755bceee5758005"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "isHireFree",
+      "hash": "54343f2400a17a0682dfa93887501ade627c366d1570aed4cf68438627d945e4"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "runRuleHook",
+      "hash": "8f0c7b1d0265ac2106d377f161bb885793299821bfea062e622f7270a079b394"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "fillRCSelect",
+      "hash": "e03e86d99ade7a649ef236c4f881dffe324e69d0618940c6926dc38e4a26d296"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "refreshActiveRulesButton",
+      "hash": "6dcaf1a5e580c06303faa01a72777171aac7fb6442620779628dc82d987b2b27"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "showActiveRules",
+      "hash": "59c901d659b38d859364c3cda81f2bd43ea037aefd71cf49f9ba472d6f620f83"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "captureLocalRuleSettings",
+      "hash": "201c018c25e14cba425dd4ec552b81c9a39d3a7d7ef8329c2fbbc77775082968"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "start",
+      "hash": "030a694e6273dd8087420a02a0eb2f9d963369276164a82606c6325ac208e673"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderDraft",
+      "hash": "4e43fa912f77985a8eb12bec3b0c76270035ade35869eccbd9b13c85c994bc6d"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "showDraftOwnedCards",
+      "hash": "6c85b7d5c7f67061512062314f42b85c123d6351441230615d417143d5dcc61e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "showCharacterAbility",
+      "hash": "b2286189dadebdd5682d81220fd34c4dab33bb18c41df08575c8ef0e50131c66"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "pick",
+      "hash": "8dec85f1ac99e2dda39a96fefd8ae392916f0c3d9fceb66caff81025476c8735"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "drawOne",
+      "hash": "b06694aa50a55623a67cdcd2c1d5757e7e03780f836f14c18cd534cfa91cb85b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "syncMarketTargetUI",
+      "hash": "b0c533db2585272428a562611a14d4bdac2407c09ca24c8143742002910ef252"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "refillMarket",
+      "hash": "24d346dcedb47a888194c1b05390e6c712097615fcb9bc4983e3299e99d8cb21"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "refillTo8",
+      "hash": "40b84b9368f8eb0cc0ede242484b85dc5f68504a8eb058b4c5ba863fc5d9a68a"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "LEGEND_CATALOG",
+      "hash": "89a7fb2aa52acf8328993f569ae39e6ee85c843b99b3e04d76010d7c7dc361ec"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "ef0fb8f1e743e8a87b8410310e72065543f77e8e4597e8be8034e63d625e0008"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "initLegends",
+      "hash": "38047fed11cb4719b4b5972a9e09c1d0d4e64f80b98513fadf129421c7523b58"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "legendCostChoices",
+      "hash": "4e1840d30cfcbceeba25867bbf4ccf7599207d361794465a5875d4a57d269bd6"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "legendAnyChoices",
+      "hash": "0d0e9c60a631f69ceb4830a89d920cda8ba6de55db5c19cfbd5e964cd1387b8d"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "legendAllFacesChoices",
+      "hash": "8bcc991e50a2f38c20d2705c6ca9fd31d2db60764e920fde05eb15f4e864a646"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "payLegendResources",
+      "hash": "dbd61f33c7569360dd5a03d5fc6ab4826009394226569628426cbec230098909"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "consumeLegendItems",
+      "hash": "e9cf0ac0ed76f144963d5cdff2347dc618fea9c64a76137295b4028f1a901308"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "legendSameFaceChoices",
+      "hash": "7881be77bc556b285b881f67bf476640dd0805ad48f6ff820128efb049982dfd"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "chooseNamedHireForLegend",
+      "hash": "3b1d91a151ad70dc97ab55f16c3677edc7148f3d8a8faba43d1c2e7f6bdecd64"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "fieldDestroyCandidates",
+      "hash": "ea7d391e111525481a05745494f38af04e7eb388641e6865d1e1dc4d2462749e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "destroyChosenFieldCard",
+      "hash": "79bbd5dfde1a36cfd2c6b2b42c3fb7a84782cafc565f8792946ce59876c489a6"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "resolveScorchedEarth",
+      "hash": "38b877ae350cead6cf30452dba10518b13d6538bdee4ea3583e45f906a854245"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "resolveGreatRefresh",
+      "hash": "43247d7aa6c1d179a0315bad56c3824596e5c4297e68e407abadb83faf993911"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "legendPaymentPending",
+      "hash": "16a0d4f8d1f7853f4ebf26076bb390f21f565df6d02cf482f1734d6abfad8ae5"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "selectLegendPayment",
+      "hash": "54f4a370c826e183853f9d4b3c87a0b8eb8350b9d39fe7fc5ef785f3a41306b9"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "takeLegend",
+      "hash": "c64cb2fca44ce26fc3233ca31b53e839a1a2cd2b55bb52eb61bd65b860d17920"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "chooseLegendCard",
+      "hash": "e8283ad4459b27fcbaebd6d03c90b00127398cd822c3249293a34b5ae70bdaab"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "resolveEggHarp",
+      "hash": "6909c941815d90cb0af0d290afbd7f23f78ebdd3f9bb4661d6cf468972bd0b9c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderLegends",
+      "hash": "4f3e6c6bf159f94918994c4bcac689dfb1a2143af66c3f23d358244ab89a5dfb"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "setupGame",
+      "hash": "be2ab4812c099b5f9151c38d0df6eff4521fb8c9d7fe771516e8ea1bdb84026b"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "initialPowerChoices",
+      "hash": "072c1f5146264734904580ab7fb73f0e64e1cd9d5c395291dd52d8f1ed4e4ac6"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "initialPowerPlayer",
+      "hash": "4345bd90156e5b2e2734f9a58c5cf416fa9abfe6b01741f0f89370b23552c3a7"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderInitialPowerSetup",
+      "hash": "21b037244d4a53b906338203ff941a1ae972710e504110d00a7b8af8afd8a2cd"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "resolveGameStartCharacterEffects",
+      "hash": "2ff8848c5189ef2f7c0bdbd7065660e52a66f83ee144ef056f45d8ed69611710"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "chooseFirstPlayer",
+      "hash": "e372e8f9c9d8a66036f31e6fc96ce2d04e05fd010fef8fde8ca927a318d29b90"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "confirmInitialPowers",
+      "hash": "c2717d105ec094074daf16feed0a1fe13e4df6f2588d3af0521cc944496ddbcf"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "playerScaledGain",
+      "hash": "9b00542b51306ba70bc5ada0e443550c0eca4dca65daa660897fe46fdda3d73f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "resolveReactiveRolls",
+      "hash": "9d140ac4f0d5883e2b2d8509cb958d975b23ba02d3fa5a1d82459f13b5a79879"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "triggerLandGrab",
+      "hash": "916115b0d17b2f4db7276b0e2bfed17c27a1e07eabc88ef753996ec369a89450"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "registerInstallation",
+      "hash": "8325807735fbc5891533cfa68d1ac0411d445390a73d7e3fa314144b0bd4fcd8"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "characterEffectSources",
+      "hash": "c9e6cb694466cc996b9b4e6816433a1893ce14b9ee2790513b3ff51aeb71d84f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "stackedNumericEffect",
+      "hash": "95a23dba3bd63960dff34990b0ed286602e647dc9369776c1012654e8cc459b3"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "groupedCharacterVP",
+      "hash": "160c464f73427af799b6334d7cce85e39584cff9dc211e1960c25c31807074cf"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "turnStartPostPending,depressionStartSuppressed",
+      "hash": "fe7711e47a696c9df3e9073cb610000c0b92be64e95a32460b1a20705b72025e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "beginTurn",
+      "hash": "e991413729f2ae62d0678874408221c3713ba9eaaa80af904956d0ee8479339e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "continueBeginTurn",
+      "hash": "e32e57e2a4957d746b8cb7786b4c7b1e556c6afe6e31f1e1542dda39794b22fc"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "gainNanban",
+      "hash": "d1381835ae8d9133ed00cff364fd0c018f9607c1b08d25a08d5d6f4e15cdbd25"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "gainTenkuCat",
+      "hash": "e7d4237cdc02aeedaeebd07eba2c996d3efa7231259993338cb0c382c0f67741"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "offerFreeResourceWipeLegend",
+      "hash": "be9669fb0a53b9fe80ee75fe963df9700c3bd3d7040d358b22783707ab93b71c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "hasGodBlessingForTurn",
+      "hash": "3fbd0df35e42e9b17967b1056ee4710cc86db71476d205d99499f29c33a73f02"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderPackCharacterConversionActions",
+      "hash": "318bafdd9dc5a027f33d5cfffed6086e508361934d93e026f0e92da4aefd0390"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "normalTurnStartCandidate",
+      "hash": "60fb723060d6a0ab928adf660abcefd94ac0a2c621f10649da90dcbc35e24468"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "repeatTurnStartEffect",
+      "hash": "031f05bd2976d55d81392789790cf6d4a6f32a6e0335e50252a16dd53cabac7c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "resolveMayQueen",
+      "hash": "ed2579ceff1ef8e9a554a066be6539378b974382b4dbf761ff3aa26dd88b5cf0"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "resolveTurnStartEffects",
+      "hash": "ee82289477615db094eb9e44e631671e38217f87d75f4a5d7b71bf570bae86f0"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "fieldUniqueAbilities",
+      "hash": "e005a5cf97e9d9c2aba73fe8cc22b9eede3a47436818e002672c3b299333c6b8"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "abilityProfile",
+      "hash": "88f3fd86a05c7f5c9dc9a25df496de58da0695b544d554807504260c83b7f8c5"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "recreationRangeForTurn",
+      "hash": "3d1aac866caf851fc093213f1bf5153e478f1b57f39882a864e1baac26106452"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "resolveAbilityCopyLegend",
+      "hash": "ab5754e874daa7cd075bf7fd4157fa528649ecb676c9d1919901a229c614e4f4"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "syncEconomyLegendUnlock",
+      "hash": "fbf4c698204696a28cb631bd5311a4f722dfe149329cbc8b391d06a2f90575b4"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "economyAcquireTrace",
+      "hash": "c80fa2a0a4e85286ae3a1721ff509429513c496da5cf7ae7210afc4e036ff323"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "traceEconomyAcquire",
+      "hash": "1886b7ad062392f8c7a4e60d29f1105c5b389714417800fe92bdb3162073f614"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "runTurnStartSpecialAcquirePhase",
+      "hash": "b34aee401923b7a04c5c73a6e1dbbadd2d06e5b408c745eae38ccab041ea66fb"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "ensureDepressionDebtSupply",
+      "hash": "9975dfbd0403fc0338b079b017960f73207bc374b2dc678f4ecc7b29f4c71962"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "eraLegendCondition",
+      "hash": "4101074e0832d687e545695fde063688f8dc4d9a2573ab3c65353a83d9ebb449"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "blockOtherEraLegend",
+      "hash": "66faebe9aa48fb2bf6e1b39bcce53f2a9be3236ba883725e570e4157f8da3588"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "resolveEraAcquire",
+      "hash": "5e591f50e9017b0dfd964f00de1c7daa4fc89c19126bd044f0dba1c183d29b66"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "offerEraLegendAtTurnStart",
+      "hash": "551e46d3ec16e32f0272304c591bbdf91b025c76b4fb7616eae6bec238c2287a"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "unusedDice",
+      "hash": "6a38adc7ecebfdb72d51ed19e351cbbd1324af2a69d08ca373c63102379f75e2"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "dieSelect",
+      "hash": "1a66539b8b90fd1a887489ec056c6c7817194a41a8603046e4727061eef1cf7b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "useDie",
+      "hash": "e69a607b38f9ac04ce7478f07abe3ab81334dddea86379e6ba68f28362c12ff4"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "colorFor",
+      "hash": "7b5cd0a6da53e854007bf502f9fefdcc71db3a303a7294c18c6493f2153f6f4b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "cname",
+      "hash": "5528a1fbb7184352c22d2687a9cb072922066a6687d215f2e4a44ebf51525099"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "fixedVP",
+      "hash": "7c01a05b403ef0485d26a6a92ef364ab98771e373f498d02d6d0a20dd35224fd"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "allFieldCards",
+      "hash": "0ed63cbe37a7c5da52d0d8ce3dfe422f126f7e8ee8e0562e8ce5c26735c389c7"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "dynamicSpecialVP",
+      "hash": "1f79eae20c9d33dc4f165438b9828d649d77d6aedca3cba48ec8a774681e0b2b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "cardVP",
+      "hash": "db47c61e6a69928e1c0cddfa3d107be09d6f17c05c095ffc28ec0c6995ac6032"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "totalVP",
+      "hash": "6187425394c975b1f91f117fc9574e73d6a31f9a6523ce0eed4ca42f8a281eb8"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "vpLabel",
+      "hash": "cb51e1f1bacf9d76770dbbc85175455adc18fa1ecfd5947a44c2a6957fb8ae66"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderSharedEndgameStatus",
+      "hash": "30325240cb1e6758ec414ced8ccf2280235f0c7e474f2aec6ad8fcb2ce14f549"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "checkEndgameTrigger",
+      "hash": "bced3cdd64d789b74f6cca8aaf7a34168788e59352befa20a06c5ca0c1438cae"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "effectText",
+      "hash": "fc3cf42bcb1359a1c7c81b941864e974f05ce029ae9a42918e542caf85a8f193"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "handCardLikelyInstallable",
+      "hash": "c270eee90fc8f2b1b281e6e66aa7d4f85d615bb14cb21e93d1c78303edf1843e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "addHandPreview",
+      "hash": "53f00c35786b29706a5e2d736cfcb8c56ad6561fb9fe5ba7268efc8def9d5235"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderKomeActions",
+      "hash": "490daf2824ed0e5a09be5e1b3ebfbb235597e5cc65698dcae0da901d84791ba0"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "hasSameOwnedUniqueAbility",
+      "hash": "7092cd00269f4f93dcb11a78e3cc19dbb5c2287a84ea6c047cca5d73fd23692f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "sameUniqueAbilityAsLord",
+      "hash": "ccbc5a3e3c6dca29c084ddb188f4d52e6e18f2fe7ee21eb19a6aecfac07f486c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "redrawSameRarityCast",
+      "hash": "1dc93625499425f3d3c673ebe2ead9c3f3909bcda94569dc7a833e960ba70845"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "resolveDoppelCopy",
+      "hash": "f3b67c819c026658cd4f5c37df0e8d68de01caead52bd92d310cb63541a45f0a"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "finalizeHire",
+      "hash": "83f8d319f786ad010e06339b4ea9b74a0b6f47c1deb0f7b75a1577ffabb97115"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "hireEmployee",
+      "hash": "9d6719da27cb4d4cba38f4b2090a60dea85cc6c25409199d147f6418add219c4"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "gainSSRDie",
+      "hash": "788b0d98cbe7a3ac981183b52b95b37f3d43deccb2bcf7cc9134da51aedcd621"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "gainCastResource",
+      "hash": "331be09d577f6a5e36cfb0a112e58126d34e9a5040dc404791790bdc17d9715d"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "gainOverclockResource",
+      "hash": "966d23d0d052ae0a4beeb160f8361fb335268e3e29c8c8af2b97c0d0f08a3119"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "castEffectText",
+      "hash": "32d037ff353b19baab55e6f078db44955005573ae75ace803d1f5e651f1e78a5"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "employeeCardView",
+      "hash": "ddfae8dbf60bff318ff86157bc23316e768d0d84c480b03c3cbf2ab5b1cb66af"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "CAST_SYNTHESIS",
+      "hash": "59de7bfb535dd7ff23d33062561c5c0f65727817aecda7a04b744f5b8ceb46a1"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "3d36f51519954dd5e9634353d33ffb95a2045ca084b07d786a217be98842713a"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "chooseLRAbilities",
+      "hash": "1ca74fd45d15c43f94ffea4db62d30c28ee63ba5c6c0c85f2019bf40891d6209"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "growthPromotionActive",
+      "hash": "1545b7d64eea53fcd1172fc0809191bb897f23fbc33ba92fe34ea0b8da669f16"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "normalFusionMaterialCount",
+      "hash": "5d76234f46230ffbf44275e4ebdf2b9de31ea979d8794237888550e346cc2369"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "synthesisOptions",
+      "hash": "a6862630b72d0b5b52ed9ed684d265102878d70b0adbabd20f458369a9769f8f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "synthesizeCast",
+      "hash": "f292e9a5db13f544d209cf354a3f753d104cf10b06018a14322ce26578057631"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "ORACLE_UPGRADE_MAP",
+      "hash": "64a7fbc91f4e3ddabeef828cf7fff018a0782d3a5fd1bb67c5655d12c8979dac"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "oracleUpgradeTarget",
+      "hash": "73b60770ed4ebdba7f3e89fc9591d41a7a10c0597e8f60bb4003d1efcb945f37"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "oracleCanUpgradeTarget",
+      "hash": "dd7c66187211fdbbed2a1cf4a0d3df8807e55c3bf8ab45a32376c10af638b431"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "oracleSource",
+      "hash": "1145c9bb7d10d84a3f09224f6b045acf0a02661bb1bb20b415b1e76f793c162a"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "oracleSourceUsed",
+      "hash": "52ffd784a83d3cb5690abc8b5b5d0c17faea0263770217f4a896c1d254df0cb7"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "markOracleSourceUsed",
+      "hash": "76c86e7fa2c5c290491ea9d776b69ebc5eef54f873ee1950c97eef5c482eb26b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "useOracleUpgrade",
+      "hash": "84380a10e007fdeb0ee92736e09db9802d16ef91f935acb1a7b7eb8f52dec1ea"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "tributeSource",
+      "hash": "bd4768fb95be787b515ebbffe1928a8f737f0e6539ab7f54e406e344b5c6d803"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "tributeSourceUsed",
+      "hash": "2a4d1d0810f54e15eb9dc7e873a98b867f8792994f1365a2b4860483d856a5de"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "markTributeSourceUsed",
+      "hash": "9271917c4aa20a5e5f3698d2595f080b5d6ce42266e73deb1709cd1e6f1b2981"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "useTributeInstall",
+      "hash": "60e5aebeda35dee7c407f6e463ecd7fa662140f4a55be3c9f0ca2e926fb6adf5"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "appendActiveAbilityControls",
+      "hash": "f328cc2cca5359b1290c3d82e4e55ea76e4651cc3540baea46c47f2c5b59ad9e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "dismissEmployee",
+      "hash": "7bfa6a311b27b4de8c1b214390028750521a6d54ff151fb4ab6fa3607769f63c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderHireActions",
+      "hash": "142f6f1b20fd3450348bda07b6eaf7d91885b4bbec1f4e2e845fc1c2a22e8abf"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "debugNamedHire",
+      "hash": "0f7385eba34b572c0066c172c49206b4225cdf76980c06dd2a1a3c892ebd5e6a"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "debugGainOrder",
+      "hash": "754f0f3407a6084b0dbf8d3663c4fd4737aed7427fca315d8559624c46eec37d"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "debugGainDebt",
+      "hash": "4f66a4f381fff772594b6818ca9072d8ef6f36177272ab0caf6d710407d90e8b"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "debugCardSerial",
+      "hash": "9dbca35bc10bb79ca3d108227542ccc0e9e6284bf71ea2898a9e96ddaab81eab"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "debugInitialMarketSnapshot",
+      "hash": "b88b633a3825bf81be20281ee27defb9c112364fa4a81da6a7d2a397b82da536"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "debugCreateCard",
+      "hash": "63402430612858551f1fa870ba4e5539256c84dd89d667c8b58b40047317c926"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "showDebugCardCreator",
+      "hash": "bcff431371bae09b8ab6a7b59c9ebfccf40dd25e937067cf6605b72dbe6862d6"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "showDebugDeckContents",
+      "hash": "af4e99375ce9f5e5c92c7cb4533897ffb3d0f1d5ba849846e866b081e2e1ca4f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "cloneDebugState",
+      "hash": "fc0196e812ab0f9c6fc2970b754d09bf00f7d9ce4aa844ee3ab051ba1cd34ae7"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "saveDebugInitialMarketSnapshot",
+      "hash": "e14110d39d3416fb04499a8ea59db03ab566ae0b906403d40d117b706ccef84b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "getDebugInitialMarketSnapshot",
+      "hash": "a272d0319e75d843ac4fe446dbc1a37b28ce75269adc348ee5c51dccac19f499"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "debugResetToInitialMarketPlacement",
+      "hash": "b2834f4bd40c590db5a6ef15a6fcdacb75132a7f82773894d735099881b77ea3"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "showDebugMarketReplace",
+      "hash": "523f76c5b88118bec33fb01f68a6561ee0cf0311479ff084c25e8a4797b8af03"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "debugAdvanceToNextOwnTurn",
+      "hash": "d2d3520a1d94ca63534b2029805686a22ff3e1150f89f5b1dec7962da3e0d65f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "showDebugEraLegendDiagnosis",
+      "hash": "d19caeba7f0e7366046bc465dbe08f93dd8aaeb94c701c17bba8ea29da1b5fca"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderDebugActions",
+      "hash": "0be49632f4f29dce1a0db3e4f0ec7d810a48991f92af60a283c6ffd320123c23"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "dialogLog",
+      "hash": "4cc532dd1a2006327d0a3b3a480fd93bd7c0451262c5d09de58543033f3fa284"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "addDialog",
+      "hash": "06f0bba791236ed1421f32abf96256b5bc5577f0d39822d41396fb28371631e3"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "showDialogLog",
+      "hash": "137acbcd238fdc0a7f944b810d15ccac81f4a20e985d45b132023a45218e8632"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "characterAbilityText",
+      "hash": "28d941c70acbfe91af37eea22983ddb4aaaec21715a04e1391fcca3467f8a707"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderOpponentTurnView",
+      "hash": "dfeb7d7aec208cc1f3f830abd5d9b1c6fbb6e9a6fca4a502f373c2490acb732c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderGame",
+      "hash": "67e9ff8472febf15ccdad11bbe21a326b37fed2a46d62836f10265423460d335"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderTriggerNotices",
+      "hash": "606ecc188e327f3155425ed114b5e6e0809eb273e78c08c39d416ee7bf19e52e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "gainLordResource",
+      "hash": "6360536116ffdbd606e19dfe9fce4e402ab169b13978eec5e1e8c913540dfa5e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnStartResourceButtons",
+      "hash": "ef895b98506523e611a02e9192895c8d941bab3010d6ef041ece69b11747a5ff"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "installNightEscape",
+      "hash": "7f3ca7abddf3f69916233f34b94a63869e5d8023e551dc1ab0e218e02db6c5be"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderTurnStart",
+      "hash": "00ed52537aa8de6c2b53e1c881fb2c9f8dadcca1c72a78dbec5550ed3efed0ac"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "optionSelect",
+      "hash": "f3473a15c9cd8b64d6d82323a1122a638ea36932b5189c6613f935f2cd55e99e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "consumeOneOf",
+      "hash": "751bce63b340f9474200b4e782bfdfc0ba442d6b96d5e08117a84c3c1f65c94c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "installStandard",
+      "hash": "25b5642c59d4b9afa8386026e1415306957c83c331cf2f6ff562fb1d0ebe22a1"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "useStdAbility",
+      "hash": "f3da11d661e8eeea66e74d5b4e6b2b45a3f5fdb7d65747fa7afbc899bebd373f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "appendInstalledCardGrid",
+      "hash": "5bd7cc0e7e6731ce7ba5966fec4eb186c17462637f62508b29ba282bd83c89fe"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "installedDisplayList",
+      "hash": "fecaea78c6e572d0d8bbb44ea84106904c218f970e6985f88ee13f680c5a202f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "isViewingOwnTurn",
+      "hash": "ae630532ceffa1e1c8b69184bee807a0b8c3ea2a45c3101aebc81b9d6cce9f73"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "useRecreation",
+      "hash": "e756f3540a3dd91d00fe683f3e1a51952d7c26da24192db41ae0a8ca4db7979b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderCardActions",
+      "hash": "7a6a55b83301107739e5d140984c35e25d22d6040d57f06dcfc10c2c7163d49f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "consumeThreeAny",
+      "hash": "a89a16e0c76251b7a1e6869065d2fde1a4156546010a12f2b70e54a3ee99705e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderNewNormalInstall",
+      "hash": "d928d2995bf69ae4fc0bcf15ac1ce29c5d2257289d9eacddc8d9d50d6bb4e8cc"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "installNewNormal",
+      "hash": "5fb2f73ce7018a2782bf64ae9c80ef0db1722538fea374c547d832b66d387059"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "graveyardUsed,publicMarketUsed",
+      "hash": "42b5357e1a1e358d328d1c632a9ea0b153fb1b859f0c95237f4d301a12b1ff35"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "normalCardActionUsed",
+      "hash": "9a3c2431361da4c1709881aa72a73107678aa6618c50b2e287ee2d6d7d21ecb6"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "useGraveyard",
+      "hash": "dba5e121ac1cd6ad3f364e4f07ceb25556171de5c995ff52fe07b012a754d091"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "usePublicMarket",
+      "hash": "48bcc83a8907083d457d6709f53e4d31a8cfe471fee0154c2c2e49d40bec0606"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "useScout",
+      "hash": "3a778f2eb514a3a12aa8f7cc7c6937a2f3e78d8ab8efb02931e9192d4e17cc9b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "organizationUpgradeRarity",
+      "hash": "b8ebd91f2fd864d92cc2259898424c44dd95cb6e94cbdcff0ee38a5cab95ce70"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "organizationPool",
+      "hash": "c36480de70777fcd8326642259a44cf8272b6d4f86da65608c0155eb413a7d36"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderPackInstall",
+      "hash": "2e439a7fec68a13141217de1ba3de910c4a754bc3d85f138232c4e9f96f4af07"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "installPackCard",
+      "hash": "40a8d3f0abb2c23b262cd04a088663795e36af734b5793812fa50fe8258ae881"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "consumePackFaceCostDry",
+      "hash": "60b4feb7a7bc7fdf2193b738c3014f2500236836eedde17e7162a880881519b9"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "upgradeRarity",
+      "hash": "40b80313329bed60efb8ec524d44d43a6cf01f07f54083fef4ad30f22f8d4ade"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "packCastPool",
+      "hash": "39b79de557e173d99c43c18c95b21b064e16381a68688b1583d0ee7faf5f2edc"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "oneStepUpgradeCast",
+      "hash": "13c0d13b53f050680a1129116420184db1923353b84f4b6788f6713e86fc37ac"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "organizationMaterialGroups",
+      "hash": "0424bc7978ab892cd3c23bdf7a13ad8c02a5cfe15a39baee54e40531a26521d8"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "usePromoteCastPair",
+      "hash": "3663bf0e4cb913452d6ad17c651931c9d747878b02a0a10e51d801de0e8b9b5b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderPackFieldAction",
+      "hash": "18eae45b5be8125771b5fee5fe51f942b8a20e86ee5d22552fec79113ab1a009"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "useDoubleHire",
+      "hash": "189851931ddf772489346f2b6a80542a7f26c4749d9f4090d1e682ba098ed582"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderPack2InstalledActions",
+      "hash": "201a261d9c2b38d6a8413de0c718b44083b7ded28d29a5213c7b3418bdf2d152"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderNewNormalInstalledActions",
+      "hash": "bcd4c949a4603c246f9fc18cde1a53fb29ac17c898391f57f1e9923e8b3f2d0a"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "installElekiter",
+      "hash": "a9eb876ce8119a879bb96b723cdfd8d12a619d2b14fedbced35b68db2b1d1775"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "installNanban",
+      "hash": "87efc907b65a43325992ae1def9a8fd4393a3a009a3b85ba5b8947345f17a6a5"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "installNinjaGuild",
+      "hash": "f3d8f023a401e1e4d804cc3f081d42778657a55f9b3b18c211352f526e9ebce1"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "installTenkuCat",
+      "hash": "481f26da8341552f841767fa8f1548ba2713abab8d2ff60a461fe4a1aa8b568e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "installCursedClock",
+      "hash": "eafe2ab754097ba2df464b185b91e176b932861955c69d333d9be0f99274eebe"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "installTreasureShip",
+      "hash": "f83c7d9ca42b502bb65473e9ea6c17a3e7f7daa153c10b7e8d294de1eda5fab5"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "installInadamashii",
+      "hash": "49644737f91c1ec94cdcde1be25698b55afc8ebd64f13a052a0e43f2baf32fcd"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "resolveOnInstall",
+      "hash": "11a7dc4cd23fc3c2857a44b9b455f016c1a04b372e9dac6dc885846eacf3abb1"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "installPaneteria",
+      "hash": "4c75a3c6e3268aae5f074316d5d2a3c31e93bf49169d02e1b3216d154ccc8057"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "resolveLordMeetingInstall",
+      "hash": "ebcefcefcbd5afe4dcf710456112ef08f3eb547859c4167283923f02d94cf8bc"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "installLordMeeting",
+      "hash": "2a17e4fb45a6db4823b70654f4eaf3e1ff1e343f4354dc337f2339ec983a904d"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "installBlackCasino",
+      "hash": "8f6a5d1edd1f2789e09640ae1a48c36c8fd58c40e70ab13a4f00cdb8bc444981"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "installGreaterAcquisition",
+      "hash": "6b8d53f059acd4259d48fbd41c5affdbdf8cde353e75710cfb54ca822aa4b17b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "parkSelectionOrder",
+      "hash": "990211f6cf0a1b170e90da9a9776e9bf545dcfca2b0a91d20ff6f3295d257314"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "finishEmptyParkChoices",
+      "hash": "53362d6961dd6f8e8e88b2c21ef7cd9952da420e35eeed40beb659e69ecf0950"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "applyOnlineParkPick",
+      "hash": "707117e2661e24e9672a1870892a362214ab0f8797c75f2bb0a20663c005fe51"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderParkChoice",
+      "hash": "407d9fea5f8e1790910efd8fbca4d99ba3a5b75d7e881dacddae2f56f8b63109"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "useElekiter",
+      "hash": "69e521e913384ff5200fa15b2f8ee59e9843163231e7a654a1f74229a9330be7"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "groups",
+      "hash": "fe0241f21ebf795c306201ccce601c13d44b9382f0ec79bceb67e561946b83fb"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderFranAction",
+      "hash": "003c5223748d3115c1d4401f851f939887e5f52ae4e47aab33d8c678628bdba2"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderSoraAction",
+      "hash": "b17694bbd8c9fda30d40dc0a1f30385c6b51ef86f4b2bdddad2e79e1a288cd90"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "useSora",
+      "hash": "d827ecd3cc96760af5f6ff4af2876a67f6329ee1d9fa1405241ee329761a6250"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "useFran",
+      "hash": "4c2fcffc294f6ea1d7b1a18dae03532f0cd0b4f8bc168b870b81c819f5338fbc"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "selectedHandDetailIndex",
+      "hash": "4f9b861400dd50e82cf497bfb6a9c8fb8e74cf2c993b603aafe962900b08e7c4"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderBoardHand",
+      "hash": "ac03243853831ee3266d43b0100666ebcf507d52c7a72d6ca3c57ed28d349e6a"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "openHandCardDetail",
+      "hash": "de3a7a70d37f2f088046eeff86c806e710b04e661ed9eedcebadf315da830a19"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "openSelectedInstall",
+      "hash": "b404ff39bf6be5bbc64a2edbd96901c0a6dc43db427fd5162375b1a155ffecd4"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "showHandCards",
+      "hash": "5ecd4dd93a549aefe23fd194aa9fad4024fb7792bb8a5179e943a7d5e3ecbef9"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "showHireCardList",
+      "hash": "f06f3eba3cb34fc541bb7dd299bfe0cc88c7c4a5eb54dccb30b5103064ce210b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "showCardList",
+      "hash": "973171ee25f0f6c5ca03c73b1f9cb86fe2cc83c6332360e6a3f6ec59c66b1bcd"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "costTextForCard",
+      "hash": "1a5ad078299aed19bb182536d3e4148f87f391cbf22eaa5173abe9a27e5d88b7"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "cleanCardEffect",
+      "hash": "ec0b02026b19acaa81fe9cee2de3f5532030fc763e00556a6f7ee8751df91f60"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "iconizeEffectText",
+      "hash": "82efc25d5b8456e26d43a5f9b52c8385b68bf88b51d5b6925f807fe082933e86"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "cardInfoSections",
+      "hash": "ee0300e1da7692a54a2a62cd5c5e04979e47d62ef2ba692c54f0aecea52f8d9b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "showDiscardPile",
+      "hash": "e7559ca4f2e9c715a8d7cea9571ff876e50ad7c06d0fc5ef430e9c153e1f8a3e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "deckEditorCard",
+      "hash": "b5511b70800034b222db43037bb030e584e03593f5968ad96093faf44fad238f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "openDeckEditor",
+      "hash": "7adcbf77d0d88405ccd97680790b0ba6546228c3ce3006a30419a565c15e9654"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderDeckEditor",
+      "hash": "9460a990f21c8b510aa9add351c574fe1141a18a6086cd5e83963973430bf343"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderMarket",
+      "hash": "1756a56ce3725c7bdc2cfcc2509c4ea2cc4203bd2a42b57b44f92e816b0cb51a"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "openPlayerBoard",
+      "hash": "376ceb2e0f89a45172a0229426ac52e5d930a49d61fd4e964ef86b5789a048ce"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "showPlayerCharacter",
+      "hash": "8212894c5e61d44aa5ffc520e7709f347339d870980b9c8383f0f89d1da51f88"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderPlayers",
+      "hash": "ca4673e03ce1ee1a982fa9a07350f5eb9a9a0d194e96967c1020b354b32f9990"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "addFieldCardPreview",
+      "hash": "5981f9f007af6306611cc226356b31b5352e60bff2eecb84c04cab7b8d795b23"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "pendingBreadAnyIndex,pendingResourceFrom",
+      "hash": "5e4d9078eb22d429b8c0bd08e2d30c43f0d97856fa420989808445d07ecb2db2"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderConversionActions",
+      "hash": "fbd5f97bbeadad67e90eda8ed0acde1923f5b1933bd9711b25727dcf1cbc6a7e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderCharacterAnyResourceConversion",
+      "hash": "11a767d3827623f7072f9d0d0e4b0182bbae65c593ca3cb42f6363106c2e553c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "openHireDiceModal",
+      "hash": "0baaad5e4431a6360d626bbe9a4f395c2c72e681dbb15b869fa460150b14af15"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "openEndTurnConfirm",
+      "hash": "22f93ea9fee8175fb9efa2c7b8849cfc12674a93cee04f50e412e2530b0a0bdb"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "invisibleHandCount",
+      "hash": "c89f6f5760c74b3869aca59b5146ffb60f31b83e0be28c60c4fae654656719f0"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "useInvisibleHand",
+      "hash": "30ee94ef5b6728f25973e0e6b1879969737b52b12431d2dc0ed5c9624a0dccc3"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderInvisibleHandActions",
+      "hash": "5264fa9ba8e1d48c47a0e896641a204ab7a923a9cdcfa826a685313b6d987c5f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderResourceExchange",
+      "hash": "fa9e3853e3de8d7c954d04e9cfb405365269d349f019926692ac4b4b38d47cd3"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "takeMarket",
+      "hash": "8b4742755063a9332f14f97bdccbf46f2bd8e6ecf6ec6c4790932e82bf1a4254"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "c69185598e4aa62a6393d61b494b78dc0bb74d2cc73bb33aa9b18e80ec256c50"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "6abc8b767192a946744393493347a5a1078516199b8556b14a118e2cbd1f800c"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "3f176aefcba13b092b494a91c10fccd50dd0bb2fc7a31f026333a26bbbfe6fe0"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "725e6a8fa83e0d04c59f890cfbf011160800ef1dd945659997bc98a0c8058b7a"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "9cb019c03aaecb569d0aac6db01e8b1a5fb24b5430a7ceab141775535c78328e"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "496795cfebe3141fa69abd41805267d86948f133fc26897d07cc5f0f625df9b6"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "e07c73e4ee7eef3b512a16a3153f326cf6cbfb1238c96dc4a63c674cee72c231"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "61353ba332bb71093a497073610a53e05e25e5dbd965f4cd1b72a44b3ba3e551"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "5201145bf59c290150f3e78244b9fd6625aa2ab1ba5870428169ee046f4f9e34"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "792dc3810af18bd22790b5acc674a7108f806392b689b423c87405e9e57e17ac"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "969df62cb102b8fe5afc390dfc0b44c6a963cfcc83d6e7205b526990ea21ba25"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "e405f8928d7890ba0b4a77b7282afff81976a48ef76f8e8cdf97a24357eb404f"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "e5d3cbafd1ad4516d83a5c990dfc7e349c1e87177a0b1cdecf72cc398c5a906d"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "b835a0c7143ca3a9c92970bece330aa8e59f47efb3fffb64e691336b96cacb1c"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "6ec9041adb17cf0b0b42e5eaca3383e24e35ed1a9bacfb927e1f6761b11a10ba"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "6797b641e19d3021318adf5723210efc26a941649da607fb12f93c7caf5e4947"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "fd6ccf825e9131822567b0cca4dd8c15283b83a070b8768517418ba1c6eecc03"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "6b9614f367b0d05d8cc2f09415a88b4256d54b48a09e1f8208ab6e88ea3605e3"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "def4c92ad2233e703fa0ade33dda301c46323dad54d3a1736ce87b7dfbeeb779"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "d20f35e0c2710ec231cf58e9842223349a74a696021a255b56f3deec0c2714fb"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "d4620a13e201d578db199c926fcd822030a214bc4644e5f1c392a5918af73368"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "8afc8dd6e89435084f8c78384432ebe0d7a947182eac1a484546b93238b2e318"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "3c198ae9865e2e3a5f1ae7e4c26cd8611afb0c2f6b1957bf936d3a2d318c3c06"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "642056a662c1da703edfbd66d2c7a7b1e0adcc85e07b9474e38eb0ae68465c3c"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "84e7b7c7082a11fa78e561af30e1a1c9be5c44ebe3602d3ea63bd657da644ffc"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "66f2b187de33b532d2ddadd5d2a7f163d4118cdd536ac7f8b892f636a124b650"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "d57b851fe62682ac06414d3595ecbeb159cf4f231e039c07e1a4ada24802a0f0"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "86a17c1fbd93fdb63026a293f15328f5744c4287ca808f1c2e22b5cea6152828"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "c4f8521feb575bce04bf3023c65c2bd4d92f02332829899749b500d98969fbc0"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "639fd106e30b5d9a7dc7f8e4b8109b3757994c50fa3ccb886d446ff474468efa"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "5a5fa10db2d9de09689bf3dcefaec0cb8bbea6a5f34d5e41e3449d8e03ddcb48"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "7ea507259a36c7515c6ff685bd08d6bbc2cb6397a13014e754a6db02a3ba020f"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "30b1d8e146e0d7f8e9c250a37d2c1ea17fecdea81ca76d3f1528a188ab9fe26e"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "abe2860fb6d94959a8a89392e85ba2f0dc6e630bb4165f80f989eb2a248a4053"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "handLimit",
+      "hash": "c3b0ac4c3cc26e3c49e0b72fd1432977acdfb017d342c5cac7ed2843300dc2e0"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "finishTurn",
+      "hash": "c09ea1aeb816e7be5dfd474ceb79efa1b75a94a01803ab54ce54d60d0e90775c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "showHandLimit",
+      "hash": "74e282a6faeb0ecf6053e473778f34aa16980a6dfc8c0a424498b6d6b08975e5"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockOriginalCompleteEnd",
+      "hash": "1075d9051a8913cae0b8b0ad1d7397185e04873cb075ae58be5e81fc81a68c0c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "debtFinalVPPerCard",
+      "hash": "3b2277464864ce5bb50d87902fdd3207f001d4b6d1e22dd5110ed907a0f6b6dc"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "debtRepayMultiplier",
+      "hash": "16e2fbe1e9d15e7af3bcc5c03416db18d9816f3a0a6de94b6c089b5a9d988b3f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "resetGameEndState",
+      "hash": "e0b87078a183968e329295c0890f774b76306a57a6b2fdb240f12d3fb93d98b0"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "finishGame",
+      "hash": "aada70518afc710a82c5c1a0fc368418bb8de0137cbe38f01a31f46df34b63e6"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "PLAYLOG_VERSION",
+      "hash": "87048577f1d677562402d8db14cdfad630101aaa5da8c23948d18d492a0cb68f"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "playLogEvents,playLogStart,playLogLastState,playLogTurnSerial",
+      "hash": "db6bdc244c85ecc1a673678769612257c24dc17aa689dfbe413f8b102ed870b7"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "playLogCard",
+      "hash": "4ac2116873717823b6b790acd0d5aec650ef4226982b499b865f03cb8ae07338"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "playLogCards",
+      "hash": "21a96fa7d248c86e41fb335e272aa4cad73057b6ae03a5c83d74cba4f959b970"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "normalCardAuditBaseline",
+      "hash": "98072da9b5689919acac61e4da27805d6e6ef66a590175e5626c024052732be0"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "normalCardAuditInventory",
+      "hash": "5b8444eab329e1215331ce86648ea35929531d79cdd8b3e6fc789b7aeedf7a6c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "resetNormalCardAudit",
+      "hash": "65fb44ee28c805b0a2302a1f9dc000a1730d87b2b8d998bc465258d06d6b3ee1"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "logNormalCardAudit",
+      "hash": "1d9a50da4fe7d3085f9e1f83e33495656a89992fb9b94ef6dc7bd6989f9ac97d"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "playLogCharacter",
+      "hash": "4178eed609e432f54967e9310c6003bbc5db9816c8995fa695f95ee71ab516f1"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "playLogAction",
+      "hash": "99a3141c4855e0a6b4a1c7606fa297e46830f0aabd3e3eb7cb7b3f42ccf60642"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "playLogSnapshot",
+      "hash": "7963912905bcd5ca9279f96c57b697cab91eef05b926b9a92621076ea43ee087"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "playLogEvent",
+      "hash": "8c5bd4381945bf426519fb06d582b629271a2cadcb5dfeffbe4f213be6f0c802"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "playLogReset",
+      "hash": "9ca63767c956931cc210309ee654a8d392ebc7f74ef5d89bf751cbdddaab7c8f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "playLogChanges",
+      "hash": "e31d884cbd35acffe2289091141515ccd1d314594781fcc4b430f506d9fdc182"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "playLogExport",
+      "hash": "d55edc9ae245c55a51083bf44c4b32498ba3822d911b2d041ded5c67023e2c69"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "playLogDownloadButton",
+      "hash": "81cf1dc514a2c84887bea6b9e4af492e94fe37d3ec28d635ecdec577941c5717"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "9e5dc357e053171301e92a4e8f67627a5d05eb3b535bd4efdb309c2c85729adf"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "a55a15cc1a8e48c39c880fad686a94dc0f724a11b2b8d55591b344baa68c3036"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "8a078bb730a16c20792744e459d527d17490a79b2d9ab69e83bfd4d7e7f75e6a"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "setupCompactUI",
+      "hash": "a824e6016ef423100ba2bf60221f49e54478910ed4f64a1ce33be30c459d41df"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "054e06855f42177ea58a55c3b94868ff91cff9a95dc39d02c02fd0ad2aa26766"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "e8d0c8d6f72d4cf793a7c8fb8da6db592e223f11125731f5b91adac607cdae7d"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "5d3599a8d04168462a2f7bf4369c99123b14e41711c8924308bcb9db11209166"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "f1698c2236490f932d3a5fe0782acf11dbae2db4ecb1ec75940c4aca30b7edde"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "d61ad2e359d8df1b7b0a9b3d121616fc6ba3e102ab9453f5cce565932bd7d3e6"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "8320effb588e174af75baa42af14c7b321647ad5e0a1009dc57d1e3a9357666a"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "0f63f91887080367744a2c381518c68de2e5a3a2544bd7ccdb3523e3a9716045"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "82ccaf979e084c15065b0b676362ede5a0074503d6ed5e4c86bf81092f4f683c"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "06001cc4bf593be58fdbd5c41512e198990d1a17ae62675323e367e85d0a2e71"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "forceRealOnlineLobbyScreen",
+      "hash": "a480af989988cb40dae7ce89d87f518aa078ce443a48711ab0022e18eb9a5592"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "returnRealOnlineToLobby",
+      "hash": "c148e2c50e36b5f2400b72899f8e1d765ccf6cbd57215b054366f981a91678bb"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "confirmReturnToLobby",
+      "hash": "fdf1d0a8860bec46ffb9a5073938dcb99b9b8e0d20c98a312afc4258b4b042e8"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "returnOnlineDebugToLobby",
+      "hash": "0b21ebdcc69aa1a3ba03d0237b87cacba3f85c0a4441f1556a370cc36dfd0277"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "be64e4c4ccda1263902d58825e8a9fd7f47e60a9f41ca0ab254a93b00394fb54"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "closeDeckEditor",
+      "hash": "ce5f286338e63689cf92ef21d52446119f46757d8bcf8f37aa2020680afe13d7"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "1b9f6e4d6e103af9a6993ef7fa0358fd6697585473d5fa2242689f58fa8bf4d9"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "f2a2f668972e98cb8c9608d745e2bd191cd87e2804fc26c5ed777bae76855f87"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "cd95323c5d77a70d2d28020da284dbba0df39f8b81aeed9a9b980672fc03036a"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "be36fe74115e344dd31fb9b62449f71667c588d929db5caed3a90140a835c322"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "602627ce6cd3939a9e06a3bc3a2aa87273f1b9b4381b3f5d744ca1242332c500"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "d07434dcf051bf4bae157fca7c8e699a8b66a7161ac1632fd6e390b8cc164aa2"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "4696bb9ad91bbf407457580004c06df9502f754ebf10f399e5db324e38ac12cd"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "39336857bcdfcf1a426f19e113e90c8546528a241b775a0a882bfb478a770e43"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "b79e161720a82c14457bd90703fe83b614d1aca84b48ab64da92fcf61c1cd75a"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "7df6a8eb5e3fd6ab5ca6d73721a36acfac85a8f81ca155b30686eb6e34f2f59f"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "2ac5df085b46d5e6ea228b13a7903a3fb76ccbe32a8680f0cdaec5e4fd01ef13"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "openCardImage",
+      "hash": "fbe58e25f1be045898a88eecddf619f5f461d612dc46de4633300526ba72c33e"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "3390751ac050e9931c5edf221d199afad6d627aade1c2aadd4a6b9d3b9d9c2cd"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "e3ce80989babccdd13e470ebe8279945dc0e403b60513511d162defb2eb59f84"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "b9deff16ae21f9b3d66eded4cb477d5f9f8f522b87161c0a86e1667cb8576fc5"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "6f34c28600bb5b37a035036b63499aaf78dfda77a673cd4522c2145695d85773"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "6af03c54959abf1d50671eb3ec668a60f4267c3b8739fa62ef6828490328c860"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "botMatchMode,botBusy,botTimer",
+      "hash": "edb3832f82163dd265546485d10d3cbd9f3e83680e6ca37c4b3ba3cccb23af34"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "debugLocalMode,onlineDebugMode",
+      "hash": "d7f4ff70f80c3af4f946ec10855e3545489af78a20301496389a477b0800d7fd"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "onlineDebugPlayers",
+      "hash": "72f9b1455b78c2b8d834fdd219e4647304494d85a862d80ca495aca8e2c3d4ca"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "updateDebugCommandVisibility",
+      "hash": "8791220fa9bbd46bd3cdbcd659a79db9baf6cc3014241bc576eae29274f23f9d"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "4069e283b92d09f2b5c9955e72f0b128e0d4dbd3e36e9d41afb81c3ca7a86d90"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "enterLocalDebugMode",
+      "hash": "3739b0af55b065c99e4ef18cf9e44d99544bad0ea662d0bb0a819d0319b62f72"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "captureOnlineDebugLobbyPendingSettings",
+      "hash": "637ac9b777aafaa61be41ab945ea368020d36a2b6e671e21bf32cd0a37cc9ae6"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderOnlineDebugLobby",
+      "hash": "4a599b5f003dc6af4dc8776dfd34e30e831c96d0e315b063d664b9c3519751c3"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "onlineCharActivePlayer,onlineCharSelections,onlineCharPending",
+      "hash": "2ac404ee43caaf23052c6b29bec15d7a3fa5b62d888b835f14cddcfe2064eaba"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "onlineCharacterAbilityText",
+      "hash": "c256d52ef68354aa9a483e4944505f621f53a92f4f12bf558d5246b5f5c34798"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "onlineFamilyTaken",
+      "hash": "dbfca8d8c10aa0e42807c9c53ee6f6cc398edfca718a892e944e94751cf6f154"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderOnlineCharacterScreen",
+      "hash": "d6657538919534bff617b86d85b323356c019694f930ff4d8ef860fcac5f41c0"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderOnlineCharacterOptions",
+      "hash": "a88afa51f91b38f1c914fd9e3f59b86a8dc51551d578e8cb7f21806b52d3f268"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "onlineDraftPacks,onlineDraftHands,onlineDraftSelected,onlineDraftRound,onlineDraftActivePlayer,onlineDraftPendingIndex",
+      "hash": "7ebaa534b55d10e48d2ae71ef78224175c248562406107c727934d01b3d1dd1b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "startOnlineDraft",
+      "hash": "ca59b37dc1c1de698394542625200db06be93fb8a15bd57f645f607134a82d4d"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderOnlineDraft",
+      "hash": "b8b96826c1657e1050c0e29b108f8b16ce25e477b953f594704c8bd9344ad912"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "confirmOnlineDraftPick",
+      "hash": "030d929f29803f9853f6fe155d0978a3fa02678f82355fde76cbf6152ff3be77"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "onlineResourceChoices,onlineResourceConfirmed,onlineResourceActivePlayer",
+      "hash": "6ab16b30bb0182020c70385ab364c53a28b76c786e6b9f4646da9e1ccd43bc24"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "syncOnlineDebugRulesFromUI",
+      "hash": "f583058cf6fadf7d514b99f230fccf4afe998746620e20d5e60e39feda1b5268"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "prepareOnlineGameState",
+      "hash": "d069a4df5e7bd14f923c91b2f7db31b0d36c12148e30b90239f1ab1167710358"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "startOnlineResourceSelection",
+      "hash": "f7d61304afb93aef46bccffbc637ba39db5ce6663d9291a45b6523abe9278eb7"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderOnlineResourceSelection",
+      "hash": "5868f8888ac43341f2a9d2603d2f2e8190df22fcf09895b25c2f067d7b501a1a"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "confirmOnlineResources",
+      "hash": "3e11e7040647c4e1b30d083625d6157156b47c46fd3c57840045064e49f070bc"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "autoCompleteOnlineDebugSetup",
+      "hash": "6c54866c6ce7dc7c67482281a396b92c52443ec5d62fdf9f3985accbc002f101"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "openOnlineCharacterScreen",
+      "hash": "e2d8632385424be552d0d2d5361f7a89ff3516499cd991d16c45a75fb936db9c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "closeOnlineCharacterScreen",
+      "hash": "5f79b30b077f235eb9de3c281f9a37cf29892d2109861cfc549fc4d415cfc49e"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "SUPABASE_URL",
+      "hash": "2acd323a7e41e215041500cc06f5b3238edbda3bc0bf6b8141ae5b31050bed35"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "SUPABASE_PUBLISHABLE_KEY",
+      "hash": "a7c0dd8646a43dbd96a69ae5678345b1866b95ba869cbebbf511b4d79cfb84f2"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "sbClient,realLobbyChannel,realLobbyRoomKey,realLobbyName,realLobbyClientId",
+      "hash": "22bb5ca87c63157a5b035b427f224553ee252665d5d11a52ff43ca67ee5d7109"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realOnlineCharacterMode,realLobbyCharSelection,realLobbyCharReady,realLobbyJoinedAt,realLobbyCharPending",
+      "hash": "275b28b75a48bebeb60316aaf207c308992675e5d4ef9b52edcb55727727b78c"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realOnlineDraftMode,realDraftState,realDraftPendingIndex,realDraftInitSent",
+      "hash": "36e38452f336582ae6c64552e386838d3b824c019324e6920ef4c76bac878304"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realOnlineResourceMode,realResourceState,realResourceInitSent",
+      "hash": "bcb82d24226133c708a6952bff68f1f7c080c1279a2c74c6b0a5bbfa114030e7"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realOnlineMainMode,realMainApplying,realMainStarted",
+      "hash": "ec6d23f2712270efc8a7006a920cd7537365dd38afb3baf66ab94b8746d2b5be"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realMainRoster",
+      "hash": "c8c018dfe51371720e2db48335c7ceb8b72ec13d4a2760292c46a5eea44666a2"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realLobbyPhase,realLobbyHostId",
+      "hash": "423014ae8bb36244f8c6be0876c56cc34432632b5ad61ca057abcccb11392c1c"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realOnlineDeckId,realOnlineDeckConfig",
+      "hash": "c09865b672b092a3ec0fb1ad969e8e2899c43edf0d07f056df97acdfa5fcb975"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realOnlineDeckName,realDeckSubmissions",
+      "hash": "80575c65e74e248f6236e1896c96ffa2a23a7bfb4f967e259173444e579321a7"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realOnlineRules",
+      "hash": "beaf1a83901a25c2945807d28a845e57137d009d17c67aa55c1d3ed80e78437b"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "REAL_SESSION_KEY",
+      "hash": "bb5f91fad8ae50690cc331b2b9812c6d1c5d397138f56d5fe3b36a32e9581a9b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "makeOnlineClientId",
+      "hash": "e20650906afc7d01b414a65950a9ed41e6752f237a8bb12ac2323f7b1c97f646"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "makeRoomKey",
+      "hash": "0ec8d668e623047ea4bcbc6640ff14a8ffdabaf972f3f1fecc149e20fe87bec5"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "saveRealOnlineResume",
+      "hash": "d26fd0dc830c8961b1d651cae259431c1fd377fa723edbad42121924dac72449"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "clearRealOnlineResume",
+      "hash": "7d9827eb6f0408990ed75602ee4ad88798a3934098910a11c4bee67116effb0e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "loadRealOnlineResume",
+      "hash": "9c34782180c5d3126f4a586c3532011f5f86bd6cd8265ac86e1774532cf50731"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "isRealLobbyHost",
+      "hash": "75dd14ce912ad7d2d52edd2801e97e3bbad96438229ccb1f26e2ca3e4072e677"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realHostReconcilePending",
+      "hash": "fdc946b99de412c0d811c0c4dd549de7861770f0c8baf75eb0663e51e675967a"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "reconcileRealLobbyHost",
+      "hash": "66ccd2cc49bc676fdda30a2459238125845cf81ab4e3003f4d95112d0c10ce44"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "setRealOnlinePhase",
+      "hash": "4ac72cd07f45e0660a44aa0822f6bb5551226777e5869db497c8e667407cd72a"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "broadcastRealPhase",
+      "hash": "393f9c3c70e4ea77805c37e35e87e3af81c0d4365bdf362b218c84f2353ce52a"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "ensureSupabaseClient",
+      "hash": "4302d0dcbd4dda8c101cb98f50c8a498a37fa7c80acbcb4e431a0f844c96b794"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "flattenLobbyPresence",
+      "hash": "5622f90008765359b7c18394f9be921e02417dcd80a9afa91d2d5c0e78a650b3"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "escapeHtml",
+      "hash": "307f5dea005b6020a783491d37f1a1f18ed9716c249e2e9fbe12a93759d07d4d"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "setRealLobbyConnection",
+      "hash": "8b1283eda65762279b90bcb3cce54bbec32713e52e013bcdef27dfb4ccddb0fd"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "trackRealLobbyPresence",
+      "hash": "9324353f7f3c13efa1fb87e5f9791823620340b2807b0906794cd29cb421b29e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "realAvailableCharacterFamilies",
+      "hash": "a50d8ecd99599fd5b2a0da48093227a7fab5846e0b3c0628560d6da646fd6a7a"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "realCharacterSelectionAllowed",
+      "hash": "20e485bbc89a6fde00c1a5d724c0ac056a4105c9c48496d872a947aefe091aed"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "realFamilyTaken",
+      "hash": "7dc3932dc3a90f13e9b90d8f49b7002edb2ec47eaf213d57cc4f343cda7a80e7"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "realOnlineCharacterDuplicate",
+      "hash": "622b84dd28696a0942e6942794bf4c0e294febefac7378a2b260be8ab6f08ab2"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderRealOnlineCharacterScreen",
+      "hash": "d9cfc41b5530acf593f877f41994ec2be25748d3e4ede26e990f89f49a27fa57"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderRealOnlineCharacterOptions",
+      "hash": "4cbe2c2948c770b8f3d379261528059594e918cedfe7ef7e4797025d659ca31f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "realLobbyPlayers",
+      "hash": "67367458646dd0ad9b84e8feeb6b8decec5faffe2f9eec35ddf879f773428348"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "realMyPlayerIndex",
+      "hash": "5e33ff789f5004ee41ecb3474fb63637bd18716833cb131b8540c545064bd991"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "realPlayerName",
+      "hash": "a705ddc87b273de547638d043b1012cab696d3642c3e0ae8fb24d83f51e2f7ff"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "stdCardFromKey",
+      "hash": "3c28c5b7be7165ebd9c35ba696c54998dcba0c19775a52d8bd7eb8792667f7a2"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "makeRealDraftInitialState",
+      "hash": "6c47c8f05d8ae6399f9784efb75b39d4ef32accb44abcd466062a998d9af2b69"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "applyRealDraftInit",
+      "hash": "63b788542a2de903863cd37189f773884f5563071454810c036aae60469eff61"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "applyRealDraftPick",
+      "hash": "dacbd3e62c81b8cb77cca268b040c0d7bba67c9a689785e5b9f3e31affcf254d"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "maybeStartRealOnlineDraft",
+      "hash": "0efedf2843aa5f3e4bb90133e8222244129f4001a81e4214d5d152d421a0764f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderRealOnlineDraft",
+      "hash": "031a7274c41d5fc94414ab36531dd979b5ed94107b1e903e40b39c4eaaf131ce"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "confirmRealOnlineDraftPick",
+      "hash": "c90b3386f292fd4e7a294cf1d3b23062319342eb54794f221b7507ae23e28dab"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "makeRealResourceInitialState",
+      "hash": "1ad3b947cc12fa03ec9f65e45bef46494b5fae14a428c504fd1cb52133584b2b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "applyRealResourceInit",
+      "hash": "ef3ef47db20e88b8ddf92e8f89e2b45275fce9ac706b7ef2a7aac5b59367ae18"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "maybeStartRealOnlineResources",
+      "hash": "a1f3c3d724e70650ab57862d9d01568e48d7325f4d7d902f41d98e4aba98d6fe"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderRealOnlineResources",
+      "hash": "8f8ba369656fce4a0ce6249457c09ed10584714bc1a13c10603b67117ffbe814"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "applyRealResourceConfirm",
+      "hash": "36147dbc11db20baae4abdbbdb446d89105fb7a590d2669da488eacd5da7178f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "confirmRealOnlineResources",
+      "hash": "77cced1f3b241d0ca182e4a5f3a29ac706be54cb8e3a21aa66ad292fd0b9e50e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "realMainSnapshot",
+      "hash": "de107942431646d6711c552819675e0913eb2103e62ef6c50c751e2aceb8c34c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "applyRealMainSnapshot",
+      "hash": "1363c0aa60a7326a42d9deff258e5a9b92fafeeee6b0c291952a1907d53e01f7"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "broadcastRealMainState",
+      "hash": "28ce4512dce66661e9cc96a6fb98c4537ec2dcccb956af8be598a269bdc8b693"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "broadcastRealGameFinished",
+      "hash": "4ed1f56761177b2bebeb7a08909d9a6d2de1333c74e311eed33f39dd2e5a440f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "prepareRealMainGame",
+      "hash": "1323d3de6623814795e54cecb33af1ca43c8c5be9db2bf8024985abd46dbd8ed"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "maybeStartRealOnlineMain",
+      "hash": "d74ba68b5e7fc123c0d4ab717d3204b536cd8ab9adc865aa74bf60841209e2af"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "110a5da00334f0fe794ec0bed0aac725f6991dd3a4b5b64312a5562f3592e6f3"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realMainBroadcastTimer",
+      "hash": "68f775191176af1ff64950da71dcf499502f3691f4e2ba58cf021e619efec867"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "scheduleRealMainBroadcast",
+      "hash": "4010bc647d3532556ed714d6b601697b97bd6c376a982e60f186e1ec53ce2b91"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "772d43490450d16efd23493fbdad8df9169b5cd4afae2b358e6cfa1dd99bde39"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "openRealOnlineCharacterScreen",
+      "hash": "3f95e11da9a2ac12a43b70a646fdcfd396e680c66651b945349fe8678d8674e3"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "closeRealOnlineCharacterScreen",
+      "hash": "042c8a331da51d964cfb6f1f0841828fa8ee25a6ffe0d0ed61392c46a5c11f65"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "refreshRealLobbySubmitDeckSelect",
+      "hash": "ee1ffe5bbc9e85f08893c2fa529fdc9c9df028b85a69061e78cfcc61f7c646e9"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "saveSharedDeckLocally",
+      "hash": "78b60c230763cb6a91b7349a28fef099eb829e288c21e26580806b86c6c6129d"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "submitRealLobbyDeck",
+      "hash": "2ac10f0a483133c52851916bd5bce339bdace15d8ba6e47976bb845c79e84dee"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "selectRealLobbyDeck",
+      "hash": "1fbe85a97b4730864353fdaf48d809e6d970402c5ab67eb18543f4523c183249"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderRealLobbyDeckCandidates",
+      "hash": "88fd4e08b84a555fb8fedf344a60436fbc43d45130be4e3487e9befd33b65216"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "applyRealOnlineRules",
+      "hash": "457349a418619ca06607ca492c722ce7f5a25f6dffb297332a11b3dc9c1e8267"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderRealLobbyRules",
+      "hash": "e12722ec72f314a23796685c3aec2796df89e29d9b8bb27acf7fbd0fe24839a0"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "changeRealLobbyRule",
+      "hash": "33fbee3cb3f0ea103e56d58c036d46ace1eea0daf116c75605e3ba616fd2d255"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "broadcastRealRules",
+      "hash": "4cd03a249ef5fc72e7d8940e5e0199c100bded24c5928e58be642f25ac0950f8"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "renderRealLobby",
+      "hash": "fa4008c045490e4106915376259379c7e7d97e2ebc1da36613e2121857eed902"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "broadcastRealDeckConfig",
+      "hash": "2abac17c00b7349d5db6f3a1d97295a828f090a16856bda6b82f47be5c7655c5"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "sendRealStateSync",
+      "hash": "a76323606f64a7e5727b672d321cf11692d6bb0a1553d74971589dcc10b1d191"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "applyRealStateSync",
+      "hash": "180772fe76fa46d6d937aedaf8d930573e8a11928ed1aaab02fd8598850066ed"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "enterRealOnlineLobby",
+      "hash": "1bfb5731dc42e25f2695f44e8816fe30d5bc26930623b89b2cb5a01dceb29e24"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "teardownRealOnlineLobby",
+      "hash": "af0a84b1f1ceb7fcb575acc4e6096e09bad5c109a6a492dbd76866dca5bfe818"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "leaveRealOnlineLobby",
+      "hash": "ab44709096e6f94319f927485ed604e766e594f92c618b25c5bc7356aaaed4b7"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "kickRealLobbyPlayer",
+      "hash": "3ddf9c4864c46f01c6b11267575d623e65bd2a26f9a2e4e1ce13b9b304163613"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "enterOnlineDebugLobby",
+      "hash": "f64cdfaefa8b558a68a3b6f567ebbeeb41690d57afff5087bddbd2f4c183b4e0"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "leaveOnlineDebugLobby",
+      "hash": "7c79be74f88e1cb8475e1c6397bedf68b9c96053ca9b101018847e660f100a3c"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "BOT_FEATURES",
+      "hash": "c5f9e15ee21683782bfa41ed4978adca7e397314786286ecca9661307d11db9c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "enforceBotRestrictions",
+      "hash": "25682667639434154778b31a842b294712f25b7493a1d8727b476155224bccf0"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "updateBotLobbyRestrictions",
+      "hash": "41fee5988b33b372790e53fed0758c98d224b4aacd5d4e04447c5b621f847252"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "botIsPlayer",
+      "hash": "e990da83062df51a716db64e9ef228cb7559e261fe8c92708df01ec006a3fdcc"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "botGameStage",
+      "hash": "3e480eba085115a5d70c6dd4bfc22de77c7afdb2f9234b837a25d4b2363c06b0"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "botStandardPriority",
+      "hash": "2510264e09a4a5ba321b4adb9a2662bf548bec6ce25a62a3f4608b7eb1462b16"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "botScoreCard",
+      "hash": "54db8c1c3ba4cdb17714f20d9339d39b496f558c2daef27d8c2772c57b000b04"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "botCardNeeds",
+      "hash": "ea0096e9103872d360e7a2fc094a498861d0ba2b6a989949c9f541c4cc97651a"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "botTargetCard",
+      "hash": "1c48081110958955d1f5045b6ea4cd68c5fa65c7f55f414e6792dc4b1c6c94f4"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "botChooseResourceColor",
+      "hash": "cc25d6bdfa132b78d75b5a8dae61722acbbeea82e3899c44231dc27801ce906b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "botTryHire",
+      "hash": "2684563e53c0f74dcd5b6c8ab3d491e79094c9f83c86eceb2046fcbf51286d8b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "botTryScout",
+      "hash": "c543ae73597f2ea98a8d1d55e929819723211c6e77ba2841183941c440b0fd58"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "botPreferredColor",
+      "hash": "9bd4c13f0246c026c56ce168524c6644aef6c0b0800992bd5fa90f453c361c63"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "enterBotMatch",
+      "hash": "57985b0e7e15b0f70cc4ba8222f3ef6fcbe64c705f02ef6f58d51249980f0fb9"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "botFillCharacters",
+      "hash": "195219df8736d3c57e40b92208a180e7ce52f6a4abdf0358a9b70a72b8e79ecb"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "botDraftTimer",
+      "hash": "2263d0a60aa13cd5442d6b1564542b73885f9757986d2b1957d53b1665b77249"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "queueBotDraft",
+      "hash": "e9102aaec762a7c71f370cf88f1f03a854d7f632b64167306d5213b6369ec737"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "queueBotResources",
+      "hash": "de93ab83e09eeac3609b1a0346aaf796cee7da455cb714752fc2cbf6605fd586"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "botLog",
+      "hash": "b5725e968c5d63d9461d6e213ac0a41d7ca6d78e3a5849b92d11423ea46295ae"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "botResolveStart",
+      "hash": "031c1299483dc13559f930b19f65b58f726aa9276220be173d61ca5168f88e70"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "botDebtRepayState",
+      "hash": "6deca0fd83e6c991d49f7592544acc4a965aab67eb9baa1f71603b21e4807bd9"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "botTryRepayDebt",
+      "hash": "afcea9206c52e24338dcc2113d04934284308edd4da90ef0867d6aee072a07b7"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "botTryExchangeForInstall",
+      "hash": "a0d723749f748cc9c02e83fda103318d23bbb3724d065d8d5d08906e892b4140"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "botTryInstall",
+      "hash": "d2912d0022d738746f112baa1c9f7f1aa3e3e97b7bb5021fede9130c5a8b46cc"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "botDiscardOverflow",
+      "hash": "fd1966e36507cd16526eae2cd960699a2e3e14c84de650b7803bbeed0e1d48c0"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "botPause",
+      "hash": "90bc389f1a2a56f06164eacca5dda184e3ec5bd463548f6384d0497f3ea05021"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "botWaitForParkChoice",
+      "hash": "d9d108e7db10e31a2d556edb36765fc44a819081ef07f38c332ac9b73c59e28c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "botExecuteTurn",
+      "hash": "7f81bc4eb16469e539f4d6063ad8b4725fcb0f5a9230a35737b1e0a28f491e8e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "queueBotTurn",
+      "hash": "56e19d8be93cec01941c2cc3be7c2b88ca85ba1c599a84937fc24cea2dd2cd65"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "botDraftConfirmOriginal",
+      "hash": "ac0c091f1bc448388ee39e655c2f8de60d16ef5d8c7bae967d56136734843e43"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "handleEntryJoin",
+      "hash": "55ef0b2058ceb9e2533a3e2434ad6f50ce280b73d5d4caa97f5f5ae0034946f5"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "initialEntryName",
+      "hash": "0a7d01b33b954a6ecd97ae8293d4b846d617eddaacdd893ce86b9faa0b55f7ef"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "7571db773ffba00f2d3af16096a19604f0f528bdf5ccc6bc686624e612693ef3"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "entryJoin",
+      "hash": "85cd12c215550daa1c0aadd3916ddc6c172af49e19af1c416ab3d05b6286a25a"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "44cef372df6bca1c83241ca889644c3cc20b37ab98e09d7696790085dc46df26"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "leaveRealLobbyBtn",
+      "hash": "38eb9e64b7023d0d2d4bae5992984f83ca86b8fd55dc56b805347d6e3f57aed4"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "db061a2c70198e80f657aa6dcb3bbd06ab195a418a1454cc3d193257ccda14ff"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "e5d77a1803e2f612a3be9e78fb2d14ec0a0b0337043a0a71727acc059ac5bb69"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realLobbyEditDeck",
+      "hash": "1bd183d2fc4b50fad2eb8294d70edd1c5a977f5c03bc62db108d0f29992d5203"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "eda938a4388edbb34c477aad501771ebba4fb66bb7c61beb0c7e3c9b7aaf17cf"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realLobbySubmitDeckBtn",
+      "hash": "903ea955de1c642005c7b62825d6e1f654a18e755e1e5d8887c085dcdd73d904"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "b1b1c6a269d6ee73432486bfbfc655cfce5d6ba3ba5d37a4418c85cbcbc5115b"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realLobbyEditDeckBtn",
+      "hash": "85f79fccc7b529311cd18f023b75f2b9183c9af27c6b960f9dd4a4ee8367b0b3"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "7b392406325093b318ec6ace41b18404b526f7bd7ee43265ee737df8a7b2489a"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realRulePack1",
+      "hash": "62d67beded78b6ad434d84cd21090ca5594fee67681c9d1e8081023911a9d650"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "c34c430962ce5faa87a3e2d5c584bf54acaa01fe5f1df884dd54f5a10da5db35"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realRulePack2",
+      "hash": "ddddd0b0b34c5ba4da2b6d37013e3a367708d93752e58277c6897736998c92f4"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "fb55a1a4a5df2bca6af88b07d7713a3289313b90b330faf80bf97553a859f868"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realRulesPack1",
+      "hash": "74ef362417ce4afe0b6ad61382fe6efb7e2cca273e5e8b7b58353b73d00a87df"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "5a9b2b37d7a64b14e5cf721a9d3dc0bb19dc26647a7664d9e8f61fcbe0139b42"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realRCMode",
+      "hash": "bbc8310607efb83e1229f9ebd24e4e49d3c06f2095b263a4b8b309a535368add"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "086f846ec63f72fc08dbe10432418ba1c89148e3f418f9e540a81fca208d1aaa"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realRCChoice",
+      "hash": "8d1401aeb8b7c059e6d16f2a4b4c320279dbe1d2066f945fa4a777042c491ce8"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "ad2d0e47b88457d0420a67ce6fd62dcfd207938a208d4d2692ebbd5a40f1bcce"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "0909b04e1fe18a1e024e88798fb6b497ad424a1c5d048f4e1497fd82e32614e9"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "dre,drc",
+      "hash": "b8614ee8415528c72b920b041ae2f8b72ed472c1df7b92ce8b2638acc660dab2"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "810829bc1e59bec9992360a1656c0d521ea52f784d1c30c30777dcd11d300901"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "ee6e812a2c21eb17393a870481cd65ffdee1a0817029f34343acbecdad0d426c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "setDebugPackEnabled",
+      "hash": "c740f725bf57e9b29bb71958b4f6e4d2db8461b16e63590506565f7fe7670b6f"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "debugPack1",
+      "hash": "3927335deba1df0c666a62c398598bf93be15d3e19b8a5f5e1bdb273afc26c28"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "498a3c59d073bef7cfd3ad8588d8211c5c1d781af100c6aa4ec45a9a9563a3a7"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "debugPack2",
+      "hash": "a983cdb3c7dd510242a7ce1fe405db1f9174a722adbf5116ae1165366650249f"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "6e83638b81f7f1b0a414998d27d139d2d04c1d8315e23ab9c0d476e9bd2cfd4a"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "debugRulesPack1",
+      "hash": "9cc4192e762c103c056c677a49652976b7e24d8649444ce751d7f5172412a05a"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "10fef5ef3206a40014625f1899a49e65a20c9662ddb13eba05d9e3d53a968a10"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "debugRCMode",
+      "hash": "d66aafda40f57bbee6eebfc1afd2f4b5eb1b0af47b904db74b73983bbf401e1b"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "bbf28bace4e1f5d038812ffae74cd624725f6c63aa43b6cb3d7c8cf2edf6b814"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "29205e7fd4c1ffd3900257699f6d42dae87b5b553c2692ecec8b52690cd32175"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "debugRCChoice",
+      "hash": "8d1225d9568309aa93abf527737a4e3ba8f060d3bc3b6816d51544417889eae5"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "9ebd72449b869dc4aa297138cb3b7f1c46e621a51a89c069884e202c58451f6d"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "onlineDebugDeckPreset",
+      "hash": "895178c4ed3e6c97603bfe10a780d4097cc934230c639cc18b3f121f27d5e86e"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "ec490a4fa66a0591a7203c905444628f36e330c32c228f96b82cd74ab6bf074a"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "onlineDebugEditDeck",
+      "hash": "c0c4f13265bc313f6613435ee3dc36401ac59360be9ca0718f2aa0e4ce7b6d27"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "c85e06e7345cbd26e4b2619af128f269d1b8d711a926384b443d2174ae33ffc3"
+    },
+    {
+      "type": "EmptyStatement",
+      "name": "",
+      "hash": "41b805ea7ac014e23556e98bb374702a08344268f92489a02f0880849394a1e4"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "realLobbyCharacterSelectBtn",
+      "hash": "a2f8178b5e46a132586a8566c1b51fcf30ab5b8f65baccc4815f0ff5db1fb41e"
+    },
+    {
+      "type": "IfStatement",
+      "name": "",
+      "hash": "e8055d71b9911ef2e4ddf1dc0ad3e5ea7a198e955b018ab18949c9da5d30d7ea"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "09e1c1ebd23f6875b8f758481881934e66e5f78e6a91a0513c7b5241c432bf69"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "9b042d06e27217244f9b01c2e83f4c87fb696811e08cbe08751e8a74f27fb8a8"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "57c226d19fb1c82c160163866ea94fc631ad7d64d01c3052f5d7ec808f8fa55b"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "c05464d981c355d6fcbbd39875d1ec330d4d9a511e154d062b9ac6c6a30a8e4e"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "8850a08c9e0026a1995ea169145d032983bb34ee53c1bb4da102ddb6d882b782"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "fb41066b2c771da785fe4736e0c2c3458fd5c3ee82ab9c12f7912ae73dc1defb"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "87501a00769403d7f3a85fa026fa4093eb81e1911866d3c121554912167569a8"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "b7c92c09658166092959b4cd2d77b0a20df9ab5837cd41e705ea18d3553c2039"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "cea5c751e9448a0b060d33e433591a33a55e7adbcdbebaafbb2a3db38719aaa3"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "d8c701deafa5542ad791410f7203bce405bce570fe9e5498feaf4a9568412059"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "d1bf468d888b6e603ce8175e4742c99df563868a0e3da1d1ca3e5c04ea2fb318"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "2e90ba79ecf47e031f16441b1ff1ea32caa5f4829ef45dc48389d64ed4a288cb"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockConvertNormalDie",
+      "hash": "311343f55df9264cf676e41300423ff8407c9f75d100c2e384fa059c2cb4de6d"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "turnClockState",
+      "hash": "cc9c813795b52578ff21715f7f46c8462f92735dfcf727c1f2f43d3633ef6608"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "TURN_CLOCK_INITIAL,TURN_CLOCK_INCREMENT",
+      "hash": "c423d9b693bff69cfbde339e93c31ef099cb1efb08ee19a24f8952d046256858"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "TURN_CLOCK_CANCEL",
+      "hash": "144a5f110dc43efc2ab1bcc1de021e84f598363fa643edca9688e07e3cfe08e4"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockVisible",
+      "hash": "e042f7f6598c5577abf8f4349457dc8dccb810475a1885cede082f3dcfce7890"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockReset",
+      "hash": "fa1b04934637f11c3e456da6a5ef3b05ae94d38108611cbae5e84cf1c1bab010"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockAccount",
+      "hash": "094a4249abf3737c11f8b5159b8bf6074ec6f6afb647b95f9e4355053bfe8e6d"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockBeginTurn",
+      "hash": "7c77fbd53c9cafe099c1696af58d043e9d0a398103d1f1d60e99c4f1a76802de"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockStop",
+      "hash": "aaed9d0076589a7de2834a745e6f9311e3a87fd2377bb40bb13a91426b1219cf"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockLeaseValid",
+      "hash": "3fba5ea6c9d5ac23f12a5e1a67e46de16a31a250a2e51aa271eecad286a637f4"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockBotValid",
+      "hash": "80bd7844b936f0926b28d7fde217924347cde26c99498a06a74e0f9bd455fd75"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockRender",
+      "hash": "65828f745d48236bc6a717a6b327fbe960bafadacb588157cf3626e787131c80"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockTick",
+      "hash": "6f812af9fb71006f54751126786d9390b25da13bb11ec67a2c6b61870a05bc8d"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockPrompt",
+      "hash": "2f34e4683c50ac244690cbaa6e201b1e042011a80b32d5819284796d76f8ae3e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockConfirm",
+      "hash": "532d312e5b9af144d6db5667f443b0588a30fd883f08d30fcc27ae8645dc85f0"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockResolvePending",
+      "hash": "2aa4b00f9d4e95a3b4656d0e39b1ece0b743e7a3a5e6467938e0dca9b128a21f"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockDiscardOverflow",
+      "hash": "c8dbef865edd3aae9f7a116bba9058323f1f02bc0ee2409aae23425acaeb5ed5"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockCloseChoices",
+      "hash": "ee8d6b32a0ed5618d3afbf7fb1a284610190cbf986b4625b0ceedbeab0de5482"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockExpire",
+      "hash": "d683e55e346c9359b8b2c55e0cafe31c31de96bc13285f6ba4480dd39f214b92"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "completeEnd",
+      "hash": "6e408e055adc0ea512e6a9823d11f9a5d9d699ed46f2d7bee59f5b5df81af365"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "62a4522a1d9ca7e70941fd1891727dbccd628076db41ce3ec2635f3d40382ebf"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "1bf24c3af774debdc3cac5b6cac97eeb431b931f90b9cdbefcf99f8deb218898"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "f5b43ba12eb6114d7597751f0ce31b00f5cc4796f66c0816e36597df26c34de2"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "d3e9337b6cbbc04d36737f0fe97f8d5af4eb067e2dcf7e32602d76815e098ccf"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "2bb0021e9132073b7c06f1c1b34536bc8647590bff5d4a57a361f408bf525390"
+    },
+    {
+      "type": "VariableDeclaration",
+      "name": "turnClockNet,turnClockStartPending,turnClockChoice",
+      "hash": "79dc5a697a27020add5578df7fe31872c4925b5e421a3389de7f23c1d6149d65"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockResetNet",
+      "hash": "c4d0d23a8c553d3ec92b2722c8568d442e0ff4531ba05a95507d79d85a71185b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockNonce",
+      "hash": "58111abb47ebe6ce6f9931c40b2253c7ad364915fc25c148c97e25bad16ed803"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockClone",
+      "hash": "60290393a4327f4800975f5283efd4a623114aa90306baf9e0fbac1e18e94073"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockInitializeAuthority",
+      "hash": "d5a2686cf6c8c1c87a90c1bba9f7be5a39357fb084aa20701ecfccd24866c3b8"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockSnapshot",
+      "hash": "c5abcdba4f115fec22079d3db8f55ffe4e4d4b9038ba9aa9573dc8697b18bdaa"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockValidMetadata",
+      "hash": "894f2e362de2a2856ca2622c297adb6232a1051f0de9d14d45887e0671282606"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockImport",
+      "hash": "59a3d25ea802e585b3c2656518f0eaf993ac3ff4442feaa8121cfab0b39d4e01"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockAcceptSnapshot",
+      "hash": "03e998464bea98d103f7f29c90b0f50fc37ed9cf15d4894ef038df85fed45fbd"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockAfterSnapshot",
+      "hash": "90b1d5c053e1358210db274da7b69a9f57c0b1e7a6b3259953b38298f5e980b9"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockRestoreChoice",
+      "hash": "c3a516d1867e502551ecc482e5402612300802880354fcdec0495dc2995e1f74"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockStartOwnTurn",
+      "hash": "0a79ac66cab5996ba9b71ed2f6d9106fabfea4c643c211fee5e6cf8ed0b1930a"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "beginTurnForClockTimeout",
+      "hash": "ca72eb959fb29c55017bf2493542e563a89a4f85178477f783b2bc2cd488d871"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockSend",
+      "hash": "b5728a3856faf621ae5afe00a07757ce9bc33980206e973cfe3c5ae10522b67c"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockCommit",
+      "hash": "4fade8451328e02917879ed4aa7fdf425dd7cb72aced234fdab4668738976414"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockResendState",
+      "hash": "3487147be85489e03517d77cf3a1350a2ff78c64be1ff6020684ee4a139738f4"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockPublishAction",
+      "hash": "55a4aac1e69554b523369638c74f287220a35f96eb2907da7a765dba2d298fb0"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockRequestEnd",
+      "hash": "f4e3123eac7e80fd0f1659cbc4052f24a3fe33e5c106404b0454e3a6da1cdc17"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockReceiveAction",
+      "hash": "370a3d096694dcffebeb02fa3f2105c74dfa74f1c593cc436a009b49ea5967d1"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockRequestPark",
+      "hash": "740a2875c48fe70ff661d97ade962a5eb19af57b004ee251c4fb9b09e0c9e06e"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockReceivePark",
+      "hash": "84381dc7ef0916d49aeae1ec91b3a2010b15f7fb45015453af17111c5ea137c3"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockReceiveState",
+      "hash": "a01f4458144799ee8fa2397c2229dd452c05617929a7b58a7afe0c9133730ec2"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockReceivePulse",
+      "hash": "ff7976f3ea0e39d82e1508d9bf334d0442e9af749eeb9f64434a20e0b3a3bb5b"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockHostChanged",
+      "hash": "73e1685bc57466199caca9f8496fe14b4cc6e5cd9c0dca47b3357c7dc4c6ab50"
+    },
+    {
+      "type": "FunctionDeclaration",
+      "name": "turnClockNetworkTick",
+      "hash": "49ff5728c399d81e27ea1857719a8542a61036c35619583bba636e88d82af914"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "a65cf8bbc2a0f10b5e9af2eae98592ddee25a4c8bb7cd8e30d52740d7807f1ed"
+    }
+  ],
+  "epilogue": [
+    {
+      "type": "VariableDeclaration",
+      "name": "q",
+      "hash": "b33a430c5a6dfc34811ea8bc55d7128934ee8169d947c3af92e82ace088d1a2a"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "7557ce63d52dbae7464d4f78086f32c1e4efaddd79305c3b28de2a9d37d49f81"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "8926ba5c92e2ff08d128ca4cf7adcf56ab527b196dc21312aed282e5a4784eea"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "03fd71b0ade6c30b5ed0d1e4da6d269f6792c32b19a2a325329a7b7ec673380c"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "4c33f5d104c4ccd2ae007490fff210e0cb03d50edeca691438b0d2e7ff6ba0e8"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "564b9dafcd68d7853f070762d0087cc3da781eaa59959b8755d529221065de7a"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "2ee217cb2077f5ec1901ff82a9defd05416b37da27a70547573c33f358296d74"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "2093838c7b23d8ce62662eb42405218245b207488f9db2c4fdbb27e933ff6d7a"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "229777a147b8fface407f237845ca79edd2bbdd9a0480e2eeef5f75b2e94c98c"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "3b270b182e7c93a21a660d7307a043887975e452eeb2753b380b9eb827823b6d"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "fff2d6e9ade12fc9ec04a1f0a82ef811b21fb08285ee5a3321d836466f9089f0"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "22d91ea138e5353c2498ef6ec0cbd1de1335cd3273e807e8eee809aa03b445a3"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "f139b0bdadd373bbce741417dc59739f7e2e531d7b6844f64fab3f8d2758199f"
+    },
+    {
+      "type": "ExpressionStatement",
+      "name": "",
+      "hash": "43f6f7c0826dfac953d95d8f5da665054ef69e8818110593941ce34ae9c2c514"
+    }
+  ]
+}
