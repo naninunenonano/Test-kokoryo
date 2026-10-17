@@ -109,3 +109,77 @@ N15は既存のScoutと通常finalizeHireに相違（再抽選条件、コピー
 その他の新旧比較はtests/fixtures/normal_222.jsonの固定した実関数を同じ状態・乱数で実行する。対象外の処理変更はscope検査で拒否。レジェンド/追加パック/変動VP/function/boost/ban/remove/resetの導入は対象外。
 
 実Supabase複数端末、iPhone Safari実機、全カードの全組合せは未検証。TESTのオンライン禁止・保存先分離は維持し、同期は模擬4クライアントで検証する。
+
+# TEST Ver.0.3.224 — レジェンド・雇用・領主・UI
+
+この節を現行仕様とする。上のVer.0.3.222/223の節は当時の記録であり、今回追加した機能の対象外という意味ではない。
+
+## 登録と呼び出し
+
+正式コマンドは24種。すべて `src/game.js` の `cardCommands` に登録する。
+`pool, draw, dice, limit, choice, move, start, change, can, count, plus, trigger, koyou, toba, once, repeat, boost, function, cast, copy, remove, discount, end, "the end"`。
+`hire` はVer.0.3.223との一時互換エイリアス。新しい呼び出しは `koyou` を使う。日本語のコマンド識別子は登録しない。日本語のUI・カード名・引数は維持する。
+
+これは文字列DSLではなくJS APIである。`cardCommands.run('the end')` は空白を正規化して単一コマンドとして認識する。`run('end')` は通常のターン終了だけを行う。繰り返しブロックの継続は `next()`、終了は `done()` であり、`end` をブロック終端として解釈しない。
+追加パックは `packRuntimeApi(owner).commands` から同じ処理を利用できる。ownerを伴う資源・ドロー・選択等は指定所有者へ作用し、共有ダイスや雇用・終了は手番所有者に限る。
+
+| コマンド | 引数・戻り値と独立した役割 |
+|---|---|
+| pool / draw / dice | 既存の在庫・制限・出目と共通獲得経路を維持。選択ダイスはgain、出目変更はset/adjust/choose、振り直しはreroll |
+| limit | hand/hireの基準値＋補正。保存値を二重加算しない |
+| choice | 明示ゾーンまたは候補配列と `select`。カード以外の文字列候補（能力・資源等）にも利用できる。状態変更なし |
+| move | 明示したfrom/toから移動。employees、bread、breadDiscardにも対応。`index`で移動先の位置を指定可能。設置効果を発動しない |
+| start | 開始プレイヤー・人数・step。選択待ちは既存の直列化可能なqueueを利用 |
+| change | convert / exchange / market。日本語引数「資源変換」「資源交換」「公開場」も同じ処理へ正規化 |
+| can / count | 関数条件による判定・固定数値取得。カード移動後も既得の数値は変化しない |
+| plus | 現在の市場上限まで補充。上限自体を変えない |
+| trigger | イベント・actor・items・対象個体を明示。新規獲得と出目変更を混同しない |
+| koyou | `('gacha', n, {accept,canHire})` または `('select',n,{pool,selected,accept})`。抽選・候補検証・個体複製を共通化し、各呼出元の既存雇用確定条件を維持 |
+| toba | `({owner,card,from})`。任意の明示ゾーンから無料設置。card省略時は山札先頭、生成カードはcreated:true。registerInstallationで設置時効果を通常解決 |
+| once | 既存の個体台帳を使う。turn/game、任意の上限、判定と消費を分離。台帳のリセットは既存タイミングに従う |
+| repeat | `(n,{index,step:(i,next)=>...,done})`。nextされるまで次へ進まない。同じnextは1回のみ有効 |
+| boost | `(base,amount,{count,stack:'add'/'max'})`。再利用可能な効果量計算 |
+| function | `({target,owner,where,value,multiplier,flat,divisor,round})` または式関数で現在状態を動的計算 |
+| cast | コマンド配列、または通常開始時効果のプログラムを即時実行。追加パック側は配列を直接渡せる |
+| copy | 能力定義から一時プロフィールを取得。初回命令書追加・初回資源は含めない。初回限定・コピー禁止能力は除外 |
+| remove | 資源キー／キー配列／allとquantity。除去数を返す |
+| discount | `('install','dice',n,{sources,remaining})`。軽減数と必要残数の計算。既存の仮設置の費用選択・消費処理に接続 |
+| end / the end | 既存の共通ターン終了／ゲーム終了エンジンへ接続。カード固有ハンドラーを呼び分けない |
+
+## 共通の基本ルール
+
+```js
+cardCommands.change('convert',3,{kind:'die',dieId:1});
+cardCommands.change('convert',3,{kind:'command',index:0}); // 命令書は固定2、ダイス補正なし
+cardCommands.change('exchange',{from:'y',to:'p'}); // 通常3:1、有効な等価交換があれば1:1
+cardCommands.change('market','all',{cost:{y:1,p:1,r:1}}); // UIの既存費用
+cardCommands.change('market',2); // 指定枚数の交換も可能
+```
+
+サイコロの1/2=資金、3/4=食料、5/6=兵力は不変。神の恩恵はダイスの基本3に+2で合計5、複数ソースの重複は既存どおり。UI・Bot・時間切れは同じchangeを使う。獲得禁止と実際の取得数を尊重し、Undoは実取得数を戻す。
+通常交換3:1・等価交換1:1は同じ関数の比率差だけで扱う。公開場の入れ替えはmove→plus。通常の補充上限・山札不足時の再利用は既存のまま。
+
+確認済みの別の変更漏れとして、雇用ガチャ率をN60/R20/SR11/SSR6/UR3へ更新。スタンダードでもCURを候補に含める既存実装は維持。ユニーク除外後に候補のないレアリティだけ従来どおり再抽選する。勝利20VP・初期資源4・領主共通資源1・その他の未確定な本体再編は変更しない。
+
+## 対象の接続先
+
+- LL1〜LL3：boostで開始時獲得補正、functionで現在の施設VP。施設の出入りで即再計算し、固定加算しない。
+- LL4：choice/koyou select。CLRを含めない通常雇用候補から選択。従来のLL4固有の雇用確定条件を維持。
+- LL5：choice/move/start。自己の先行破棄、その後の全員の既存順を維持。移動による再設置効果なし。
+- LL6：start/count/move/draw/pool。各人の通常手札＋命令書だけを破棄・計数。負債は維持。
+- LU1：the end。
+- LU2：once/choice/cast。2回をそれぞれ選択。複数の設置個体を独立管理。
+- LU3：repeat/choice/toba。設置時効果でN1の選択待ちが生じたら、全員の選択完了後に次の設置へ。継続番号だけを既存turnClockChoiceへ保存し、関数は同期状態へ保存しない。
+- LU4：choice/move/limit。雇用個体の初回・使用履歴を保持して所有者変更。仮設置時からの既存上限計算を維持。
+- LU5：can/toba/remove/end。開始時専用条件を維持。
+- LU6：once/choice/copy。設置個体にIDがないデータは共通のcommandInstanceIdで同期可能な個体識別子を付与。
+- CN〜CSSR：同一のstaff走査とpool/diceで処理。CUR共通の出目選択ダイスは固有能力とは別に処理。
+- CUR1〜CUR6とP1〜P12：同じUNIQUE_ABILITY_DEFS。神の贈り物+2/+3、神算鬼謀2+初回4、オーバークロック初回20、神の見えざる手2枚/破棄1枚で2資源を反映。
+- P13〜P24の既存能力：リクリエイション±2、無限の黄金VP10（能力無効化なし）、神の恩恵+2/変換5、神託各個体2回、貢ぎ物の既存1回、デッドマンズトリガー開始時通常2+命令書2。神の見えざる手・デッドマンズのターン中操作は従来の重複可否を維持。
+
+既存S1〜S10・N1〜N15のコスト・VP・タイミング・既存回数管理は変更しない。使用履歴は同じ台帳でonceへ接続し、二重管理しない。追加パックJSは変更せず、共有定義とPack APIだけ拡張する。
+
+## 検証と制限
+
+154件のNode自動テスト（既存回帰・新旧比較・DOM操作・4クライアント模擬同期）が合格。具体的な項目と未確認事項はVER224_REPORT.mdを参照。
+実Supabase接続・iPhone Safari実機・人間による初期設定から終局までの通し対戦・全カードの全組合せ・旧版の進行中セーブ引継ぎは未確認。TEST公開版のオンライン通信禁止は維持する。

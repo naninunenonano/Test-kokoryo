@@ -1,3 +1,7 @@
+# TEST Ver.0.3.224
+
+レジェンド・雇用・領主・UIの共通コマンドと基本ルールの更新。現行仕様は [docs/COMMANDS.md](docs/COMMANDS.md) のVer.0.3.224節、検証結果は [docs/VER224_REPORT.md](docs/VER224_REPORT.md) を参照。TEST専用・本番Ver.0.3.220は変更しない。
+
 # ここ領 TEST Ver.0.3.222 — 汎用コマンド 第1段階（本番未反映）
 
 Ver.0.3.221 の分割構成を基準に、旧S1〜S10の内部処理をpool・draw・dice・limitへ置換します。カード、ルール、画面、Bot判断、オンライン仕様を変更しません。

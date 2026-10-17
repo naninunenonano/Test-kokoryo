@@ -1,3 +1,9 @@
+# TEST Ver.0.3.224
+
+現行の変更・検証は `command-overrides/docs/VER224_REPORT.md`、コマンド仕様は `command-overrides/docs/COMMANDS.md` のVer.0.3.224節を参照。基準TEST Ver.0.3.223。公開対象はTest-kokoryoのみ、本番mainは変更しない。通常のダイス変換は3、命令書は2、交換は3:1（等価交換1:1）。
+
+以下は以前のバージョンの運用記録。
+
 # ここ領 オフラインテスト
 
 `naninunenonano/kokoryo` の指定PRを、オフラインプレイ／Bot戦専用として配信します。

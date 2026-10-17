@@ -26,9 +26,9 @@ function addCommandUndo(entry){commandUndoHistory.push({id:Date.now()+Math.rando
 function commandUndoAvailable(e){return !!e&&!e.blocked&&e.owner===turn}
 function undoCommandAction(id){
  let e=commandUndoHistory.find(x=>x.id===id);if(!commandUndoAvailable(e))return alert('この操作は戻せません。市場が変更されたか、すでに戻しています。');
- if(e.kind==='dieConvert'){let d=dice.find(x=>x.id===e.dieId);if(!d||!d.used||powers[turn][e.color]<(e.amount||1))return alert('現在の状態ではこの変換を戻せません。');powers[turn][e.color]-=(e.amount||1);d.used=false}
- else if(e.kind==='breadConvert'){if(powers[turn][e.color]<1)return alert('現在の状態ではこの変換を戻せません。');let loc=breadDiscard.findIndex(x=>x.id===e.order.id);if(loc>=0)breadDiscard.splice(loc,1);else{loc=breadDeck.findIndex(x=>x.id===e.order.id);if(loc>=0)breadDeck.splice(loc,1);else return alert('変換した命令書がすでに別の処理で移動しているため戻せません。')}powers[turn][e.color]--;breadHands[turn].push(e.order)}
- else if(e.kind==='resourceExchange'){if(powers[turn][e.to]<1)return alert('受け取った資源をすでに使っているため、この交換は戻せません。');powers[turn][e.to]--;powers[turn][e.from]+=(e.amount||2)}
+ if(e.kind==='dieConvert'){let d=dice.find(x=>x.id===e.dieId);if(!d||!d.used||powers[turn][e.color]<(e.amount??1))return alert('現在の状態ではこの変換を戻せません。');powers[turn][e.color]-=(e.amount??1);d.used=false}
+ else if(e.kind==='breadConvert'){if(powers[turn][e.color]<(e.amount??2))return alert('現在の状態ではこの変換を戻せません。');let loc=breadDiscard.findIndex(x=>x.id===e.order.id);if(loc>=0)breadDiscard.splice(loc,1);else{loc=breadDeck.findIndex(x=>x.id===e.order.id);if(loc>=0)breadDeck.splice(loc,1);else return alert('変換した命令書がすでに別の処理で移動しているため戻せません。')}powers[turn][e.color]-=(e.amount??2);breadHands[turn].push(e.order)}
+ else if(e.kind==='resourceExchange'){if(powers[turn][e.to]<(e.gain??1))return alert('受け取った資源をすでに使っているため、この交換は戻せません。');powers[turn][e.to]-=(e.gain??1);powers[turn][e.from]+=(e.amount||2)}
  e.blocked=true;pendingBreadAnyIndex=null;pendingResourceFrom=null;renderGame();
 }
 // @kokoryo-end-section S0018
@@ -96,16 +96,14 @@ function commandDice(operation,{count=1,dieId,value,delta=0,source='effect'}={})
  else d.value=value;
  return [d]
 }
-function commandLimit(target,delta,{base=gameSettings.handLimit,count=1}={}){
- if(target!=='hand')throw new RangeError('Unknown limit target');
- if(!Number.isSafeInteger(delta)||!Number.isSafeInteger(base))throw new RangeError('Invalid limit');
- return base+delta*commandQuantity(count)
+function commandLimit(target,delta,{base=target==='hire'?gameSettings.hireLimit:gameSettings.handLimit,count=1}={}){
+ if(!['hand','hire'].includes(target))throw new RangeError('Unknown limit target');if(!Number.isSafeInteger(delta)||!Number.isSafeInteger(base))throw new RangeError('Invalid limit');return base+delta*commandQuantity(count)
 }
 // Commands use explicit zones, stateless event descriptors, and existing saved ledgers.
 function commandZone(target,owner=turn){
  if(Array.isArray(target))return target;
  const zone=typeof target==='string'?target:target?.zone,p=typeof target==='object'&&!Array.isArray(target)?target.owner??owner:owner;
- const list=({hand:hands[p],installed:installed[p],temporary:temporary[p],market,discard,deck})[zone];
+ const list=({hand:hands[p],installed:installed[p],temporary:temporary[p],market,discard,deck,employees:employees[p],bread:breadHands[p],breadDiscard})[zone];
  if(!Array.isArray(list))throw new RangeError('Unknown card zone');return list
 }
 function commandChoice(target,quantity,{owner=turn,where=()=>true,select=null}={}){
@@ -114,7 +112,7 @@ function commandChoice(target,quantity,{owner=turn,where=()=>true,select=null}={
  if(chosen.length>n||new Set(chosen).size!==chosen.length||chosen.some(c=>!candidates.includes(c)))throw new RangeError('Invalid card selection');
  return chosen.slice()
 }
-function commandMove(cards,from,to,{replaceSource=false}={}){
+function commandMove(cards,from,to,{replaceSource=false,index=null}={}){
  const chosen=Array.isArray(cards)?cards.slice():[cards],source=commandZone(from),destination=commandZone(to);
  if(source===destination)throw new RangeError('Move requires different zones');
  if(new Set(chosen).size!==chosen.length||chosen.some(c=>!source.includes(c)))throw new RangeError('Card not in explicit source');
@@ -122,7 +120,7 @@ function commandMove(cards,from,to,{replaceSource=false}={}){
   if(from!=='market'&&from?.zone!=='market')throw new RangeError('Replacement source must be market');
   market=source.filter(c=>!chosen.includes(c));
  }else for(const c of chosen)source.splice(source.indexOf(c),1);
- destination.push(...chosen);return chosen
+ if(index===null)destination.push(...chosen);else destination.splice(index,0,...chosen);return chosen
 }
 function commandStart(owner,quantity='all',{queue=null,step=null}={}){
  const n=quantity==='all'?playerCount:commandQuantity(quantity);
@@ -143,16 +141,46 @@ function commandPlus(target,quantity='max'){
  const limit=commandQuantity(quantity),keys=new Set(market.map(c=>c.key));
  while(keys.size<limit){const c=drawOne();if(!c)break;market.push(c);keys.add(c.key)}return market
 }
-function commandChange(target,quantity='all'){
- if(target!=='market')throw new RangeError('Unknown change target');
- const cards=commandChoice(target,quantity);commandMove(cards,target,'discard',{replaceSource:true});commandPlus(target);return cards
+function commandChange(target,quantity='all',options={}){
+ if(quantity&&typeof quantity==='object'&&!Array.isArray(quantity)){options=quantity;quantity='all'}
+ target=({'資源変換':'convert','資源交換':'exchange','公開場':'market'})[target]||target;
+ const {owner=turn,kind='die',dieId,index,color,from,to,undo=false,record=false,source=target==='exchange'?'exchange':'dieConvert'}=options;
+ if(target==='market'){
+  const cost=options.cost||{};if(Object.entries(cost).some(([k,n])=>powers[owner][k]<n))return false;
+  const cards=Array.isArray(quantity)?commandChoice('market','all',{select:quantity}):commandChoice('market',quantity);
+  for(const [k,n]of Object.entries(cost))powers[owner][k]-=n;
+  commandMove(cards,'market','discard',{replaceSource:true});commandPlus('market');return cards
+ }
+ if(target==='convert'){
+  if(owner!==turn)throw new Error('Conversion requires active player');
+  const die=kind==='die'?dice.find(d=>d.id===+dieId&&!d.used):null,order=kind==='command'?breadHands[owner]?.[index]:null;
+  if(!die&&!order)return {ok:false,amount:0};const face=die?die.value:order.value;
+  const key=color||(face==='any'?null:colorFor(face));if(!['y','p','r'].includes(key))return {ok:false,amount:0};
+  if(die&&key!==colorFor(face)&&!hasGodBlessingForTurn()&&!options.allowAny)return {ok:false,amount:0};
+  if(order&&face!=='any'&&key!==colorFor(face)&&!options.allowAny)return {ok:false,amount:0};
+  const amount=(die?(quantity==='all'?3:commandQuantity(quantity)):2)+(die?conversionBonus(owner):0);
+  if(die)die.used=true;else{breadDiscard.push(breadHands[owner].splice(index,1)[0]);recycleBreadIfEmpty()}
+  const gained=gainResource(owner,key,amount,source);
+  if(record)playLogAction('resource_conversion',{method:die?'die':'command',dieValue:die?.value,dieId:die?.id,order:order?.value,to:key,gained});
+  if(undo)addCommandUndo(die?{kind:'dieConvert',dieId:die.id,dieValue:face,color:key,amount:gained}:{kind:'breadConvert',order,color:key,amount:gained});
+  return {ok:true,amount:gained,color:key,die,order}
+ }
+ if(target==='exchange'){
+  if(!['y','p','r'].includes(from)||!['y','p','r'].includes(to)||from===to)return {ok:false,amount:0};
+  const rate=options.rate??exchangeRateFor(owner),gain=options.gain??1;commandQuantity(rate);commandQuantity(gain);
+  if(powers[owner][from]<rate)return {ok:false,amount:0};powers[owner][from]-=rate;const received=gainResource(owner,to,gain,source);
+  if(!received&&options.rollbackBlocked)powers[owner][from]+=rate;
+  if(record)playLogAction('resource_exchange',{from,to,spent:rate,gained:received});
+  if(undo)addCommandUndo({kind:'resourceExchange',from,to,amount:rate,gain:received});return {ok:true,amount:received,spent:rate}
+ }
+ throw new RangeError('Unknown change target')
 }
 function commandCan(target,condition,{owner=turn,value}={}){
  if(typeof condition==='function')return !!condition(target);
  if(condition==='installed')return (installed[owner]||[]).includes(target);
  if(condition==='temporary')return (temporary[owner]||[]).includes(target);
  if(condition==='special')return !!target&&target.special===value;
- if(condition==='hire-space')return (employees[owner]||[]).length<effectiveHireLimit();
+ if(condition==='hire-space')return (employees[owner]||[]).length<effectiveHireLimit(owner);
  throw new RangeError('Unknown condition')
 }
 function commandCount(target,condition=()=>true,{owner=turn}={}){
@@ -171,12 +199,18 @@ function commandTrigger(event,context,{event:expected=event,targets,when=()=>tru
  }
  return results
 }
-function commandHire(mode,quantity,{accept=e=>finalizeHire(e),canHire=()=>cardCommands.can(null,'hire-space')}={}){
- if(mode!=='gacha')throw new RangeError('Unknown hiring mode');const n=commandQuantity(quantity),hired=[];
- for(let i=0;i<n;i++){if(!canHire())break;const e=gachaCast();if(!e)break;accept(e);hired.push(e)}return hired
+function commandHire(mode,quantity,{accept=e=>finalizeHire(e),canHire=()=>cardCommands.can(null,'hire-space'),selected=null,pool=null}={}){
+ if(!['gacha','select'].includes(mode))throw new RangeError('Unknown hiring mode');const n=commandQuantity(quantity),hired=[];
+ const candidates=mode==='select'?(pool||['N','R','SR','SSR','UR'].flatMap(r=>implementedCastPool(r))):null;
+ for(let i=0;i<n;i++){if(!canHire())break;let e=mode==='gacha'?gachaCast():selected?.[i];if(!e||mode==='select'&&!candidates.some(c=>c.id===e.id))break;if(mode==='select')e={...e};accept(e);hired.push(e)}return hired
 }
-function commandToba({owner=turn}={}){
- const card=drawOne();if(card)registerInstallation(owner,card);return card
+function commandToba({owner=turn,card=null,from=null,created=false}={}){
+ if(!card){card=drawOne();if(!card)return null}else if(!created&&(!from||!commandZone(from).includes(card)))return null;
+ if(from){const arr=commandZone(from);arr.splice(arr.indexOf(card),1)}registerInstallation(owner,card);return card
+}
+function commandInstanceId(card){
+ if(!card||typeof card!=='object')throw new TypeError('Missing effect instance');if(card.id!=null)return card.id;if(card._commandId)return card._commandId;
+ const used=new Set([...installed.flat(),...temporary.flat(),...hands.flat(),...employees.flat(),...discard,...deck,...market].map(c=>c?._commandId));let n=1;while(used.has('instance:'+n))n++;return card._commandId='instance:'+n
 }
 function commandOnce(limit,period,{cardId,usage,owner=null,consume=false}={}){
  const max=commandQuantity(limit);if(!['turn','game'].includes(period))throw new RangeError('Unknown usage period');
@@ -186,12 +220,67 @@ function commandOnce(limit,period,{cardId,usage,owner=null,consume=false}={}){
  if(used>=max)return false;
  if(consume){const store=owner===null?usage:(usage[owner]||={});store[cardId]=max===1?true:used+1}return true
 }
-const cardCommands=Object.freeze({pool:commandPool,draw:commandDraw,dice:commandDice,limit:commandLimit,choice:commandChoice,move:commandMove,start:commandStart,change:commandChange,can:commandCan,count:commandCount,plus:commandPlus,trigger:commandTrigger,hire:commandHire,toba:commandToba,once:commandOnce});
+function commandBoost(base,amount,{count=1,stack='add'}={}){const values=Array.isArray(amount)?amount:[amount];if(!values.every(Number.isFinite)||!Number.isFinite(base))throw new RangeError('Invalid boost');return base+(stack==='max'?Math.max(0,...values):values.reduce((a,b)=>a+b,0))*commandQuantity(count)}
+function commandFunction(expression,context={}){
+ if(typeof expression==='function')return expression(context);
+ const {target='installed',owner=turn,where=()=>true,value=()=>1,multiplier=1,flat=0,divisor=1,round='none'}=expression||{};
+ let result=commandZone(target,owner).filter(where).reduce((n,c)=>n+value(c),0)*multiplier/divisor+flat;
+ return round==='floor'?Math.floor(result):round==='ceil'?Math.ceil(result):result
+}
+function commandRemove(target='all',{owner=turn,quantity='all'}={}){
+ const keys=target==='all'?['y','p','r']:Array.isArray(target)?target:[target];if(keys.some(k=>!['y','p','r'].includes(k)))throw new RangeError('Unknown resource');
+ const n=quantity==='all'?null:commandQuantity(quantity),removed={};for(const k of keys){removed[k]=n===null?powers[owner][k]:Math.min(n,powers[owner][k]);powers[owner][k]-=removed[k]}return removed
+}
+function commandDiscount(target,kind,amount,{sources=[],remaining=null}={}){
+ if(target!=='install'||kind!=='dice')throw new RangeError('Unknown discount');
+ const value=commandQuantity(amount)+sources.reduce((n,x)=>n+commandQuantity(x),0);return remaining===null?value:Math.max(0,commandQuantity(remaining)-value)
+}
+function commandRepeat(times,{index=0,step,done=()=>{}}={}){
+ const n=commandQuantity(times),i=commandQuantity(index);if(i>=n)return done();if(typeof step!=='function')throw new TypeError('Missing repeat body');
+ let continued=false;return step(i,()=>{if(continued)return;continued=true;return commandRepeat(n,{index:i+1,step,done})})
+}
+function commandCopy(name,{applyStart=false}={}){
+ const def=UNIQUE_ABILITY_DEFS[name];if(!def||def.copyable===false||def.props?.uncopyable)return false;
+ const profile={...abilityProfile(name)};delete profile.firstBreadBonus;delete profile.overclockResources;copiedAbility=name;
+ if(applyStart){if(profile.turnBread)commandDraw('command',profile.turnBread);if(profile.invisibleHand)commandDraw('deck',profile.invisibleHand);if(profile.deadMansTrigger){commandDraw('deck',profile.deadMansDraw||2);commandDraw('command',profile.deadMansBread||2)}}return profile
+}
+function commandCast(program,{owner=turn,times=1}={}){
+ const instructions=Array.isArray(program)?program:normalEffectProgram(program,owner);if(!instructions)return null;
+ const results=[];for(let n=0;n<commandQuantity(times);n++)for(const instruction of instructions){const [name,...args]=instruction;results.push(commandRun(name,...args))}return results
+}
+function normalEffectProgram(card,owner=turn){
+ const s=card?.special,boosts={mine:['y','legendmine'],farm:['p','legendfarm'],barracks:['r','legendbarracks']},greater={greatermine:'y',greaterfarm:'p',greaterbarracks:'r'};
+ if(boosts[s]){const [key,legend]=boosts[s],amount=commandBoost(1,3,{count:installed[owner].some(c=>c.special===legend)?1:0});return [['pool',key,amount,{owner}]]}
+ if(greater[s])return [['pool',greater[s],3,{owner}]];
+ if(s==='commandroom'||s==='greatercommand')return [['draw','command',s==='greatercommand'?2:1,{owner}]];
+ if(s==='church')return [['draw','deck',1,{owner}]];
+ if(s==='bandit')return [['pool','y',commandCount('players',p=>p!==owner&&commandCount('resources',()=>true,{owner:p})>=5)*playerScaledGain(),{owner}]];
+ return null
+}
+function commandEnd(){return completeEnd()}
+function commandTheEnd(){return finishGame()}
+function commandRun(name,...args){const key=String(name).trim().replace(/\s+/g,' ');if(!Object.hasOwn(cardCommands,key)||key==='run')throw new RangeError('Unknown command '+key);return cardCommands[key](...args)}
+function conversionBonus(owner=turn){return stackedNumericEffect(owner,'dieResourceBonus')+(owner===turn&&copiedAbility==='神の恩恵'?(abilityProfile(copiedAbility).dieResourceBonus||0):0)}
+function exchangeRateFor(owner=turn){const lord=CHARACTER_DATA[charOf(owner)]||{},staff=employeeUniqueAbilitiesEnabled(owner)?employees[owner]||[]:[];return lord.exchangeRate===1||staff.some(e=>e.exchangeRate===1||e.uniqueAbility==='等価交換')||(owner===turn&&copiedAbility==='等価交換')?1:3}
+function commandApi(owner=turn){
+ const active=()=>{if(owner!==turn)throw new Error('Dice and active-turn commands require the active player')};
+ const api=Object.freeze({...cardCommands,
+  pool:(key,n,opts={})=>commandPool(key,n,{owner,...opts}),draw:(target,n,opts={})=>commandDraw(target,n,{owner,...opts}),
+  choice:(target,n,opts={})=>commandChoice(target,n,{owner,...opts}),count:(target,where,opts={})=>commandCount(target,where,{owner,...opts}),
+  can:(target,test,opts={})=>commandCan(target,test,{owner,...opts}),remove:(target,opts={})=>commandRemove(target,{owner,...opts}),
+  toba:(opts={})=>commandToba({owner,...opts}),cast:(program,opts={})=>commandCast(program,{owner,...opts}),
+  change:(target,n,opts={})=>typeof n==='object'&&!Array.isArray(n)?commandChange(target,{owner,...n}):commandChange(target,n,{owner,...opts}),
+  dice:(...args)=>{active();return commandDice(...args)},koyou:(...args)=>{active();return commandHire(...args)},hire:(...args)=>{active();return commandHire(...args)},
+  end:()=>{active();return commandEnd()},'the end':()=>{active();return commandTheEnd()},
+  run:(name,...args)=>{const key=String(name).trim().replace(/\s+/g,' ');if(!Object.hasOwn(api,key)||key==='run')throw new RangeError('Unknown command');return api[key](...args)}
+ });return api
+}
+const cardCommands=Object.freeze({pool:commandPool,draw:commandDraw,dice:commandDice,limit:commandLimit,choice:commandChoice,move:commandMove,start:commandStart,change:commandChange,can:commandCan,count:commandCount,plus:commandPlus,trigger:commandTrigger,koyou:commandHire,hire:commandHire,toba:commandToba,once:commandOnce,repeat:commandRepeat,boost:commandBoost,function:commandFunction,cast:commandCast,copy:commandCopy,remove:commandRemove,discount:commandDiscount,end:commandEnd,'the end':commandTheEnd,run:commandRun});
 // @kokoryo-end-section S0026
 
 // @kokoryo-section S0029
 
-function installCostOptions(required=null){let old=renderingInstallCosts;renderingInstallCosts=true;let out=costOptions(required);renderingInstallCosts=old;return out}
+function installCostOptions(required=null,allowDiscount=true){let old=renderingInstallCosts;renderingInstallCosts=allowDiscount;let out=costOptions(required);renderingInstallCosts=old;return out}
 function costOptions(required=null){
  let a=[];
  if(renderingInstallCosts){let discount=lordInstallDiceDiscount(),isCiel=(CHARACTER_DATA[charOf(turn)]||{}).group==='ciel';for(let i=0;i<(isCiel?discount:Math.min(discount,1));i++)a.push({id:'free:request:'+i,label:'《おねだり》免除'+(isCiel&&discount>1?' '+(i+1):'')});}
@@ -318,7 +407,7 @@ function continueBeginTurn(){
  const depressionResourceBaseline=suppressDepressionStart?{...powers[turn]}:null;
  depressionStartSuppressed=suppressDepressionStart;
  if(depressionDebtLocked(turn)&&!suppressDepressionStart){gainResource(turn,'p',5,'depressionBonus');gainResource(turn,'r',5,'depressionBonus');}
- let lord=CHARACTER_DATA[charOf(turn)]||{},staff=employees[turn]||[],randomBonus=staff.reduce((n,x)=>n+(x.noCommonDie?0:((x.rarity==='SSR'||x.rarity==='UR')?0:1))+(employeeUniqueAbilitiesEnabled(turn)?(x.extraRandomDice||0):0),0)+stackedNumericEffect(turn,'extraDice')+(copiedAbility==='神の贈り物'||copiedAbility==='神の恩恵'?1:0);
+ let lord=CHARACTER_DATA[charOf(turn)]||{},staff=employees[turn]||[],randomBonus=staff.reduce((n,x)=>n+(x.noCommonDie?0:((x.rarity==='SSR'||x.rarity==='UR')?0:1))+(employeeUniqueAbilitiesEnabled(turn)?(x.extraRandomDice||0):0),0)+stackedNumericEffect(turn,'extraDice')+(abilityProfile(copiedAbility)?.extraDice||0);
  pendingSSRBonus=staff.reduce((n,x)=>n+(x.noCommonDie?0:((x.rarity==='SSR'||x.rarity==='UR')?1:0))+(employeeUniqueAbilitiesEnabled(turn)?(x.extraChosenDice||0):0),0);
  pendingCastResourceChoices=[];
  // パック1金融系雇用：所有者のターン開始時に個体ごと発動。負債禁止はacquireDebtが判定。
@@ -328,13 +417,13 @@ function continueBeginTurn(){
   triggerNotices.push('《'+e.name+'》：ターン開始時の金融効果を発動しました。');
  });
  if(hasActiveRule('RC4'))pendingOverclockChoices.push({name:'超好景気',remaining:2,label:'RC4《超好景気》',total:2});
- staff.forEach(e=>{e.oracleUsedTurn=false;e.tributeUsedTurn=false;if(!employeeUniqueAbilitiesEnabled(turn))return;if(e.deadMansTrigger){let n=1;for(let j=0;j<n;j++){let c=drawOne();if(c)hands[turn].push(c)}}if(e.flexibleResourceTotal)pendingOverclockChoices.push({name:e.name,remaining:e.flexibleResourceTotal,label:e.name,total:e.flexibleResourceTotal});else if(e.chooseResource)pendingCastResourceChoices.push({name:e.name,amount:e.amount||0});else if(e.resource&&e.amount)gainResource(turn,e.resource,e.amount,'effect')});
- dice=Array.from({length:3+randomBonus},(_,i)=>({id:i+1,value:1+Math.floor(Math.random()*6),used:false,source:i<3?'base':(i<3+(lord.extraDice||0)?'lord':'employee')}));
+ staff.forEach(e=>{e.oracleUsedTurn=false;e.tributeUsedTurn=false;if(!employeeUniqueAbilitiesEnabled(turn))return;if(e.deadMansTrigger){cardCommands.draw('deck',e.deadMansDraw||2);cardCommands.draw('command',e.deadMansBread||2)}if(e.flexibleResourceTotal)pendingOverclockChoices.push({name:e.name,remaining:e.flexibleResourceTotal,label:e.name,total:e.flexibleResourceTotal});else if(e.chooseResource)pendingCastResourceChoices.push({name:e.name,amount:e.amount||0});else if(e.resource&&e.amount)cardCommands.pool(e.resource,e.amount)});
+ dice=[];for(let i=0;i<3+randomBonus;i++)cardCommands.dice('roll',{count:1,source:i<3?'base':(i<3+(lord.extraDice||0)?'lord':'employee')});
  elekiterUsed[turn]=false;q('#limit').classList.add('hidden');
  resolveReactiveRolls();
- pendingLordResource=1+(lord.extraLordResource||0)+(copiedAbility==='神の贈り物'?1:0);
+ pendingLordResource=1+(lord.extraLordResource||0)+(abilityProfile(copiedAbility)?.extraLordResource||0);
  runRuleHook('turnStart',{player:turn});resolveTurnStartEffects();runInstalledPackHooks('turnStart',turn);
- let deadLord=CHARACTER_DATA[charOf(turn)]?.deadMansTrigger?1:0; if(deadLord){let c=drawOne();if(c)hands[turn].push(c)}
+ let deadLord=CHARACTER_DATA[charOf(turn)];if(deadLord?.deadMansTrigger){cardCommands.draw('deck',deadLord.deadMansDraw||2);cardCommands.draw('command',deadLord.deadMansBread||2)}
  let hasGuild=installed[turn].some(c=>c.special==='naroppaGuild'); if(hasGuild){}
  if(suppressDepressionStart){
   // 獲得ターンだけ、通常・追加・選択式の全ダイスと開始時資源獲得を抑止する。
@@ -435,7 +524,7 @@ function updateDebugCommandVisibility(){
 // @kokoryo-section S0128
 
 
-function turnClockConvertNormalDie(dieId){let used=useDie(dieId);if(!used)return;let col=colorFor(used.value),lord=CHARACTER_DATA[charOf(turn)]||{},bonus=(lord.dieResourceBonus||0)+(employeeUniqueAbilitiesEnabled(turn)?(employees[turn]||[]):[]).reduce((n,e)=>n+(e.dieResourceBonus||0),0)+(copiedAbility==='神の恩恵'?1:0);gainResource(turn,col,1+bonus,'dieConvert');playLogAction('resource_conversion',{method:'die',dieValue:used.value,dieId:used.id,to:col,gained:1+bonus});addCommandUndo({kind:'dieConvert',dieId:used.id,dieValue:used.value,color:col,amount:1+bonus});renderGame()}
+function turnClockConvertNormalDie(dieId){const result=cardCommands.change('convert',3,{kind:'die',dieId,undo:true,record:true});if(result.ok)renderGame()}
 // Shared offline / Bot / online chess clock. Online completion is host-authoritative.
 var turnClockState={remaining:[],active:null,token:0,lastCompleted:-1,ending:false,expiring:false,resolving:false,timeoutCommit:null,mono:0,wall:0};
 const TURN_CLOCK_INITIAL=180000,TURN_CLOCK_INCREMENT=30000;

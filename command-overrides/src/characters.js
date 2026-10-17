@@ -39,18 +39,18 @@ const CHARACTER_FAMILIES=[
 ];
 // Ver.0.3.77: 固有能力は本体で一元管理。追加パックは uniqueAbility 名だけを宣言する。
 const UNIQUE_ABILITY_DEFS=Object.freeze({
- '神の贈り物':{text:'ターン開始時に振るサイコロを1つ増やす。ターン開始時に好きな資源を1つ獲得する。',props:{extraDice:1,extraLordResource:1,chooseResource:true,amount:1}},
+ '神の贈り物':{text:'ターン開始時、サイコロを2個追加で振って獲得し、好きな資源を3個獲得する。',props:{extraDice:2,extraLordResource:3,chooseResource:true,amount:3}},
  '等価交換':{stackable:false,text:'好きな資源1つを、別の好きな資源1つに交換できる。',props:{exchangeRate:1}},
- '神算鬼謀':{text:'ターン開始時に命令書を1枚獲得する。この能力が初めて発動するとき、追加で命令書を2枚獲得する。',props:{turnBread:1,firstBreadBonus:2}},
+ '神算鬼謀':{text:'ターン開始時、命令書を2枚獲得する。この個体での初回発動時は、さらに4枚獲得する。',props:{turnBread:2,firstBreadBonus:4}},
  'おねだり':{text:'通常カードを設置するとき、必要なサイコロのうち好きな1つを使わずに設置できる。',props:{installDiceDiscount:1}},
- 'オーバークロック':{copyable:false,stackable:true,text:'ターン開始時、好きな資源を合計で10個獲得する。この効果は1回しか発動しない。',props:{overclockResources:10}},
- '神の見えざる手':{text:'ターン開始時、山札から通常カードを1枚手札に加える。通常手札を1枚捨てることで、好きな資源を1つ獲得する。',props:{invisibleHand:1}},
- 'リクリエイション':{copyable:true,stackable:false,text:'自分の設置済み通常カード1枚を、VP差が±1以内（同値含む）の通常手札1枚と入れ替えて仮設置する。設置時効果は発動する。レジェンドカードは対象にできない。',props:{recreationRange:1}},
- '無限の黄金':{copyable:false,stackable:false,text:'領主マイン：10VPを持つ。自分が雇用しているキャラの固有能力はすべて無効（レアリティ共通のサイコロ獲得は有効）。雇用ゴルド：5VPを持つ。《パーフェクト・イミテーション》ではコピーできない。',props:{copyable:false,uncopyable:true}},
- '神の恩恵':{text:'ターン開始時、サイコロを1つ追加で獲得する。サイコロを好きな種類の資源に交換できる。サイコロから資源を獲得するとき、その獲得量を＋1する（命令書による交換は対象外）。',props:{extraDice:1,dieResourceBonus:1,anyResourceDieConversionAmount:2}},
- '神託':{text:'ターン1回、通常の雇用の代わりに、未使用のサイコロ1個と資金5を支払い、自分の雇用キャラクター1人を決められた1段階上のキャラクターへレベルアップする。この能力は所持している個体ごとに1回使用できる。',props:{oracleUpgrade:true}},
+ 'オーバークロック':{copyable:false,stackable:true,text:'この個体での初回のみ、ターン開始時に好きな資源を合計20個、任意に配分して獲得する。',props:{overclockResources:20}},
+ '神の見えざる手':{text:'ターン開始時、通常カードを2枚引く。通常手札を1枚捨て、好きな資源を2個獲得できる。',props:{invisibleHand:2}},
+ 'リクリエイション':{copyable:true,stackable:false,text:'自分の設置済み通常カード1枚を、VP差±2以内の通常手札1枚と入れ替えて仮設置する。設置時効果は発動する。レジェンドカードは対象外。',props:{recreationRange:2}},
+ '無限の黄金':{copyable:false,stackable:false,text:'領主マイン・雇用ゴルドは10VPを持つ。雇用キャラクターの固有能力は無効化しない。この能力はコピーできない。',props:{copyable:false,uncopyable:true,vpOverride:10}},
+ '神の恩恵':{text:'ターン開始時、サイコロを2個追加で獲得する。サイコロを好きな種類の資源に変換でき、サイコロ変換の獲得量を＋2する（基本3個から合計5個、命令書は対象外）。',props:{extraDice:2,dieResourceBonus:2,anyResourceDieConversionAmount:5}},
+ '神託':{text:'各個体につき1ターン2回、通常雇用の代わりにサイコロ1個と資金5を支払い、雇用1人を既定の1段階上へレベルアップする。',props:{oracleUpgrade:true,oracleUses:2}},
  '貢ぎ物':{text:'ターン1回、通常手札のカード1枚を設置コストを支払わずに設置できる。この効果を使用したとき、命令書を1枚獲得する。この能力は所持している個体ごとに1回使用できる。',props:{tributeInstall:true}},
- 'デッドマンズトリガー':{text:'ターン開始時、カードを1枚引く。通常手札を1枚捨てることで、命令書を1枚獲得する。回数制限なし。同じ能力が重複している場合、ターン開始時のドロー数と、通常手札1枚を捨てたときに獲得する命令書の枚数が重複数ぶん増える。',props:{deadMansTrigger:true}},
+ 'デッドマンズトリガー':{text:'ターン開始時、通常カード2枚と命令書2枚を獲得する。通常手札1枚を捨てて命令書1枚を獲得できる。重複可。',props:{deadMansTrigger:true,deadMansDraw:2,deadMansBread:2}},
  'クレシェンティア・ギフテッド':{copyable:false,stackable:false,text:'ターン開始時、好きな出目のサイコロ2個を獲得する。さらに、このCLRに設定された2つの固有能力を、それぞれ能力全体として得る。',props:{extraChosenDice:2}}
 });
 const ABILITY_ADD_KEYS=new Set(['extraDice','extraLordResource','dieResourceBonus','turnBread','firstBreadBonus','installDiceDiscount','invisibleHand','vp','extraChosenDice']);
@@ -79,13 +79,13 @@ function applyUniqueAbilityDef(entity){
 }
 // 《無限の黄金》は領主マインと雇用ゴルドで別の効果を持つ。
 function isMineGoldLord(p){let lord=CHARACTER_DATA[charOf(p)];return !!lord&&lord.uniqueAbility==='無限の黄金'&&lord.name==='マイン'}
-function employeeUniqueAbilitiesEnabled(p){return !isMineGoldLord(p)}
+function employeeUniqueAbilitiesEnabled(p){return true}
 function effectiveEmployeeAbility(e,p){if(employeeUniqueAbilitiesEnabled(p))return e;return {rarity:e.rarity,name:e.name,id:e.id,noCommonDie:e.noCommonDie};}
 function abilityStackLabel(name){if(!name||!UNIQUE_ABILITY_DEFS[name])return '';return UNIQUE_ABILITY_DEFS[name].stackable===false?'重複不可':'重複可'}
 function abilityStackTag(name){let label=abilityStackLabel(name);return label?' <span class="ability-stack-tag">'+label+'</span>':''}
 function abilityStackText(name){let label=abilityStackLabel(name);return label?' 【'+label+'】':''}
 function uniqueAbilityText(name){return UNIQUE_ABILITY_DEFS[name]?.text||''}
-function abilityTextForEntity(entity){if(!entity)return '';let own=entity.uniqueAbility==='無限の黄金'?(entity.id==='CUR8'?'常時：このキャラクターは5VPを持つ。《パーフェクト・イミテーション》ではコピーできない。':entity.name==='マイン'?'常時：10VPを持つ。自分が雇用した全キャラの固有能力を無効化する。レアリティ共通のサイコロ獲得は無効化しない。':''):uniqueAbilityText(entity.uniqueAbility);if(Array.isArray(entity.grantedAbilities)&&entity.grantedAbilities.length){let got=entity.grantedAbilities.map(x=>'《'+x+'》').join('＋');return own+(own?'\n':'')+'取得能力：'+got}return own}
+function abilityTextForEntity(entity){if(!entity)return '';let own=entity.uniqueAbility==='無限の黄金'?(entity.id==='CUR8'?'常時：このキャラクターは10VPを持つ。《パーフェクト・イミテーション》ではコピーできない。':entity.name==='マイン'?'常時：10VPを持つ。':''):uniqueAbilityText(entity.uniqueAbility);if(Array.isArray(entity.grantedAbilities)&&entity.grantedAbilities.length){let got=entity.grantedAbilities.map(x=>'《'+x+'》').join('＋');return own+(own?'\n':'')+'取得能力：'+got}return own}
 // @kokoryo-end-section S0003
 
 // @kokoryo-section S0005
@@ -152,8 +152,8 @@ function castDisplayName(e){if(!e)return '';if(e.rarity==='CLR')return e.name;re
 
 // @kokoryo-section S0008
 
-const CAST_GACHA_RATES=[['N',70],['R',16],['SR',10],['SSR',3],['UR',1]];
-// UR＝Unique Rare（ユニークレア）。正式実装済みだが、スタンダードの通常ガチャ排出対象は8種のみ。追加パック側から排出IDを追加できる。
+const CAST_GACHA_RATES=[['N',60],['R',20],['SR',11],['SSR',6],['UR',3]];
+// UR＝Unique Rare（ユニークレア）。正式実装済みだが、スタンダードでもURを含む14種を通常ガチャから排出。追加パック側から排出IDを追加できる。
 // URは固有キャスト。同じURキャストはゲーム中に1人しか雇用できず、獲得済みURは以後の抽選候補から除外する。
 const STANDARD_CAST_IDS=['CN1','CN2','CN3','CR1','CR2','CR3','CSR1','CSSR1','CUR1','CUR2','CUR3','CUR4','CUR5','CUR6'];
 const SYNTHESIS_CAST_IDS=['CSR2','CSR3','CSR4','CSSR2','CSSR3','CSSR4'];
@@ -165,7 +165,7 @@ function implementedCastPool(rarity){let ids=[...ACTIVE_CAST_IDS];Object.values(
 function allImplementedCastPool(rarity){return availableCastPool(IMPLEMENTED_CAST_IDS,rarity)}
 function addCastPack(ids=[]){ids.forEach(id=>{if(CAST_TYPES[id]&&!ACTIVE_CAST_IDS.includes(id))ACTIVE_CAST_IDS.push(id)})}
 function rollCastRarity(){
- // 未実装レアリティ（現在はUR）を引いた場合は、実装済みレアリティが出るまで再抽選する。
+ // 候補切れのレアリティを引いた場合は、実装済みレアリティが出るまで再抽選する。
  while(true){let r=Math.random()*100,acc=0;for(let [rarity,rate] of CAST_GACHA_RATES){acc+=rate;if(r<acc){if(implementedCastPool(rarity).length)return rarity;break}}}
 }
 function randomCastOfRarity(rarity){let pool=implementedCastPool(rarity);return pool.length?{...pool[Math.floor(Math.random()*pool.length)]}:null}
@@ -195,12 +195,12 @@ let nextHireMinRarity=null,nextHireExtra=0,fusionUsedThisTurn=false;
 
 // @kokoryo-section S0028
 
-function lordInstallDiceDiscount(){let lord=CHARACTER_DATA[charOf(turn)]||{},staff=employeeUniqueAbilitiesEnabled(turn)?(employees[turn]||[]):[];return (lord.installDiceDiscount||0)+staff.reduce((n,e)=>n+(e.installDiceDiscount||0),0)+(copiedAbility==='おねだり'?1:0)}
+function lordInstallDiceDiscount(){return cardCommands.discount('install','dice',0,{sources:characterEffectSources(turn).map(s=>s.installDiceDiscount||0).concat(copiedAbility==='おねだり'?1:0)})}
 // @kokoryo-end-section S0028
 
 // @kokoryo-section S0035
 
-function effectiveHireLimit(){let bonus=hasActiveRule('RC3')?1:0;for(const c of allFieldCards(turn))if(c.special==='hireCapacity'||c.special==='bigCompany'||c.special==='changeOfHeart')bonus++;return gameSettings.hireLimit+bonus}
+function effectiveHireLimit(p=turn){let bonus=hasActiveRule('RC3')?1:0;for(const c of allFieldCards(p))if(c.special==='hireCapacity'||c.special==='bigCompany'||c.special==='changeOfHeart')bonus++;return cardCommands.limit('hire',bonus)}
 function isHireFree(){return hasActiveRule('RC3')}
 // @kokoryo-end-section S0035
 
@@ -229,7 +229,8 @@ function resolveReactiveRolls(acquired=dice,clearNotices=true){
 
 function characterEffectSources(p){let a=[],lord=CHARACTER_DATA[charOf(p)];if(lord)a.push(lord);(employees[p]||[]).forEach(e=>{if(e)a.push(effectiveEmployeeAbility(e,p))});return a}
 function stackedNumericEffect(p,key){let total=0,groups=new Map();characterEffectSources(p).forEach(x=>{let v=+x[key]||0;if(!v)return;if(x.effectStackGroup)groups.set(x.effectStackGroup,Math.max(groups.get(x.effectStackGroup)||0,v));else total+=v});groups.forEach(v=>total+=v);return total}
-function groupedCharacterVP(p){let total=isMineGoldLord(p)?10:0,groups=new Map();characterEffectSources(p).forEach(x=>{let v=+x.vp||0;if(x.id==='CUR8'&&x.uniqueAbility==='無限の黄金')v=5;if(!v)return;if(x.vpStackGroup)groups.set(x.vpStackGroup,Math.max(groups.get(x.vpStackGroup)||0,v));else total+=v});groups.forEach(v=>total+=v);return total}
+function groupedCharacterVP(p){let values=[],groups=new Map();characterEffectSources(p).forEach(x=>{let v=+(x.vpOverride??x.vp)||0;if(!v)return;if(x.vpStackGroup)groups.set(x.vpStackGroup,Math.max(groups.get(x.vpStackGroup)||0,v));else values.push(v)});return cardCommands.function({target:values.concat([...groups.values()]),value:v=>v})}
+
 // @kokoryo-end-section S0053
 
 // @kokoryo-section S0056
@@ -249,7 +250,7 @@ function fieldUniqueAbilities(){
 function abilityProfile(name){if(!name)return null;let def=UNIQUE_ABILITY_DEFS[name];if(def)return applyUniqueAbilityDef({uniqueAbility:name});for(const x of Object.values(CHARACTER_DATA))if(x?.uniqueAbility===name)return x;for(const x of Object.values(CAST_TYPES))if(x?.uniqueAbility===name)return x;return null}
 function recreationRangeForTurn(){let vals=[];let lord=CHARACTER_DATA[charOf(turn)];if(lord?.recreationRange)vals.push(lord.recreationRange);(employeeUniqueAbilitiesEnabled(turn)?(employees[turn]||[]):[]).forEach(e=>{if(e?.recreationRange)vals.push(e.recreationRange)});let cp=abilityProfile(copiedAbility);if(cp?.recreationRange)vals.push(cp.recreationRange);return vals.length?Math.max(...vals):0}
 function resolveAbilityCopyLegend(onDone){
- if(!installed[turn].some(c=>c.special==='abilityCopy'))return false;
+ const copyCard=installed[turn].find(c=>c.special==='abilityCopy');if(!copyCard||!cardCommands.once(1,'turn',{usage:stdAbilityUsed,cardId:'copy:'+commandInstanceId(copyCard)}))return false;
  let opts=fieldUniqueAbilities();if(!opts.length)return false;
  const owner=turn;turnClockChoice={kind:'copy'};
  const m=q('#legendChoiceModal'),grid=q('#legendChoiceCards');
@@ -263,10 +264,8 @@ function resolveAbilityCopyLegend(onDone){
  ok.disabled=!allowed();sel.disabled=!allowed();
  ok.onclick=()=>{
   if(!allowed()||turn!==owner)return;
-  const chosen=opts[Number(sel.value)];if(!chosen)return;
-  m.classList.add('hidden');turnClockChoice=null;copiedAbility=chosen;
-  if(copiedAbility==='神算鬼謀'){let b=drawBread(turn);if(b)triggerNotices.push('《パーフェクト・イミテーション》：命令書「'+breadLabel(b)+'」を1枚獲得しました。')}
-  if(copiedAbility==='神の見えざる手'||copiedAbility==='デッドマンズトリガー'){let c=drawOne();if(c)hands[turn].push(c)}
+  const chosen=cardCommands.choice(opts,1,{select:[Number(sel.value)]})[0];if(!chosen)return;if(!cardCommands.once(1,'turn',{usage:stdAbilityUsed,cardId:'copy:'+commandInstanceId(copyCard),consume:true}))return;
+  m.classList.add('hidden');turnClockChoice=null;cardCommands.copy(chosen,{applyStart:true});
   triggerNotices.push('《パーフェクト・イミテーション》：《'+copiedAbility+'》をコピーしました。');
   if(onDone)onDone();
  };
@@ -306,7 +305,7 @@ function hireEmployee(dieId){
   let d=useDie(dieId);if(!d)return alert('未使用のサイコロを1個選んでください。');
   powers[turn].y-=5;
  }
- let e=gachaCast();if(nextHireMinRarity){let order=['N','R','SR','SSR','UR'],min=order.indexOf(nextHireMinRarity);let pool=packCastPool(nextHireMinRarity).concat(...order.slice(min+1).map(r=>packCastPool(r)));if(pool.length)e={...pool[Math.floor(Math.random()*pool.length)]};nextHireMinRarity=null;}if(!e)return alert('雇用できるキャストが実装されていません。');
+ return cardCommands.koyou('gacha',1,{accept:e=>{if(nextHireMinRarity){let order=['N','R','SR','SSR','UR'],min=order.indexOf(nextHireMinRarity);let pool=packCastPool(nextHireMinRarity).concat(...order.slice(min+1).map(r=>packCastPool(r)));if(pool.length)e={...pool[Math.floor(Math.random()*pool.length)]};nextHireMinRarity=null;}if(!e)return alert('雇用できるキャストが実装されていません。');
  // 通常は即雇用。URかつ、すでに所持しているキャラと固有能力が同名の場合だけ再抽選を選べる。
  if(e.rarity==='UR'&&hasSameOwnedUniqueAbility(e)){
   let nextPool=implementedCastPool('UR').filter(x=>x.id!==e.id);
@@ -318,11 +317,11 @@ function hireEmployee(dieId){
  // 効果による雇用は通常の雇用回数を消費しないため、通常雇用側で記録する。
  hiredThisTurn=true;
  finalizeHire(e);
- return true;
+ }}).length>0;
 }
-function gainSSRDie(value){if(pendingSSRBonus<=0)return;let v=+value;if(v<1||v>6)return;let id=dice.length?Math.max(...dice.map(x=>x.id))+1:1;dice.push({id,value:v,used:false,source:'SSR'});pendingSSRBonus--;renderGame()}
-function gainCastResource(color){if(!pendingCastResourceChoices.length)return;if(!eraGainAllowed(turn,color,'effect'))return;let x=pendingCastResourceChoices.shift();gainResource(turn,color,x.amount,'effect');playLogAction('character_ability',{ability:'cast_resource',color,gained:x.amount});renderGame()}
-function gainOverclockResource(color){if(!pendingOverclockChoices.length)return;if(!eraGainAllowed(turn,color,'effect'))return;let x=pendingOverclockChoices[0];gainResource(turn,color,1,'effect');playLogAction('character_ability',{ability:'オーバークロック',color,gained:1});x.remaining--;if(x.remaining<=0)pendingOverclockChoices.shift();renderGame()}
+function gainSSRDie(value){if(pendingSSRBonus<=0)return;let v=+value;if(v<1||v>6)return;cardCommands.dice('gain',{value:v,source:'SSR'});pendingSSRBonus--;renderGame()}
+function gainCastResource(color){if(!pendingCastResourceChoices.length)return;if(!eraGainAllowed(turn,color,'effect'))return;let x=pendingCastResourceChoices.shift();cardCommands.pool(color,x.amount);playLogAction('character_ability',{ability:'cast_resource',color,gained:x.amount});renderGame()}
+function gainOverclockResource(color){if(!pendingOverclockChoices.length)return;if(!eraGainAllowed(turn,color,'effect'))return;let x=pendingOverclockChoices[0];cardCommands.pool(color,1);playLogAction('character_ability',{ability:'オーバークロック',color,gained:1});x.remaining--;if(x.remaining<=0)pendingOverclockChoices.shift();renderGame()}
 // @kokoryo-end-section S0071
 
 // @kokoryo-section S0073
@@ -450,15 +449,16 @@ function oracleSource(sourceType,sourceIndex){
  if(sourceType==='lord')return CHARACTER_DATA[charOf(turn)]||null;
  return employeeUniqueAbilitiesEnabled(turn)?(employees[turn]?.[sourceIndex]||null):null
 }
-function oracleSourceUsed(sourceType,sourceIndex){
- return sourceType==='copy'?!!copiedOracleUsed:sourceType==='lord'?!!lordOracleUsed[turn]:!!employees[turn]?.[sourceIndex]?.oracleUsedTurn
-}
+function oracleAnyUsed(){return (+copiedOracleUsed||0)>0||(+lordOracleUsed[turn]||0)>0||(employees[turn]||[]).some(e=>(+e.oracleUsedTurn||0)>0)}
+function oracleSourceUsed(sourceType,sourceIndex){const n=sourceType==='copy'?copiedOracleUsed:sourceType==='lord'?lordOracleUsed[turn]:employees[turn]?.[sourceIndex]?.oracleUsedTurn;return (+n||0)>=2}
 function markOracleSourceUsed(sourceType,sourceIndex){
- if(sourceType==='copy')copiedOracleUsed=true;else if(sourceType==='lord')lordOracleUsed[turn]=true;else if(employees[turn]?.[sourceIndex])employees[turn][sourceIndex].oracleUsedTurn=true
+ if(sourceType==='copy'){const ledger={uses:+copiedOracleUsed||0};cardCommands.once(2,'turn',{usage:ledger,cardId:'uses',consume:true});copiedOracleUsed=ledger.uses}
+ else if(sourceType==='lord')cardCommands.once(2,'turn',{usage:lordOracleUsed,cardId:turn,consume:true});
+ else if(employees[turn]?.[sourceIndex])cardCommands.once(2,'turn',{usage:employees[turn][sourceIndex],cardId:'oracleUsedTurn',consume:true})
 }
 function useOracleUpgrade(sourceType,sourceIndex,targetIndex){
  let source=oracleSource(sourceType,sourceIndex);if(!source?.oracleUpgrade)return;
- if(hiredThisTurn)return alert('《神託》は通常の雇用の代わりに使用するため、このターンはすでに雇用済みです。');
+ if(hiredThisTurn&&!oracleAnyUsed())return alert('《神託》は通常の雇用の代わりに使用するため、このターンはすでに雇用済みです。');
  if(oracleSourceUsed(sourceType,sourceIndex))return alert('この個体の《神託》はこのターン使用済みです。');
  let target=employees[turn]?.[targetIndex];if(!target)return alert('レベルアップする雇用キャラクターを選んでください。');
  if(!oracleCanUpgradeTarget(target))return alert('SSRはドッペルゲンガー以外、《神託》の対象にできません。');
@@ -469,7 +469,7 @@ function useOracleUpgrade(sourceType,sourceIndex,targetIndex){
  let usedDie=useDie(d.id);if(!usedDie)return alert('《神託》に使用するサイコロを消費できませんでした。');
  powers[turn].y-=5;
  let ne=applyUniqueAbilityDef(upgraded);if(ne.doppelganger)ne=resolveDoppelCopy(ne);
- let before=castDisplayName(target);employees[turn][targetIndex]=ne;markOracleSourceUsed(sourceType,sourceIndex);hiredThisTurn=true;
+ let before=castDisplayName(target);markOracleSourceUsed(sourceType,sourceIndex);if(sourceType!=='lord'&&sourceType!=='copy'&&sourceIndex===targetIndex)ne.oracleUsedTurn=target.oracleUsedTurn;cardCommands.koyou('select',1,{pool:[ne],selected:[ne],canHire:()=>true,accept:next=>{cardCommands.move(target,{zone:'employees',owner:turn},[]);cardCommands.move(next,[next],{zone:'employees',owner:turn},{index:targetIndex})}});hiredThisTurn=true;
  triggerNotices.push('《神託》：'+before+' → '+castDisplayName(ne)+'（'+nr+'）へレベルアップしました。');renderGame()
 }
 function tributeSource(sourceType,sourceIndex){
@@ -478,16 +478,16 @@ function tributeSource(sourceType,sourceIndex){
  return employeeUniqueAbilitiesEnabled(turn)?(employees[turn]?.[sourceIndex]||null):null
 }
 function tributeSourceUsed(sourceType,sourceIndex){
- return sourceType==='copy'?!!copiedTributeUsed:sourceType==='lord'?!!lordTributeUsed[turn]:!!employees[turn]?.[sourceIndex]?.tributeUsedTurn
+ const usage=sourceType==='copy'?{uses:copiedTributeUsed}:sourceType==='lord'?lordTributeUsed:employees[turn]?.[sourceIndex];return !usage||!cardCommands.once(1,'turn',{usage,cardId:sourceType==='lord'?turn:sourceType==='copy'?'uses':'tributeUsedTurn'})
 }
 function markTributeSourceUsed(sourceType,sourceIndex){
- if(sourceType==='copy')copiedTributeUsed=true;else if(sourceType==='lord')lordTributeUsed[turn]=true;else if(employees[turn]?.[sourceIndex])employees[turn][sourceIndex].tributeUsedTurn=true
+ if(sourceType==='copy'){let usage={uses:copiedTributeUsed};cardCommands.once(1,'turn',{usage,cardId:'uses',consume:true});copiedTributeUsed=usage.uses}else if(sourceType==='lord')cardCommands.once(1,'turn',{usage:lordTributeUsed,cardId:turn,consume:true});else if(employees[turn]?.[sourceIndex])cardCommands.once(1,'turn',{usage:employees[turn][sourceIndex],cardId:'tributeUsedTurn',consume:true})
 }
 function useTributeInstall(sourceType,sourceIndex,handIndex){
  let source=tributeSource(sourceType,sourceIndex);if(!source?.tributeInstall)return;
  if(tributeSourceUsed(sourceType,sourceIndex))return alert('この個体の《貢ぎ物》はこのターン使用済みです。');
  let i=Number(handIndex);if(!Number.isInteger(i)||i<0||!hands[turn]?.[i])return alert('設置する通常手札を選んでください。');
- let c=hands[turn].splice(i,1)[0];registerInstallation(turn,c);let b=drawBread(turn);markTributeSourceUsed(sourceType,sourceIndex);
+ let c=hands[turn][i];cardCommands.toba({card:c,from:'hand'});let b=cardCommands.draw('command',1).cards[0];markTributeSourceUsed(sourceType,sourceIndex);
  if(b)triggerNotices.push('《貢ぎ物》：命令書「'+breadLabel(b)+'」を1枚獲得しました。');renderGame()
 }
 // @kokoryo-end-section S0073
@@ -508,7 +508,7 @@ function dismissEmployee(index){
 
 // @kokoryo-section S0079
 
-function gainLordResource(color){if(pendingLordResource<=0||!eraGainAllowed(turn,color,'effect'))return;gainResource(turn,color,1,'effect');playLogAction('character_ability',{ability:'lord_resource',color,gained:1});pendingLordResource--;renderGame()}
+function gainLordResource(color){if(pendingLordResource<=0||!eraGainAllowed(turn,color,'effect'))return;cardCommands.pool(color,1);playLogAction('character_ability',{ability:'lord_resource',color,gained:1});pendingLordResource--;renderGame()}
 // @kokoryo-end-section S0079
 
 // @kokoryo-section S0092
@@ -563,6 +563,6 @@ function useFran(fieldIndex,handIndex){if(charOf(turn)!=='fran')return;let old=i
 
 // @kokoryo-section S0106
 
-function invisibleHandCount(p=turn){let lord=CHARACTER_DATA[charOf(p)]||{};return (lord.invisibleHand||0)+(employeeUniqueAbilitiesEnabled(p)?(employees[p]||[]):[]).reduce((n,e)=>n+(e.invisibleHand||0),0)+(p===turn&&copiedAbility==='神の見えざる手'?1:0)}
-function useInvisibleHand(handIndex,color){let n=invisibleHandCount();if(n<=0)return;let c=hands[turn][handIndex];if(!c)return alert('捨てる手札を選んでください。');discard.push(hands[turn].splice(handIndex,1)[0]);gainResource(turn,color,n,'effect');triggerNotices.push('《神の見えざる手》：「'+c.name+'」を捨て、'+cname(color)+'を'+n+'個獲得しました。');renderGame()}
+function invisibleHandCount(p=turn){let lord=CHARACTER_DATA[charOf(p)]||{};return (lord.invisibleHand||0)+(employeeUniqueAbilitiesEnabled(p)?(employees[p]||[]):[]).reduce((n,e)=>n+(e.invisibleHand||0),0)+(p===turn&&copiedAbility==='神の見えざる手'?(abilityProfile(copiedAbility).invisibleHand||0):0)}
+function useInvisibleHand(handIndex,color){let n=invisibleHandCount();if(n<=0)return;let c=hands[turn][+handIndex];if(!c)return alert('捨てる手札を選んでください。');c=cardCommands.choice('hand',1,{select:[c]})[0];cardCommands.move(c,'hand','discard');cardCommands.pool(color,n);triggerNotices.push('《神の見えざる手》：「'+c.name+'」を捨て、'+cname(color)+'を'+n+'個獲得しました。');renderGame()}
 // @kokoryo-end-section S0106

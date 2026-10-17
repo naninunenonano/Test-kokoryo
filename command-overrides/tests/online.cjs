@@ -52,7 +52,7 @@ test('online: only HOST times out; unused dice use the shared normal conversion'
  const r=await room(t);
  r.guest.run('dice=[1,3,6].map((value,i)=>({id:i+1,value,used:false}));turnClockPublishAction(false)');await r.drain();
  r.guest.advance(999999);assert.equal(r.guest.read('turn'),1,'guest cannot commit an expiry');
- r.host.advance(180001);await r.drain();r.same('turn',2);r.same('powers[1]',{y:1,p:1,r:1});r.same('turnClockState.remaining[1]',30000);
+ r.host.advance(180001);await r.drain();r.same('turn',2);r.same('powers[1]',{y:3,p:3,r:3});r.same('turnClockState.remaining[1]',30000);
 });
 test('online: duplicate end request and late prior-lease state advance exactly once',async t=>{
  const r=await room(t);r.guest.run('completeEnd()');const request=r.queue.shift();
@@ -168,4 +168,15 @@ test('online: N11/N14 individual once ledgers and moves survive reconnect snapsh
  const r=await room(t);r.guest.run("renderGame=()=>{};installed[1]=[{id:'g1',special:'graveyard'},{id:'g2',special:'graveyard'},{id:'m1',special:'publicmarket'}];powers[1]={y:10,p:0,r:0};discard=[{id:'recovered',name:'recovered'}];chooseLegendCard=(title,note,opts,choose)=>choose(opts[0]);useGraveyard(0);q('#legendChoiceCards').children[0].click();market=[{id:'taken',key:'K',name:'taken'}];deck=[];window.__prompts=['1','1'];turnClockPrompt=()=>window.__prompts.shift()??null;usePublicMarket(2);turnClockPublishAction(false)");await r.drain();
  r.same('graveyardUsed[1]',{g1:true});r.same('publicMarketUsed[1]',{m1:true});r.same('hands[1].map(c=>c.id)',['taken']);
  const snap=r.host.read('realMainSnapshot()');r.guest.run(`applyRealMainSnapshot(${JSON.stringify(snap)})`);r.same('graveyardUsed[1]',{g1:true});
+});
+test('online Ver224: strengthened profiles, first-use flags, conversion and cast ledger synchronize across four clients',async t=>{
+ const r=await room(t);r.guest.run("employees[1]=[applyUniqueAbilityDef({...CAST_TYPES.CUR4}),applyUniqueAbilityDef({...CAST_TYPES.CUR5})];dice=[{id:1,value:3,used:false}];breadDeck=Array.from({length:30},(_,i)=>({id:'b'+i,value:1}));resolveTurnStartEffects();cardCommands.change('convert',3,{dieId:1});stdAbilityUsed['cast:q']=2;turnClockPublishAction(false)");await r.drain();
+ r.same('powers[1].p',3);r.same('breadHands[1].length',6);r.same('employees[1].map(e=>[e._firstBreadUsed||false,e._overclockUsed||false])',[[true,false],[false,true]]);r.same('pendingOverclockChoices[0].remaining',20);r.same('stdAbilityUsed',{'cast:q':2});
+});
+test('online Ver224: Genesis waits for all remote Park picks, then resumes the saved repeat index',async t=>{
+ const r=await room(t);r.guest.run("deck=Array.from({length:30},(_,i)=>({id:'c'+i,key:'K'+i,name:'card',type:'N'}));gameSettings.marketTypes=4;hands[1]=[{id:'park',key:'N1',type:'N',special:'paneteria',name:'park'},{id:'plain',key:'S1',type:'S',name:'plain'}];window.__pick=null;chooseLegendCard=(title,note,opts,choose,cancel)=>window.__pick={opts,choose,cancel};resolveEggHarp(1);window.__pick.choose(window.__pick.opts[0]);turnClockPublishAction(false)");await r.drain();r.same('turnClockChoice.waiting','park');r.same('turnClockChoice.n',1);
+ for(let i=0;i<4;i++){
+  const p=r.host.read('pendingParkPlayers[0]'),key=r.host.read('market[0].key');r.clients[p].run(`turnClockRequestPark(${p},${JSON.stringify(key)})`);await r.drain();
+ }
+ r.same('pendingParkPlayers.length',0);r.same('turnClockChoice.n',1);r.same('temporary[1].length',1);
 });
