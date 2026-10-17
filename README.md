@@ -75,3 +75,13 @@ Pages設定とワークフローは **Test-kokoryoだけ** で使用してくだ
 本体に持ち時間制を含むPR（本体 Ver.0.3.220以降）も指定できます。
 本体の時計を再利用し、同じ時計を二重に追加しません。テスト版では引き続きオンライン接続を禁止します。
 既定の検証対象PRは自動では変更しません。
+
+## TEST Ver.0.3.222: 汎用コマンド 第1段階
+
+本番リポジトリは更新しません。基準PR #3 / `1ca6ccfcf7c5f9cddea8c508f472b0af04a9167a` を固定し、TEST側の `command-overrides/` にある15ファイルだけを適用します。`js/app.js` は保存せず、組み立て後に全103件のゲームテストを実行してから従来の隔離処理を適用します。`src/order.json`、パック・画像・カードデータは基準のままです。
+
+一覧: [command-overrides/docs/COMMANDS.md](command-overrides/docs/COMMANDS.md)。pool/draw/dice/limitと旧S1〜S10だけが対象です。online.js/debug.jsはバージョン表記だけを更新しています。tests/regression.cjs/online.cjsは共通コマンドの参照をテスト環境で扱うための変更です。
+
+`preview-target.json` の `commandOverrides: true` を指定すると、既存Actionsの実行またはTEST mainへの対象設定更新により、この差分を使って公開します。手動で別PRを指定する場合も基準コミットが異なれば停止します。全カード効果の全面再設計、N/レジェンド/雇用への移行は含みません。
+
+ローカル検証: ゲーム103件、TESTビルド・隔離22件、JS13本の構文、オフライン/Bot起動、TEST時計33件が成功。実Supabase複数端末・iPhone Safari実機・全カード全組み合わせは未検証です。

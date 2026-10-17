@@ -8,6 +8,7 @@ on:
       - 'tests/**'
       - 'package*.json'
       - 'preview-target.json'
+      - 'command-overrides/**'
   workflow_dispatch:
     inputs:
       pr_number:
@@ -46,7 +47,7 @@ jobs:
           manual_pr = os.environ.get('PR_NUMBER', '')
           pr = manual_pr or str(target['pr'])
           commit = os.environ.get('EXPECTED_COMMIT', '') if manual_pr else target['commit']
-          subprocess.run([sys.executable, 'tools/build_preview.py', '--pr', pr, '--commit', commit, '--output', '_site'], check=True)
+          subprocess.run([sys.executable, 'tools/build_preview.py', '--pr', pr, '--commit', commit, '--output', '_site'] + (['--command-overrides', 'command-overrides'] if target.get('commandOverrides') else []), check=True)
           PY
       - name: Verify offline isolation and packaged assets
         run: python3 -m unittest discover -s tests -p 'test_*.py' -v
