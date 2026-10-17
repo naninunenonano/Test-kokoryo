@@ -206,10 +206,10 @@ def build(source_dir, output, pr, commit):
 def apply_command_overrides(directory, overrides, commit):
     if commit != '1ca6ccfcf7c5f9cddea8c508f472b0af04a9167a':
         raise ValueError('Cumulative overrides require the pinned Ver.0.3.221 baseline')
-    allowed = {'docs/VER227_REPORT.md', 'tests/start227.cjs', 'docs/VER226_REPORT.md', 'tests/balance226.cjs', 'tests/fixtures/scope_225.json', 'tests/startup.cjs', 'tests/setup225.cjs', 'tests/scope225.cjs', 'tests/fixtures/scope_224.json', 'docs/VER225_REPORT.md', 'tests/commands.cjs', 'tests/split.cjs', 'src/debug.js', 'docs/COMMANDS.md', 'tests/regression.cjs', 'src/game.js', 'src/online.js', 'tests/online.cjs', 'tests/normal_commands.cjs', 'tests/clock.cjs', 'tests/fixtures/scope_223.json', 'tests/fixtures/legends_223.json', 'tests/integration224.cjs', 'src/characters.js', 'src/bot.js', 'package.json', 'tests/fixtures/standard_221.json', 'index.html', 'docs/dependencies.json', 'docs/VER224_REPORT.md', 'src/decks.js', 'src/card_effects.js', 'src/ui.js', 'README.md', 'docs/DEPENDENCIES.md', 'tests/fixtures/normal_222.json', 'src/bootstrap.js', 'tools/package_test.py'}
+    allowed = {'docs/VER228_REPORT.md', 'docs/VER227_REPORT.md', 'tests/start227.cjs', 'docs/VER226_REPORT.md', 'tests/balance226.cjs', 'tests/fixtures/scope_225.json', 'tests/startup.cjs', 'tests/setup225.cjs', 'tests/scope225.cjs', 'tests/fixtures/scope_224.json', 'docs/VER225_REPORT.md', 'tests/commands.cjs', 'tests/split.cjs', 'src/debug.js', 'docs/COMMANDS.md', 'tests/regression.cjs', 'src/game.js', 'src/online.js', 'tests/online.cjs', 'tests/normal_commands.cjs', 'tests/clock.cjs', 'tests/fixtures/scope_223.json', 'tests/fixtures/legends_223.json', 'tests/integration224.cjs', 'src/characters.js', 'src/bot.js', 'package.json', 'tests/fixtures/standard_221.json', 'index.html', 'docs/dependencies.json', 'docs/VER224_REPORT.md', 'src/decks.js', 'src/card_effects.js', 'src/ui.js', 'README.md', 'docs/DEPENDENCIES.md', 'tests/fixtures/normal_222.json', 'src/bootstrap.js', 'tools/package_test.py'}
     files = {str(p.relative_to(overrides)): p for p in overrides.rglob('*') if p.is_file()}
     if set(files) != allowed:
-        raise ValueError('Unexpected or missing Ver227 cumulative override files')
+        raise ValueError('Unexpected or missing Ver228 cumulative override files')
     for relative, source in files.items():
         if source.is_symlink():
             raise ValueError('Override symlinks are forbidden')

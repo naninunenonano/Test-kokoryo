@@ -22,7 +22,7 @@ function createInitialDraftDeal(count){
  const error=initialDraftSetupError(count);if(error)throw new RangeError(error);
  const supply=sh(STD),packs=Array.from({length:count},()=>supply.splice(0,INITIAL_DRAFT.packSize));return {packs,unused:supply};
 }
-let gameSettings={...DEFAULT_RULE_SETTINGS,handLimit:6,deckId:'standard1',randomizerEnabled:false,randomizerCount:15,enabledPacks:[],enabledRulePacks:[],ruleCardMode:'select',ruleCardChoice:'RC1',activeRuleCards:[]};
+let gameSettings={...DEFAULT_RULE_SETTINGS,handLimit:10,deckId:'standard1',randomizerEnabled:false,randomizerCount:15,enabledPacks:[],enabledRulePacks:[],ruleCardMode:'select',ruleCardChoice:'RC1',activeRuleCards:[]};
 function legendSlotMax(deckId=gameSettings.deckId){let cfg=activeDeckConfig(deckId),lower=(cfg.lowerLegendKeys||[]).length,upper=(cfg.upperLegendKeys||[]).length;return Math.max(1,Math.min(6,lower,upper))}
 function fillLegendSlotSelect(sel,deckId,value){let el=typeof sel==='string'?q(sel):sel;if(!el)return;let max=legendSlotMax(deckId);el.innerHTML='';let cur=Math.max(1,Math.min(max,+value||Math.min(DEFAULT_RULE_SETTINGS.legendSlots,max)));for(let i=1;i<=max;i++){let o=document.createElement('option');o.value=i;o.textContent=i+'枚';el.appendChild(o)}el.value=cur}
 function refreshLegendSlotSelectors(){fillLegendSlotSelect('#settingLegendSlots',q('#deckPreset')?.value||'standard1',gameSettings.legendSlots);fillLegendSlotSelect('#onlineDebugRuleLegendSlots',gameSettings.deckId,gameSettings.legendSlots);fillLegendSlotSelect('#realRuleLegendSlots',realOnlineDeckId||'standard1',realOnlineRules?.legendSlots||gameSettings.legendSlots)}
@@ -418,8 +418,6 @@ let initialPowerPlayer=0;
 // @kokoryo-section S0049
 
 function resolveGameStartCharacterEffects(){
- // ドラフトで選んだ5枚を維持し、山札から追加して初期手札を10枚にする。
- for(let p=0;p<playerCount;p++)cardCommands.draw('deck',Math.max(0,10-hands[p].length),{owner:p});
  // 現在の領主固有能力はゲーム開始時に直接処理しない。
  // 《神算鬼謀》の初回ボーナスは、その能力を持つ領主／キャストごとに最初のターン開始時に独立して処理する。
 }

@@ -157,7 +157,7 @@ function captureLocalRuleSettings(){
  if(q('#settingWinVP'))q('#settingWinVP').value=String(gameSettings.winVP);
  gameSettings.marketTypes=ruleSettingValue('marketTypes',q('#settingMarketTypes')?.value);
  gameSettings.initialResources=ruleSettingValue('initialResources',q('#settingInitialResources')?.value);
- gameSettings.handLimit=Math.max(1,Math.floor(Number(q('#settingHandLimit')?.value)||6));
+ gameSettings.handLimit=Math.max(1,Math.floor(Number(q('#settingHandLimit')?.value)||10));
  gameSettings.hireLimit=ruleSettingValue('hireLimit',q('#settingHireLimit')?.value);
  gameSettings.legendSlots=Math.min(maxLegend,ruleSettingValue('legendSlots',q('#settingLegendSlots')?.value));
  gameSettings.deckId=chosenDeck;
