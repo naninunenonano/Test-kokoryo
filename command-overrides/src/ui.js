@@ -219,8 +219,11 @@ function appendActiveAbilityControls(parent,sourceType,sourceIndex,entity){
   let row=document.createElement('div');row.className='row';row.style.marginTop='6px';
   let sel=document.createElement('select');
   (employees[turn]||[]).forEach((x,i)=>{if(!oracleCanUpgradeTarget(x))return;let nx=oracleUpgradeTarget(x);if(nx){let o=document.createElement('option');o.value=i;o.textContent=castDisplayName(x)+' → '+castDisplayName(nx)+'（'+nx.rarity+'）';sel.appendChild(o)}});
-  let b=document.createElement('button');b.type='button';b.className='secondary';b.textContent='《神託》を使用';b.disabled=(hiredThisTurn&&!oracleAnyUsed())||oracleSourceUsed(sourceType,sourceIndex)||!sel.options.length||!unusedDice().length||!canPayResourceCost({["y"]:(5)},turn);
-  b.onclick=()=>useOracleUpgrade(sourceType,sourceIndex,+sel.value);row.append(sel,b);parent.appendChild(row)
+  const costs=[];for(let n=0;n<3;n++){const cost=document.createElement('select');cost.setAttribute('aria-label','神託で捨てる通常手札'+(n+1));oracleDiscardCandidates().forEach(({c,i})=>{const o=document.createElement('option');o.value=i;o.textContent=c.name;cost.appendChild(o)});if(cost.options.length>n)cost.selectedIndex=n;costs.push(cost);row.append('捨てる手札'+(n+1)+' ',cost);}
+  let b=document.createElement('button');b.type='button';b.className='secondary';b.textContent='《神託》：手札3枚でレベルアップ＋山札1枚設置（残り'+Math.max(0,3-(+oracleUpgradesThisTurn[turn]||0))+'回）';
+  const refresh=()=>{const selected=costs.map(c=>+c.value);b.disabled=!isViewingOwnTurn()||!oracleCanPay()||!sel.options.length||costs.some(c=>!c.options.length)||new Set(selected).size!==3;};
+  costs.forEach(c=>c.onchange=refresh);sel.onchange=refresh;
+  b.onclick=()=>useOracleUpgrade(sourceType,sourceIndex,+sel.value,costs.map(c=>+c.value));row.prepend(sel);row.appendChild(b);refresh();parent.appendChild(row)
  }
  if(entity.tributeInstall){
   let row=document.createElement('div');row.className='row';row.style.marginTop='6px';

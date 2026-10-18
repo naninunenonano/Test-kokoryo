@@ -51,7 +51,7 @@ function undoCommandAction(id){
 
 function undoMarketAcquisition(id){let e=marketUndoHistory.find(x=>x.id===id);if(!marketUndoEntryAvailable(e))return alert('この市場獲得は戻せません。獲得した山のカードを設置・移動したか、市場を変更する効果を使用しています。');for(let c of e.cards){let i=hands[turn].indexOf(c);if(i<0)return alert('獲得したカードが手札に揃っていないため戻せません。');hands[turn].splice(i,1)}market.push(...e.cards);let d=dice.find(x=>x.id===e.dieId);if(d)d.used=false;e.blocked=true;selectedMarketKey=null;renderGame()}
 let installEffectStack=[],installEffectRunning=false,parkChoiceRevision=0;
-let playerTurnCounts=[],lastCountedTurnToken=-1;
+let playerTurnCounts=[],lastCountedTurnToken=-1,oracleUpgradesThisTurn=[];
 let nightEscapePostAvailable=false,nightEscapeResetNext=[],stdAbilityUsed={},pendingLordResource=0,playerCount=4,lordOracleUsed=[],lordTributeUsed=[],unusedStd=[],packs=[],hands=[],selected=[],round=0,viewer=0,deck=[],market=[],discard=[],turn=0,dice=[],powers=[],installed=[],temporary=[],elekiterUsed=[],pendingNanban=0,pendingTenkuCat=0,commandCounts=[],komePlace=100,pendingParkPlayers=[],pendingParkTaken=[],characterMode='P1',characters=[],legends=[],legendTakenThisTurn=false,endgameStarter=null,endgameRemaining=0,gameEnded=false,breadDeck=[],breadDiscard=[],breadHands=[],employeeDeck=[],employees=[],hiredThisTurn=false,pendingSSRBonus=0,pendingCastResourceChoices=[],lordFirstBreadUsed=[],lordOverclockUsed=[],pendingOverclockChoices=[],debugVP=[],copiedAbility=null,copiedOracleUsed=false,copiedTributeUsed=false,organizationUsed=[];
 function sh(a){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function makeBreadDeck(){let a=[];for(let v=1;v<=6;v++)for(let i=0;i<4;i++)a.push({kind:'bread',value:v,name:'命令書 '+v,id:'B'+v+'-'+(i+1)});a.push({kind:'bread',value:'any',name:'命令書 ANY',id:'BANY-1'});return sh(a)}
@@ -467,7 +467,7 @@ function beginTurn(){
  playLogChanges('previous_turn');playLogEvent('turn_start',{player:turn+1},true);legendTakenThisTurn=false;stdAbilityUsed={};copiedAbility=null;copiedOracleUsed=false;copiedTributeUsed=false;
  allFieldCards(turn).forEach(c=>{if(c._eraAcquiredThisTurn)c._eraAcquiredThisTurn=false});
  if(gameEnded)return;
- if(lastCountedTurnToken!==turnClockState.token){playerTurnCounts[turn]=(+playerTurnCounts[turn]||0)+1;lastCountedTurnToken=turnClockState.token;}
+ if(lastCountedTurnToken!==turnClockState.token){playerTurnCounts[turn]=(+playerTurnCounts[turn]||0)+1;oracleUpgradesThisTurn[turn]=0;lastCountedTurnToken=turnClockState.token;}
  hiredThisTurn=false;organizationUsed=[];nextHireMinRarity=null;nextHireExtra=0;fusionUsedThisTurn=false;lordOracleUsed[turn]=false;lordTributeUsed[turn]=false;graveyardUsed[turn]={};publicMarketUsed[turn]={};clearMarketUndo();
  if(runTurnStartSpecialAcquirePhase('pre'))return;
  if(resolveAbilityCopyLegend(()=>continueBeginTurn()))return;
@@ -565,7 +565,7 @@ function turnClockOriginalCompleteEnd(){playLogChanges('turn_end');playLogEvent(
 // @kokoryo-section S0114
 
 function resetGameEndState(){
- playerTurnCounts=Array(playerCount).fill(0);lastCountedTurnToken=-1;
+ playerTurnCounts=Array(playerCount).fill(0);lastCountedTurnToken=-1;oracleUpgradesThisTurn=Array(playerCount).fill(0);
  turnClockReset();
  endgameStarter=null;endgameRemaining=0;gameEnded=false;
  let box=q('#gameover');if(box){box.className='notice hidden';box.innerHTML=''}
