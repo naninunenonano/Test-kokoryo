@@ -484,6 +484,7 @@ function continueBeginTurn(){
   triggerNotices.push('《世界恐慌》：獲得したターンの開始時資源獲得と全サイコロ獲得を無効化しました。');
  }
  depressionStartSuppressed=false;
+ if(hasEquivalentExchange(turn))cardCommands.pool('y',5,{respectRestrictions:false});
  turnStartPostPending=true;nightEscapePostAvailable=false;renderGame()
 }
 // @kokoryo-end-section S0054
