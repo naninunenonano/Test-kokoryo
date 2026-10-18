@@ -11,9 +11,9 @@ test('230 Oracle: last deck card and discard recycle preserve every physical cos
 
 test('235 mobile Oracle controls: every target/cost remains selectable and actual click preserves the 230 effect',async t=>{
  const h=await oracle(t);h.run("employees[0][0]=applyUniqueAbilityDef({...CAST_TYPES.CUR10});employees[0].push({...CAST_TYPES.CN2});hands[0].forEach((c,i)=>c.name='長い通常カード名'.repeat(8)+i);renderHireActions()");
- const doc=h.dom.window.document,row=doc.querySelector('.employee-card-wrap .row:has(>select[aria-label])'),selects=row.querySelectorAll('select');assert.equal(selects.length,4);assert.equal(selects[0].options.length,2);for(const s of [...selects].slice(1))assert.equal(s.options.length,15);
- selects[0].value='2';[1,3,5].forEach((v,i)=>{selects[i+1].value=String(v);selects[i+1].onchange()});row.querySelector('button').click();
- assert.equal(h.run('employees[0][2].id'),'CR2');assert.deepEqual(h.read('discard.map(c=>c.id)'),['cost1','cost3','cost5']);assert.equal(h.run('temporary[0][0].id'),'top0');assert.equal(h.run('oracleUpgradesThisTurn[0]'),1);
+ const doc=h.dom.window.document,row=doc.querySelector('.employee-card-wrap .row:has(>select[aria-label])'),selects=row.querySelectorAll('select');assert.equal(selects.length,4);assert.equal(selects[0].options.length,2);for(const s of [...selects].slice(1))assert.equal(s.options.length,13);
+ selects[0].value='2';[3,4,5].forEach((v,i)=>{selects[i+1].value=String(v);selects[i+1].onchange()});row.querySelector('button').click();
+ assert.equal(h.run('employees[0][2].id'),'CR2');assert.deepEqual(h.read('discard.map(c=>c.id)'),['cost3','cost4','cost5']);assert.equal(h.run('temporary[0][0].id'),'top0');assert.equal(h.run('oracleUpgradesThisTurn[0]'),1);
 });
 test('235 shared ability rows: lord/copy Oracle and Tribute retain their controls; mobile CSS is scoped and safe-area aware',async t=>{
  const h=await oracle(t);h.run("CHARACTER_DATA.P1={...CHARACTER_DATA.P1,oracleUpgrade:true};copiedAbility='神託';renderHireActions()");
