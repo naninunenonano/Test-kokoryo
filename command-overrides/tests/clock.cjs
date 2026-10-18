@@ -46,26 +46,26 @@ async function fixture(t,options={}){
 }
 module.exports={fixture};
 if(require.main===module){
-test('180 seconds each; only active player spends elapsed time',async t=>{
+test('300 seconds each; only active player spends elapsed time',async t=>{
  const h=await fixture(t);h.advance(50000);
- assert.deepEqual(h.read('turnClockState.remaining'),[130000,180000,180000,180000]);
- assert.equal(h.dom.window.document.querySelector('[data-clock-player="0"]').dataset.seconds,'130');
+ assert.deepEqual(h.read('turnClockState.remaining'),[250000,300000,300000,300000]);
+ assert.equal(h.dom.window.document.querySelector('[data-clock-player="0"]').dataset.seconds,'250');
 });
-test('170 seconds plus recovery caps at 180 seconds',async t=>{
- const h=await fixture(t);h.advance(10000);h.run('completeEnd()');assert.equal(h.read('turnClockState.remaining[0]'),180000);
+test('290 seconds plus recovery caps at 300 seconds',async t=>{
+ const h=await fixture(t);h.advance(10000);h.run('completeEnd()');assert.equal(h.read('turnClockState.remaining[0]'),300000);
 });
-test('normal completion recovers 30 seconds, caps at 180, preserves carryover',async t=>{
+test('normal completion recovers 60 seconds, caps at 300, preserves carryover',async t=>{
  const h=await fixture(t);h.advance(50000);h.run('completeEnd()');
- assert.equal(h.read('turnClockState.remaining[0]'),160000);
+ assert.equal(h.read('turnClockState.remaining[0]'),300000);
  for(let i=0;i<3;i++)h.run('completeEnd()');
  assert.equal(h.read('turn'),0);h.advance(70000);h.run('completeEnd()');
- assert.equal(h.read('turnClockState.remaining[0]'),120000);
- assert.equal(h.read('turnClockState.remaining[1]'),180000);
+ assert.equal(h.read('turnClockState.remaining[0]'),290000);
+ assert.equal(h.read('turnClockState.remaining[1]'),300000);
 });
 test('timeout uses ordinary conversion for all six faces, ignores used dice and orders',async t=>{
  const h=await fixture(t);h.run("dice=[1,2,3,4,5,6].map((value,i)=>({id:i+1,value,used:false}));dice.push({id:7,value:1,used:true});breadHands[0]=[{id:'b',value:6}]");
  await h.expire();assert.deepEqual(h.read('powers[0]'),{y:6,p:6,r:6});
- assert.equal(h.read('breadHands[0].length'),1);assert.equal(h.read('turnClockState.remaining[0]'),30000);assert.equal(h.read('turn'),1);
+ assert.equal(h.read('breadHands[0].length'),1);assert.equal(h.read('turnClockState.remaining[0]'),60000);assert.equal(h.read('turn'),1);
 });
 test('manual and timeout conversions share employee and copied-ability bonuses',async t=>{
  const h=await fixture(t);h.run("employees[0]=[{dieResourceBonus:1}];copiedAbility='神の恩恵';dice=[{id:1,value:1,used:false},{id:2,value:1,used:false}];renderConversionActions();q('#normalconvertchoices button').click()");
@@ -79,7 +79,7 @@ test('timeout and repeated stale expiration finalize temporary cards and advance
  const h=await fixture(t);h.run("temporary[0]=[{id:'placed',key:'N1',type:'N',name:'test',vp:0}]");
  const old=await h.expire();h.run(`turnClockExpire(${old});turnClockExpire(${old})`);h.tick();
  assert.equal(h.read('turn'),1);assert.equal(h.read('installed[0].length'),1);assert.equal(h.read('temporary[0].length'),0);
- assert.equal(h.read('turnClockState.remaining[0]'),30000);
+ assert.equal(h.read('turnClockState.remaining[0]'),60000);
 });
 test('uniform overflow pool includes normal cards and command sheets, not debt',async t=>{
  const h=await fixture(t);h.run(`gameSettings.handLimit=10;commandCounts[0]=5;hands[0]=Array.from({length:4},(_,i)=>({id:'n'+i}));breadHands[0]=[1,2,3].map(value=>({id:'b'+value,value}));Math.random=()=>0.999;`);
@@ -146,7 +146,7 @@ test('timeout cancels asynchronous unpaid legend payment',async t=>{
 });
 test('ordinary end button remains usable after timeout',async t=>{
  const h=await fixture(t);await h.expire();h.run("q('#endturn').click();q('#confirmEndTurn').click()");
- assert.equal(h.read('turn'),2);assert.equal(h.read('turnClockState.remaining[1]'),180000);
+ assert.equal(h.read('turn'),2);assert.equal(h.read('turnClockState.remaining[1]'),300000);
 });
 test('time can expire while the ordinary hand-limit selection is open',async t=>{
  const h=await fixture(t);h.run("hands[0]=Array.from({length:9},(_,i)=>({id:'n'+i,name:'test',type:'N'}));showHandLimit()");
@@ -155,7 +155,7 @@ test('time can expire while the ordinary hand-limit selection is open',async t=>
  assert.equal(h.read("q('#limit').classList.contains('hidden')"),true);
 });
 test('native dialogue elapsed time is caught when the dialogue closes',async t=>{
- const h=await fixture(t);h.dom.window.confirm=()=>{h.jump(180001);return true};
+ const h=await fixture(t);h.dom.window.confirm=()=>{h.jump(300001);return true};
  assert.equal(h.run("turnClockConfirm('test')"),false);await Promise.resolve();await Promise.resolve();assert.equal(h.read('turn'),1);
 });
 test('game-ending final turn uses existing game-over path and stops the clock',async t=>{
@@ -169,25 +169,25 @@ test('resource-derived victory reached by timeout starts the final round for the
 });
 test('background elapsed time expires once, leaves next player with a full clock',async t=>{
  const h=await fixture(t);h.advance(3600000);assert.equal(h.read('turn'),1);
- assert.equal(h.read('turnClockState.remaining[0]'),30000);assert.equal(h.read('turnClockState.remaining[1]'),180000);
+ assert.equal(h.read('turnClockState.remaining[0]'),60000);assert.equal(h.read('turnClockState.remaining[1]'),300000);
 });
 test('late click at zero cannot consume next player action or end two turns',async t=>{
- const h=await fixture(t);h.jump(180001);h.run("q('#endturn').click()");
+ const h=await fixture(t);h.jump(300001);h.run("q('#endturn').click()");
  assert.equal(h.read('turn'),1);assert.equal(h.read("q('#endTurnConfirmModal').classList.contains('hidden')"),true);
 });
-test('reroll does not reset time; a new game does reset each player to 180',async t=>{
- const h=await fixture(t);h.advance(40000);h.run('beginTurn()');assert.equal(h.read('turnClockState.remaining[0]'),140000);
- h.run('resetGameEndState()');assert.deepEqual(h.read('turnClockState.remaining'),[180000,180000,180000,180000]);assert.equal(h.read('turnClockState.active'),null);
+test('reroll does not reset time; a new game does reset each player to 300',async t=>{
+ const h=await fixture(t);h.advance(40000);h.run('beginTurn()');assert.equal(h.read('turnClockState.remaining[0]'),260000);
+ h.run('resetGameEndState()');assert.deepEqual(h.read('turnClockState.remaining'),[300000,300000,300000,300000]);assert.equal(h.read('turnClockState.active'),null);
 });
 test('reentrant end hooks cannot add recovery twice or skip a player',async t=>{
  const h=await fixture(t);h.advance(40000);h.run("const oldHook=runInstalledPackHooks;runInstalledPackHooks=(name,p)=>{if(name==='turnEnd')completeEnd();return oldHook(name,p)};completeEnd()");
- assert.equal(h.read('turn'),1);assert.equal(h.read('turnClockState.remaining[0]'),170000);
+ assert.equal(h.read('turn'),1);assert.equal(h.read('turnClockState.remaining[0]'),300000);
 });
 test('a sleeping Bot cannot act on the new turn after timeout',async t=>{
  const h=await fixture(t);h.run("botMatchMode=true;onlineDebugMode=true;onlineDebugPlayers=['human','bot1','bot2','bot3'];turn=1;turnClockState.active=null;turnClockBeginTurn()");
- const bot=h.run('botExecuteTurn()');h.advance(180001);assert.equal(h.read('turn'),2);
+ const bot=h.run('botExecuteTurn()');h.advance(300001);assert.equal(h.read('turn'),2);
  h.jump(2000);await h.flush();await bot;
- assert.equal(h.read('turn'),2);assert.equal(h.read('turnClockState.remaining[1]'),30000);assert.equal(h.read('botBusy'),false);
+ assert.equal(h.read('turn'),2);assert.equal(h.read('turnClockState.remaining[1]'),60000);assert.equal(h.read('botBusy'),false);
 });
 test('Bot timeout during its final pause cannot end the following player turn',async t=>{
  const h=await fixture(t);h.run("botMatchMode=true;onlineDebugMode=true;onlineDebugPlayers=['human','bot1','bot2','bot3'];turn=1;turnClockState.active=null;turnClockBeginTurn();botTryInstall=()=>false;botTryScout=()=>false;botTryHire=()=>false;");

@@ -67,9 +67,11 @@ def patch_html(source, pr, commit, source_split=False):
     parts = source_version.split('.')
     version = source_version if source_split else '.'.join(parts[:-1] + [str(int(parts[-1]) + 2)])
     preview_commit = os.environ.get('GITHUB_SHA', 'local')
+    clock_match = re.search(r'const TURN_CLOCK_INITIAL=(\d+),TURN_CLOCK_INCREMENT=(\d+);', source)
+    initial_ms, increment_ms = map(int, clock_match.groups()) if clock_match else (180000, 30000)
     build = {'environment': 'offline-test', 'version': version, 'sourceVersion': source_version,
              'pr': pr, 'commit': commit, 'previewCommit': preview_commit, 'onlineEnabled': False,
-             'features': ['turn-chess-clock'], 'clock': {'initialSeconds': 180, 'maxSeconds': 180, 'incrementSeconds': 30, 'timeoutDieConversion': 'normal'}}
+             'features': ['turn-chess-clock'], 'clock': {'initialSeconds': initial_ms // 1000, 'maxSeconds': initial_ms // 1000, 'incrementSeconds': increment_ms // 1000, 'timeoutDieConversion': 'normal'}}
     if source_split:
         build['features'].append('source-split')
         if 'once:commandOnce' in source:

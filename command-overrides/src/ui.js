@@ -837,7 +837,7 @@ function turnClockRender(){
  let box=q('#turnClockPanel');
  if(!box){box=document.createElement('section');box.id='turnClockPanel';box.className='notice';box.setAttribute('aria-label','プレイヤー別持ち時間');q('#game')?.prepend(box)}
  if(!box)return;
- box.innerHTML='<strong>持ち時間</strong> <span class="small">自分のターンのみ消費・終了時＋30秒（上限180秒）</span>';
+ box.innerHTML='<strong>持ち時間</strong> <span class="small">自分のターンのみ消費・終了時＋'+(TURN_CLOCK_INCREMENT/1000)+'秒（上限'+(TURN_CLOCK_INITIAL/1000)+'秒）</span>';
  const row=document.createElement('div');row.className='row';row.style.cssText='justify-content:flex-start;gap:8px;flex-wrap:wrap;margin-top:6px';
  for(let p=0;p<playerCount;p++){
   const secs=Math.ceil((s.remaining[p]??TURN_CLOCK_INITIAL)/1000),el=document.createElement('span');
