@@ -188,3 +188,25 @@ cardCommands.change('market',2); // 指定枚数の交換も可能
 ## Ver.0.3.226 バランス定義
 
 コマンド登録・構文・Pack APIは維持する。S/Nカードの開始時プログラムと人数別獲得量を更新。LU2はonce 3/turnで3回の独立したcastを行う。N1のchange/start/choice/moveを2セット実行し、N3は2回のtobaを設置時効果の完了後に続ける。中断可能な処理はJSON可能なinstallEffectStackで保持する。新旧効果を二重実行しない。
+
+
+## Ver.0.3.231 雇用の段階指定
+
+```js
+cardCommands.run('雇用 レベルアップ 2', {targetIndex:0});
+cardCommands.koyou('レベルアップ',2,{targetIndex:0});
+cardCommands.run('雇用 融合 通常 3');
+cardCommands.koyou('融合','モノマネ',2);
+cardCommands.run('雇用 融合 特殊 1');
+packRuntimeApi(turn).commands.run('雇用 レベルアップ 1');
+```
+
+数字は進化段階数であり、実行回数ではない。戻り値は生成された最終キャラクターの配列（失敗・キャンセルは空配列）。通常／モノマネ融合は既存CAST_SYNTHESIS、レベルアップは既存の神託進化ラインと追加パック定義を参照する。途中段階は生成しない。成長促進時の通常素材1人、それ以外の2人、モノマネのレアリティ・特殊組合せは従来どおり。特殊融合はCLR_FUSION_RULESのmaterials/resultと省略時1のstagesで登録。2以上は明示登録された最終結果だけ実行でき、現状は未登録なので実行不可。SLRは追加していない。
+
+複数対象は既存の番号選択プロンプト、通常操作は従来の融合候補UI、CLRは既存の能力選択UIを使う。options.selectedで融合候補を指定できるが、その時点の登録済み候補と照合する。選択待ち後に手番トークン・素材の実体・ユニーク制限を再検証する。
+
+コストと使用台帳は呼び出し元が持つ。beforeCommitは副作用なしの最終検証、commitCostは検証後の確定、onSuccessは成功時効果。CLRはUIによる非同期確定なので、後続処理は戻り値の即時lengthではなくonSuccessへ置く。これらのコールバックをオンライン状態には保存しない。
+
+神託は手札3枚を検証し、共通レベルアップのcommitCostで既存once 3/turn台帳と捨て札を確定、成功後に既存tobaを1回実行する。230の対象条件・通常雇用コスト・共有3回上限は維持。通常融合UIは既存fusionUsedThisTurnにonceを適用し、汎用コマンド自体に追加の回数制限は設けない。
+
+Bot戦はパック2のチェックとスタンダード③を解放。パックチェックはキャラクター登録を切り替え、通常カードの構成は選択デッキに従う。BotのinstallSpec支払いは異なるダイス／命令書の組合せを探索して既存installPackCardへ渡す。融合はCLR優先、それ以外は最初の合法候補。CLR能力とドッペルコピーは候補の先頭、汎用選択プロンプトは既定値を使う。人間の操作は自動化しない。
