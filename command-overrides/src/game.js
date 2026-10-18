@@ -470,7 +470,7 @@ function beginTurn(){
  continueBeginTurn();
 }
 function continueBeginTurn(){
- const suppressDepressionStart=!hasEquivalentExchange(turn)&&depressionDebtLocked(turn)&&allFieldCards(turn).some(c=>specialEffectId(c)==='greatDepression'&&c._eraAcquiredThisTurn);
+ const suppressDepressionStart=depressionDebtLocked(turn)&&allFieldCards(turn).some(c=>specialEffectId(c)==='greatDepression'&&c._eraAcquiredThisTurn);
  const depressionResourceBaseline=suppressDepressionStart?{...powers[turn]}:null;
  depressionStartSuppressed=suppressDepressionStart;
  if(depressionDebtLocked(turn)&&!suppressDepressionStart){gainResource(turn,'p',5,'depressionBonus');gainResource(turn,'r',5,'depressionBonus');}
@@ -494,8 +494,9 @@ function continueBeginTurn(){
  let hasGuild=installed[turn].some(c=>c.special==='naroppaGuild'); if(hasGuild){}
  if(suppressDepressionStart){
   // 獲得ターンだけ、通常・追加・選択式の全ダイスと開始時資源獲得を抑止する。
-  dice=[];pendingSSRBonus=0;pendingLordResource=0;pendingNanban=0;pendingTenkuCat=0;pendingCastResourceChoices=[];pendingOverclockChoices=[];
-  for(const k of ['y','p','r'])powers[turn][k]=Math.min(powers[turn][k],depressionResourceBaseline[k]);
+  dice=[];pendingSSRBonus=0;
+  if(!hasEquivalentExchange(turn)){pendingLordResource=0;pendingNanban=0;pendingTenkuCat=0;pendingCastResourceChoices=[];pendingOverclockChoices=[];
+  for(const k of ['y','p','r'])powers[turn][k]=Math.min(powers[turn][k],depressionResourceBaseline[k]);}
   triggerNotices.push('《世界恐慌》：獲得したターンの開始時資源獲得と全サイコロ獲得を無効化しました。');
  }
  depressionStartSuppressed=false;

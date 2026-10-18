@@ -206,10 +206,10 @@ def build(source_dir, output, pr, commit):
 def apply_command_overrides(directory, overrides, commit):
     if commit != '1ca6ccfcf7c5f9cddea8c508f472b0af04a9167a':
         raise ValueError('Cumulative overrides require the pinned Ver.0.3.221 baseline')
-    allowed = {'docs/VER228_REPORT.md', 'docs/VER227_REPORT.md', 'tests/start227.cjs', 'docs/VER226_REPORT.md', 'tests/balance226.cjs', 'tests/fixtures/scope_225.json', 'tests/startup.cjs', 'tests/setup225.cjs', 'tests/scope225.cjs', 'tests/fixtures/scope_224.json', 'docs/VER225_REPORT.md', 'tests/commands.cjs', 'tests/split.cjs', 'src/debug.js', 'docs/COMMANDS.md', 'tests/regression.cjs', 'src/game.js', 'src/online.js', 'tests/online.cjs', 'tests/normal_commands.cjs', 'tests/clock.cjs', 'tests/fixtures/scope_223.json', 'tests/fixtures/legends_223.json', 'tests/integration224.cjs', 'src/characters.js', 'src/bot.js', 'package.json', 'tests/fixtures/standard_221.json', 'index.html', 'docs/dependencies.json', 'docs/VER224_REPORT.md', 'src/decks.js', 'src/card_effects.js', 'src/ui.js', 'README.md', 'docs/DEPENDENCIES.md', 'tests/fixtures/normal_222.json', 'src/bootstrap.js', 'tools/package_test.py'}
-    files = {str(p.relative_to(overrides)): p for p in overrides.rglob('*') if p.is_file()}
+    allowed = {'tests/fixtures/normal_222.json', 'tests/equivalent_vp229.cjs', 'tests/setup225.cjs', 'src/decks.js', 'tests/scope225.cjs', 'tests/fixtures/scope_225.json', 'src/card_effects.js', 'tools/build.cjs', 'tests/clock.cjs', 'tests/commands.cjs', 'docs/VER229_REPORT.md', 'docs/DEPENDENCIES.md', 'tests/start227.cjs', 'packs/pack2.js', 'tests/regression.cjs', 'tests/fixtures/scope_223.json', 'tests/online.cjs', 'tests/equivalent229.cjs', 'tools/package_test.py', 'docs/VER225_REPORT.md', 'tests/balance226.cjs', 'src/debug.js', 'package.json', 'tests/scope229.cjs', 'src/bootstrap.js', 'docs/COMMANDS.md', 'tests/fixtures/standard_221.json', 'packs/rules_pack1.js', 'index.html', 'src/ui.js', 'tests/fixtures/scope_224.json', 'README.md', 'src/order.json', 'tests/fixtures/legends_223.json', 'packs/pack1.js', 'tests/normal_commands.cjs', 'docs/VER227_REPORT.md', 'docs/VER228_REPORT.md', 'src/game.js', 'src/characters.js', 'tests/equivalent_gain229.cjs', 'src/bot.js', 'docs/VER226_REPORT.md', 'docs/dependencies.json', 'package-lock.json', 'src/online.js', 'tests/split.cjs', 'tests/fixtures/scope228.json', 'tests/integration224.cjs', 'tests/startup.cjs', 'docs/VER224_REPORT.md'}
+    files = {str(p.relative_to(overrides)): p for p in overrides.rglob('*') if p.is_file() and not set(p.relative_to(overrides).parts) & {'node_modules','js','images'}}
     if set(files) != allowed:
-        raise ValueError('Unexpected or missing Ver228 cumulative override files')
+        raise ValueError('Unexpected or missing Ver229 cumulative override files')
     for relative, source in files.items():
         if source.is_symlink():
             raise ValueError('Override symlinks are forbidden')
@@ -217,10 +217,31 @@ def apply_command_overrides(directory, overrides, commit):
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, destination)
     subprocess.run(['npm', 'ci', '--ignore-scripts'], cwd=directory, check=True)
-    for command in ['build', 'analyze']:
+    for command in ['build']:
         subprocess.run(['npm', 'run', command], cwd=directory, check=True)
     subprocess.run(['npm', 'test'], cwd=directory, check=True)
 
+
+def build_test_owned(source, output, pr, commit):
+    """Build exclusively TEST-owned sources; asset bytes are hash-pinned TEST images."""
+    import concurrent.futures
+    assets=json.loads((Path(__file__).parent/'test-assets-228.json').read_text())
+    def asset(item):
+        name, digest=item
+        target=source/name
+        if target.exists() and hashlib.sha256(target.read_bytes()).hexdigest()==digest:
+            return
+        data=get('https://naninunenonano.github.io/Test-kokoryo/'+name)
+        if hashlib.sha256(data).hexdigest()!=digest:
+            raise ValueError('TEST asset hash mismatch: '+name)
+        target.parent.mkdir(parents=True,exist_ok=True)
+        target.write_bytes(data)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=12) as executor:
+        list(executor.map(asset,assets.items()))
+    subprocess.run(['npm','ci','--ignore-scripts'],cwd=source,check=True)
+    subprocess.run(['npm','run','build'],cwd=source,check=True)
+    subprocess.run(['npm','test'],cwd=source,check=True)
+    build(source, output, pr, commit)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -228,11 +249,16 @@ def main():
     parser.add_argument('--commit', help='Optional expected PR commit; abort when head changed')
     parser.add_argument('--source-dir', type=Path, help='Local immutable source snapshot, for tests')
     parser.add_argument('--command-overrides', type=Path, help='TEST-owned phase-one source changes')
+    parser.add_argument('--test-owned', type=Path, help='Self-contained TEST sources; never read production')
     parser.add_argument('--output', type=Path, default=Path('_site'))
     args = parser.parse_args()
     if args.pr < 1:
         parser.error('PR must be a positive number')
-    if args.source_dir:
+    if args.test_owned:
+        if not args.commit or not re.fullmatch('[0-9a-f]{40}',args.commit):
+            parser.error('TEST-owned build requires explicit source provenance')
+        build_test_owned(args.test_owned,args.output,args.pr,args.commit)
+    elif args.source_dir:
         if not args.commit or not re.fullmatch('[0-9a-f]{40}', args.commit):
             parser.error('Local builds require an explicit commit SHA')
         if args.command_overrides:

@@ -1,0 +1,1518 @@
+{
+  "schema": 1,
+  "upstream": {
+    "repository": "naninunenonano/kokoryo",
+    "commit": "2dc96523a6c447babee2e54245955e2c9935d77c",
+    "version": "0.3.220",
+    "indexBlob": "038de1a2aa8c5ebcda89f7391673446644daf270",
+    "normalizedScriptSha256": "f5053a76c0cb21a51781b4ceec0ab2185ae3cf77be77b967b89e0d97bbcfcb7d",
+    "normalizedHtmlSha256": "c8ace7b8b837cb59c828ca2684a7bedc6809091249494146a61a602d4157a047"
+  },
+  "prefix": "\n(()=>{",
+  "close": "\n\n})();",
+  "sections": [
+    {
+      "id": "S0001",
+      "file": "game.js",
+      "symbols": [
+        "q",
+        "mk",
+        "copies"
+      ]
+    },
+    {
+      "id": "S0002",
+      "file": "decks.js",
+      "symbols": [
+        "CONTENT_ID_LIMITS",
+        "isReservedContentId"
+      ]
+    },
+    {
+      "id": "S0003",
+      "file": "characters.js",
+      "symbols": [
+        "CHARACTER_DATA",
+        "CHARACTER_FAMILIES",
+        "UNIQUE_ABILITY_DEFS",
+        "ABILITY_ADD_KEYS",
+        "applyUniqueAbilityDef",
+        "isMineGoldLord",
+        "employeeUniqueAbilitiesEnabled",
+        "effectiveEmployeeAbility",
+        "abilityStackLabel",
+        "abilityStackTag",
+        "abilityStackText",
+        "uniqueAbilityText",
+        "abilityTextForEntity"
+      ]
+    },
+    {
+      "id": "S0004",
+      "file": "decks.js",
+      "symbols": [
+        "KOKORYO_PACKS"
+      ]
+    },
+    {
+      "id": "S0005",
+      "file": "characters.js",
+      "symbols": [
+        "isPackEnabled",
+        "availableCharacterFamilies",
+        "CLR_FUSION_RULES",
+        "registerCLRFusionRule",
+        "clrFusionOptions",
+        "CLR_TYPES",
+        "CAST_TYPES",
+        "castCopies",
+        "castDisplayName"
+      ]
+    },
+    {
+      "id": "S0006",
+      "file": "decks.js",
+      "symbols": [
+        "CONTENT_IMAGE_DIRS",
+        "contentBaseId"
+      ]
+    },
+    {
+      "id": "S0007",
+      "file": "ui.js",
+      "symbols": [
+        "contentImagePath",
+        "resolvedContentImage"
+      ]
+    },
+    {
+      "id": "S0008",
+      "file": "characters.js",
+      "symbols": [
+        "CAST_GACHA_RATES",
+        "STANDARD_CAST_IDS",
+        "SYNTHESIS_CAST_IDS",
+        "IMPLEMENTED_CAST_IDS",
+        "ACTIVE_CAST_IDS",
+        "isUniqueRareAlreadyHired",
+        "availableCastPool",
+        "implementedCastPool",
+        "allImplementedCastPool",
+        "addCastPack",
+        "rollCastRarity",
+        "randomCastOfRarity",
+        "gachaCast",
+        "charOf",
+        "lordPortraitPath"
+      ]
+    },
+    {
+      "id": "S0009",
+      "file": "ui.js",
+      "symbols": [
+        "renderLordPortrait"
+      ]
+    },
+    {
+      "id": "S0010",
+      "file": "characters.js",
+      "symbols": [
+        "characterFamily",
+        "characterVersion"
+      ]
+    },
+    {
+      "id": "S0011",
+      "file": "ui.js",
+      "symbols": [
+        "makeSetupChoiceButton",
+        "renderPlayerCountChoices",
+        "renderCharacterSelects",
+        "renderCharacterRow"
+      ]
+    },
+    {
+      "id": "S0012",
+      "file": "characters.js",
+      "symbols": [
+        "selectedCharacterIds"
+      ]
+    },
+    {
+      "id": "S0013",
+      "file": "ui.js",
+      "symbols": [
+        "updateCharacterSelectAvailability"
+      ]
+    },
+    {
+      "id": "S0014",
+      "file": "decks.js",
+      "symbols": [
+        "STD_BASE",
+        "NORMAL_BASE",
+        "N_NORMAL_START_SPECIALS",
+        "STD",
+        "NORMAL",
+        "DECK_PRESETS",
+        "customDeck",
+        "CUSTOM_DECK_SAVE_KEY",
+        "getSavedDecks",
+        "putSavedDecks",
+        "cloneCustomDeck",
+        "refreshDeckSaveUI",
+        "saveCustomDeck",
+        "loadCustomDeck",
+        "deleteCustomDeck",
+        "allCardsDeckConfig",
+        "activeDeckConfig",
+        "standardDeckPresets",
+        "standardDeckName",
+        "deckMissingCards",
+        "deckPresetAvailable",
+        "refreshSetupDeckPreset"
+      ]
+    },
+    {
+      "id": "S0015",
+      "file": "debug.js",
+      "symbols": [
+        "populateOnlineDebugDeckPreset"
+      ]
+    },
+    {
+      "id": "S0016",
+      "file": "decks.js",
+      "symbols": [
+        "normalCardsForDeck",
+        "implementedNormalCards",
+        "clampedRandomizerCount",
+        "makeRandomizerCards"
+      ]
+    },
+    {
+      "id": "S0017",
+      "file": "characters.js",
+      "symbols": [
+        "nextHireMinRarity",
+        "nextHireExtra",
+        "fusionUsedThisTurn"
+      ]
+    },
+    {
+      "id": "S0018",
+      "file": "game.js",
+      "symbols": [
+        "gameSettings",
+        "legendSlotMax",
+        "fillLegendSlotSelect",
+        "refreshLegendSlotSelectors",
+        "selectedMarketKey",
+        "marketUndoHistory",
+        "commandUndoHistory",
+        "clearMarketUndo",
+        "marketUndoEntryAvailable",
+        "blockAllMarketUndo",
+        "addCommandUndo",
+        "commandUndoAvailable",
+        "undoCommandAction"
+      ]
+    },
+    {
+      "id": "S0019",
+      "file": "ui.js",
+      "symbols": [
+        "renderUndoActions"
+      ]
+    },
+    {
+      "id": "S0020",
+      "file": "game.js",
+      "symbols": [
+        "undoMarketAcquisition",
+        "nightEscapePostAvailable",
+        "nightEscapeResetNext",
+        "stdAbilityUsed",
+        "pendingLordResource",
+        "playerCount",
+        "lordOracleUsed",
+        "lordTributeUsed",
+        "unusedStd",
+        "packs",
+        "hands",
+        "selected",
+        "round",
+        "viewer",
+        "deck",
+        "market",
+        "discard",
+        "turn",
+        "dice",
+        "powers",
+        "installed",
+        "temporary",
+        "elekiterUsed",
+        "pendingNanban",
+        "pendingTenkuCat",
+        "commandCounts",
+        "komePlace",
+        "pendingParkPlayers",
+        "pendingParkTaken",
+        "characterMode",
+        "characters",
+        "legends",
+        "legendTakenThisTurn",
+        "endgameStarter",
+        "endgameRemaining",
+        "gameEnded",
+        "breadDeck",
+        "breadDiscard",
+        "breadHands",
+        "employeeDeck",
+        "employees",
+        "hiredThisTurn",
+        "pendingSSRBonus",
+        "pendingCastResourceChoices",
+        "lordFirstBreadUsed",
+        "lordOverclockUsed",
+        "pendingOverclockChoices",
+        "debugVP",
+        "copiedAbility",
+        "copiedOracleUsed",
+        "copiedTributeUsed",
+        "organizationUsed",
+        "sh",
+        "makeBreadDeck",
+        "recycleBreadIfEmpty",
+        "drawBread",
+        "breadLabel"
+      ]
+    },
+    {
+      "id": "S0021",
+      "file": "card_effects.js",
+      "symbols": [
+        "specialEffectId",
+        "SPECIAL_EFFECT_DEFAULTS",
+        "mergeSpecialConfig",
+        "specialConfig",
+        "hasSpecialEffect",
+        "hasEraSpecial",
+        "specialOwners",
+        "goldenAgeOwner",
+        "greatDepressionOwner",
+        "depressionDebtLocked",
+        "depressionLegendLocked",
+        "depressionProtectsDebtAtHandLimit"
+      ]
+    },
+    {
+      "id": "S0022",
+      "file": "game.js",
+      "symbols": [
+        "handLimitNeedsDiscard"
+      ]
+    },
+    {
+      "id": "S0023",
+      "file": "card_effects.js",
+      "symbols": [
+        "debtIgnoredForHand"
+      ]
+    },
+    {
+      "id": "S0024",
+      "file": "game.js",
+      "symbols": [
+        "totalHandCount"
+      ]
+    },
+    {
+      "id": "S0025",
+      "file": "card_effects.js",
+      "symbols": [
+        "eraGainAllowed"
+      ]
+    },
+    {
+      "id": "S0026",
+      "file": "game.js",
+      "symbols": [
+        "gainResource"
+      ]
+    },
+    {
+      "id": "S0027",
+      "file": "ui.js",
+      "symbols": [
+        "renderingInstallCosts"
+      ]
+    },
+    {
+      "id": "S0028",
+      "file": "characters.js",
+      "symbols": [
+        "lordInstallDiceDiscount"
+      ]
+    },
+    {
+      "id": "S0029",
+      "file": "game.js",
+      "symbols": [
+        "installCostOptions",
+        "costOptions"
+      ]
+    },
+    {
+      "id": "S0030",
+      "file": "ui.js",
+      "symbols": [
+        "makeChoicePicker",
+        "costSelect"
+      ]
+    },
+    {
+      "id": "S0031",
+      "file": "game.js",
+      "symbols": [
+        "consumeCostChoice",
+        "distinctCostChoices",
+        "canAcquireDebt",
+        "acquireDebt",
+        "distributeLimitedAcquisition",
+        "distributeLimitedByQuota",
+        "distributeDebt",
+        "distributeCommandsByQuota"
+      ]
+    },
+    {
+      "id": "S0032",
+      "file": "decks.js",
+      "symbols": [
+        "packRuntimeApi",
+        "runPackCardHook",
+        "runInstalledPackHooks"
+      ]
+    },
+    {
+      "id": "S0033",
+      "file": "ui.js",
+      "symbols": [
+        "card"
+      ]
+    },
+    {
+      "id": "S0034",
+      "file": "decks.js",
+      "symbols": [
+        "KOKORYO_RULE_PACKS",
+        "enabledRuleCards",
+        "resolveActiveRuleCards",
+        "activeRuleCards",
+        "hasActiveRule"
+      ]
+    },
+    {
+      "id": "S0035",
+      "file": "characters.js",
+      "symbols": [
+        "effectiveHireLimit",
+        "isHireFree"
+      ]
+    },
+    {
+      "id": "S0036",
+      "file": "card_effects.js",
+      "symbols": [
+        "runRuleHook"
+      ]
+    },
+    {
+      "id": "S0037",
+      "file": "ui.js",
+      "symbols": [
+        "fillRCSelect",
+        "refreshActiveRulesButton",
+        "showActiveRules"
+      ]
+    },
+    {
+      "id": "S0038",
+      "file": "decks.js",
+      "symbols": [
+        "captureLocalRuleSettings"
+      ]
+    },
+    {
+      "id": "S0039",
+      "file": "game.js",
+      "symbols": [
+        "start"
+      ]
+    },
+    {
+      "id": "S0040",
+      "file": "ui.js",
+      "symbols": [
+        "renderDraft",
+        "showDraftOwnedCards",
+        "showCharacterAbility"
+      ]
+    },
+    {
+      "id": "S0041",
+      "file": "game.js",
+      "symbols": [
+        "pick"
+      ]
+    },
+    {
+      "id": "S0042",
+      "file": "decks.js",
+      "symbols": [
+        "drawOne"
+      ]
+    },
+    {
+      "id": "S0043",
+      "file": "ui.js",
+      "symbols": [
+        "syncMarketTargetUI"
+      ]
+    },
+    {
+      "id": "S0044",
+      "file": "decks.js",
+      "symbols": [
+        "refillMarket",
+        "refillTo8",
+        "LEGEND_CATALOG",
+        "initLegends"
+      ]
+    },
+    {
+      "id": "S0045",
+      "file": "card_effects.js",
+      "symbols": [
+        "legendCostChoices",
+        "legendAnyChoices",
+        "legendAllFacesChoices",
+        "payLegendResources",
+        "consumeLegendItems",
+        "legendSameFaceChoices",
+        "chooseNamedHireForLegend",
+        "fieldDestroyCandidates",
+        "destroyChosenFieldCard",
+        "resolveScorchedEarth",
+        "resolveGreatRefresh",
+        "legendPaymentPending",
+        "selectLegendPayment",
+        "takeLegend",
+        "chooseLegendCard",
+        "resolveEggHarp"
+      ]
+    },
+    {
+      "id": "S0046",
+      "file": "ui.js",
+      "symbols": [
+        "renderLegends"
+      ]
+    },
+    {
+      "id": "S0047",
+      "file": "game.js",
+      "symbols": [
+        "setupGame",
+        "initialPowerChoices",
+        "initialPowerPlayer"
+      ]
+    },
+    {
+      "id": "S0048",
+      "file": "ui.js",
+      "symbols": [
+        "renderInitialPowerSetup"
+      ]
+    },
+    {
+      "id": "S0049",
+      "file": "game.js",
+      "symbols": [
+        "resolveGameStartCharacterEffects",
+        "chooseFirstPlayer",
+        "confirmInitialPowers",
+        "playerScaledGain"
+      ]
+    },
+    {
+      "id": "S0050",
+      "file": "characters.js",
+      "symbols": [
+        "resolveReactiveRolls"
+      ]
+    },
+    {
+      "id": "S0051",
+      "file": "card_effects.js",
+      "symbols": [
+        "triggerLandGrab"
+      ]
+    },
+    {
+      "id": "S0052",
+      "file": "game.js",
+      "symbols": [
+        "registerInstallation"
+      ]
+    },
+    {
+      "id": "S0053",
+      "file": "characters.js",
+      "symbols": [
+        "characterEffectSources",
+        "stackedNumericEffect",
+        "groupedCharacterVP"
+      ]
+    },
+    {
+      "id": "S0054",
+      "file": "game.js",
+      "symbols": [
+        "turnStartPostPending",
+        "depressionStartSuppressed",
+        "beginTurn",
+        "continueBeginTurn"
+      ]
+    },
+    {
+      "id": "S0055",
+      "file": "card_effects.js",
+      "symbols": [
+        "gainNanban",
+        "gainTenkuCat",
+        "offerFreeResourceWipeLegend"
+      ]
+    },
+    {
+      "id": "S0056",
+      "file": "characters.js",
+      "symbols": [
+        "hasGodBlessingForTurn"
+      ]
+    },
+    {
+      "id": "S0057",
+      "file": "ui.js",
+      "symbols": [
+        "renderPackCharacterConversionActions"
+      ]
+    },
+    {
+      "id": "S0058",
+      "file": "card_effects.js",
+      "symbols": [
+        "normalTurnStartCandidate",
+        "repeatTurnStartEffect",
+        "resolveMayQueen",
+        "resolveTurnStartEffects"
+      ]
+    },
+    {
+      "id": "S0059",
+      "file": "characters.js",
+      "symbols": [
+        "fieldUniqueAbilities",
+        "abilityProfile",
+        "recreationRangeForTurn",
+        "resolveAbilityCopyLegend"
+      ]
+    },
+    {
+      "id": "S0060",
+      "file": "card_effects.js",
+      "symbols": [
+        "syncEconomyLegendUnlock",
+        "economyAcquireTrace",
+        "traceEconomyAcquire",
+        "runTurnStartSpecialAcquirePhase",
+        "ensureDepressionDebtSupply",
+        "eraLegendCondition",
+        "blockOtherEraLegend",
+        "resolveEraAcquire",
+        "offerEraLegendAtTurnStart"
+      ]
+    },
+    {
+      "id": "S0061",
+      "file": "game.js",
+      "symbols": [
+        "unusedDice",
+        "dieSelect",
+        "useDie",
+        "colorFor"
+      ]
+    },
+    {
+      "id": "S0062",
+      "file": "ui.js",
+      "symbols": [
+        "cname"
+      ]
+    },
+    {
+      "id": "S0063",
+      "file": "game.js",
+      "symbols": [
+        "fixedVP",
+        "allFieldCards"
+      ]
+    },
+    {
+      "id": "S0064",
+      "file": "card_effects.js",
+      "symbols": [
+        "dynamicSpecialVP",
+        "cardVP"
+      ]
+    },
+    {
+      "id": "S0065",
+      "file": "game.js",
+      "symbols": [
+        "totalVP"
+      ]
+    },
+    {
+      "id": "S0066",
+      "file": "ui.js",
+      "symbols": [
+        "vpLabel",
+        "renderSharedEndgameStatus"
+      ]
+    },
+    {
+      "id": "S0067",
+      "file": "game.js",
+      "symbols": [
+        "checkEndgameTrigger"
+      ]
+    },
+    {
+      "id": "S0068",
+      "file": "ui.js",
+      "symbols": [
+        "effectText"
+      ]
+    },
+    {
+      "id": "S0069",
+      "file": "characters.js",
+      "symbols": [
+        "handCardLikelyInstallable"
+      ]
+    },
+    {
+      "id": "S0070",
+      "file": "ui.js",
+      "symbols": [
+        "addHandPreview",
+        "renderKomeActions"
+      ]
+    },
+    {
+      "id": "S0071",
+      "file": "characters.js",
+      "symbols": [
+        "hasSameOwnedUniqueAbility",
+        "sameUniqueAbilityAsLord",
+        "redrawSameRarityCast",
+        "resolveDoppelCopy",
+        "finalizeHire",
+        "hireEmployee",
+        "gainSSRDie",
+        "gainCastResource",
+        "gainOverclockResource"
+      ]
+    },
+    {
+      "id": "S0072",
+      "file": "ui.js",
+      "symbols": [
+        "castEffectText"
+      ]
+    },
+    {
+      "id": "S0073",
+      "file": "characters.js",
+      "symbols": [
+        "employeeCardView",
+        "CAST_SYNTHESIS",
+        "chooseLRAbilities",
+        "growthPromotionActive",
+        "normalFusionMaterialCount",
+        "synthesisOptions",
+        "synthesizeCast",
+        "ORACLE_UPGRADE_MAP",
+        "oracleUpgradeTarget",
+        "oracleCanUpgradeTarget",
+        "oracleSource",
+        "oracleSourceUsed",
+        "markOracleSourceUsed",
+        "useOracleUpgrade",
+        "tributeSource",
+        "tributeSourceUsed",
+        "markTributeSourceUsed",
+        "useTributeInstall"
+      ]
+    },
+    {
+      "id": "S0074",
+      "file": "ui.js",
+      "symbols": [
+        "appendActiveAbilityControls"
+      ]
+    },
+    {
+      "id": "S0075",
+      "file": "characters.js",
+      "symbols": [
+        "dismissEmployee"
+      ]
+    },
+    {
+      "id": "S0076",
+      "file": "ui.js",
+      "symbols": [
+        "renderHireActions"
+      ]
+    },
+    {
+      "id": "S0077",
+      "file": "debug.js",
+      "symbols": [
+        "debugNamedHire",
+        "debugGainOrder",
+        "debugGainDebt",
+        "debugCardSerial",
+        "debugInitialMarketSnapshot",
+        "debugCreateCard",
+        "showDebugCardCreator",
+        "showDebugDeckContents",
+        "cloneDebugState",
+        "saveDebugInitialMarketSnapshot",
+        "getDebugInitialMarketSnapshot",
+        "debugResetToInitialMarketPlacement",
+        "showDebugMarketReplace",
+        "debugAdvanceToNextOwnTurn",
+        "showDebugEraLegendDiagnosis",
+        "renderDebugActions",
+        "dialogLog",
+        "addDialog"
+      ]
+    },
+    {
+      "id": "S0078",
+      "file": "ui.js",
+      "symbols": [
+        "showDialogLog",
+        "characterAbilityText",
+        "renderOpponentTurnView",
+        "renderGame",
+        "renderTriggerNotices"
+      ]
+    },
+    {
+      "id": "S0079",
+      "file": "characters.js",
+      "symbols": [
+        "gainLordResource"
+      ]
+    },
+    {
+      "id": "S0080",
+      "file": "ui.js",
+      "symbols": [
+        "turnStartResourceButtons"
+      ]
+    },
+    {
+      "id": "S0081",
+      "file": "card_effects.js",
+      "symbols": [
+        "installNightEscape"
+      ]
+    },
+    {
+      "id": "S0082",
+      "file": "ui.js",
+      "symbols": [
+        "renderTurnStart",
+        "optionSelect"
+      ]
+    },
+    {
+      "id": "S0083",
+      "file": "card_effects.js",
+      "symbols": [
+        "consumeOneOf",
+        "installStandard",
+        "useStdAbility"
+      ]
+    },
+    {
+      "id": "S0084",
+      "file": "ui.js",
+      "symbols": [
+        "appendInstalledCardGrid"
+      ]
+    },
+    {
+      "id": "S0085",
+      "file": "card_effects.js",
+      "symbols": [
+        "installedDisplayList"
+      ]
+    },
+    {
+      "id": "S0086",
+      "file": "game.js",
+      "symbols": [
+        "isViewingOwnTurn"
+      ]
+    },
+    {
+      "id": "S0087",
+      "file": "card_effects.js",
+      "symbols": [
+        "useRecreation"
+      ]
+    },
+    {
+      "id": "S0088",
+      "file": "ui.js",
+      "symbols": [
+        "renderCardActions"
+      ]
+    },
+    {
+      "id": "S0089",
+      "file": "card_effects.js",
+      "symbols": [
+        "consumeThreeAny"
+      ]
+    },
+    {
+      "id": "S0090",
+      "file": "ui.js",
+      "symbols": [
+        "renderNewNormalInstall"
+      ]
+    },
+    {
+      "id": "S0091",
+      "file": "card_effects.js",
+      "symbols": [
+        "installNewNormal",
+        "graveyardUsed",
+        "publicMarketUsed",
+        "normalCardActionUsed",
+        "useGraveyard",
+        "usePublicMarket",
+        "useScout"
+      ]
+    },
+    {
+      "id": "S0092",
+      "file": "characters.js",
+      "symbols": [
+        "organizationUpgradeRarity",
+        "organizationPool"
+      ]
+    },
+    {
+      "id": "S0093",
+      "file": "ui.js",
+      "symbols": [
+        "renderPackInstall"
+      ]
+    },
+    {
+      "id": "S0094",
+      "file": "card_effects.js",
+      "symbols": [
+        "installPackCard",
+        "consumePackFaceCostDry"
+      ]
+    },
+    {
+      "id": "S0095",
+      "file": "characters.js",
+      "symbols": [
+        "upgradeRarity",
+        "packCastPool",
+        "oneStepUpgradeCast",
+        "organizationMaterialGroups",
+        "usePromoteCastPair"
+      ]
+    },
+    {
+      "id": "S0096",
+      "file": "ui.js",
+      "symbols": [
+        "renderPackFieldAction"
+      ]
+    },
+    {
+      "id": "S0097",
+      "file": "characters.js",
+      "symbols": [
+        "useDoubleHire"
+      ]
+    },
+    {
+      "id": "S0098",
+      "file": "ui.js",
+      "symbols": [
+        "renderPack2InstalledActions",
+        "renderNewNormalInstalledActions"
+      ]
+    },
+    {
+      "id": "S0099",
+      "file": "card_effects.js",
+      "symbols": [
+        "installElekiter",
+        "installNanban",
+        "installNinjaGuild",
+        "installTenkuCat",
+        "installCursedClock",
+        "installTreasureShip",
+        "installInadamashii",
+        "resolveOnInstall",
+        "installPaneteria",
+        "resolveLordMeetingInstall",
+        "installLordMeeting",
+        "installBlackCasino",
+        "installGreaterAcquisition",
+        "parkSelectionOrder",
+        "finishEmptyParkChoices",
+        "applyOnlineParkPick"
+      ]
+    },
+    {
+      "id": "S0100",
+      "file": "ui.js",
+      "symbols": [
+        "renderParkChoice"
+      ]
+    },
+    {
+      "id": "S0101",
+      "file": "card_effects.js",
+      "symbols": [
+        "useElekiter"
+      ]
+    },
+    {
+      "id": "S0102",
+      "file": "decks.js",
+      "symbols": [
+        "groups"
+      ]
+    },
+    {
+      "id": "S0103",
+      "file": "ui.js",
+      "symbols": [
+        "renderFranAction",
+        "renderSoraAction"
+      ]
+    },
+    {
+      "id": "S0104",
+      "file": "characters.js",
+      "symbols": [
+        "useSora",
+        "useFran"
+      ]
+    },
+    {
+      "id": "S0105",
+      "file": "ui.js",
+      "symbols": [
+        "selectedHandDetailIndex",
+        "renderBoardHand",
+        "openHandCardDetail",
+        "openSelectedInstall",
+        "showHandCards",
+        "showHireCardList",
+        "showCardList",
+        "costTextForCard",
+        "cleanCardEffect",
+        "iconizeEffectText",
+        "cardInfoSections",
+        "showDiscardPile",
+        "deckEditorCard",
+        "openDeckEditor",
+        "renderDeckEditor",
+        "renderMarket",
+        "openPlayerBoard",
+        "showPlayerCharacter",
+        "renderPlayers",
+        "addFieldCardPreview",
+        "pendingBreadAnyIndex",
+        "pendingResourceFrom",
+        "renderConversionActions",
+        "renderCharacterAnyResourceConversion",
+        "openHireDiceModal",
+        "openEndTurnConfirm"
+      ]
+    },
+    {
+      "id": "S0106",
+      "file": "characters.js",
+      "symbols": [
+        "invisibleHandCount",
+        "useInvisibleHand"
+      ]
+    },
+    {
+      "id": "S0107",
+      "file": "ui.js",
+      "symbols": [
+        "renderInvisibleHandActions",
+        "renderResourceExchange"
+      ]
+    },
+    {
+      "id": "S0108",
+      "file": "decks.js",
+      "symbols": [
+        "takeMarket"
+      ]
+    },
+    {
+      "id": "S0109",
+      "file": "bootstrap.js",
+      "symbols": []
+    },
+    {
+      "id": "S0110",
+      "file": "game.js",
+      "symbols": [
+        "handLimit",
+        "finishTurn"
+      ]
+    },
+    {
+      "id": "S0111",
+      "file": "ui.js",
+      "symbols": [
+        "showHandLimit"
+      ]
+    },
+    {
+      "id": "S0112",
+      "file": "game.js",
+      "symbols": [
+        "turnClockOriginalCompleteEnd"
+      ]
+    },
+    {
+      "id": "S0113",
+      "file": "card_effects.js",
+      "symbols": [
+        "debtFinalVPPerCard",
+        "debtRepayMultiplier"
+      ]
+    },
+    {
+      "id": "S0114",
+      "file": "game.js",
+      "symbols": [
+        "resetGameEndState",
+        "finishGame"
+      ]
+    },
+    {
+      "id": "S0115",
+      "file": "debug.js",
+      "symbols": [
+        "PLAYLOG_VERSION",
+        "playLogEvents",
+        "playLogStart",
+        "playLogLastState",
+        "playLogTurnSerial",
+        "playLogCard",
+        "playLogCards",
+        "normalCardAuditBaseline",
+        "normalCardAuditInventory",
+        "resetNormalCardAudit",
+        "logNormalCardAudit",
+        "playLogCharacter",
+        "playLogAction",
+        "playLogSnapshot",
+        "playLogEvent",
+        "playLogReset",
+        "playLogChanges",
+        "playLogExport",
+        "playLogDownloadButton"
+      ]
+    },
+    {
+      "id": "S0116",
+      "file": "ui.js",
+      "symbols": [
+        "setupCompactUI"
+      ]
+    },
+    {
+      "id": "S0117",
+      "file": "bootstrap.js",
+      "symbols": []
+    },
+    {
+      "id": "S0118",
+      "file": "online.js",
+      "symbols": [
+        "forceRealOnlineLobbyScreen",
+        "returnRealOnlineToLobby",
+        "confirmReturnToLobby",
+        "returnOnlineDebugToLobby"
+      ]
+    },
+    {
+      "id": "S0119",
+      "file": "bootstrap.js",
+      "symbols": [
+        "closeDeckEditor"
+      ]
+    },
+    {
+      "id": "S0120",
+      "file": "ui.js",
+      "symbols": [
+        "openCardImage"
+      ]
+    },
+    {
+      "id": "S0121",
+      "file": "bootstrap.js",
+      "symbols": []
+    },
+    {
+      "id": "S0122",
+      "file": "game.js",
+      "symbols": [
+        "botMatchMode",
+        "botBusy",
+        "botTimer",
+        "debugLocalMode",
+        "onlineDebugMode",
+        "onlineDebugPlayers",
+        "updateDebugCommandVisibility"
+      ]
+    },
+    {
+      "id": "S0123",
+      "file": "bootstrap.js",
+      "symbols": []
+    },
+    {
+      "id": "S0124",
+      "file": "debug.js",
+      "symbols": [
+        "enterLocalDebugMode"
+      ]
+    },
+    {
+      "id": "S0125",
+      "file": "online.js",
+      "symbols": [
+        "captureOnlineDebugLobbyPendingSettings",
+        "renderOnlineDebugLobby",
+        "onlineCharActivePlayer",
+        "onlineCharSelections",
+        "onlineCharPending",
+        "onlineCharacterAbilityText",
+        "onlineFamilyTaken",
+        "renderOnlineCharacterScreen",
+        "renderOnlineCharacterOptions",
+        "onlineDraftPacks",
+        "onlineDraftHands",
+        "onlineDraftSelected",
+        "onlineDraftRound",
+        "onlineDraftActivePlayer",
+        "onlineDraftPendingIndex",
+        "startOnlineDraft",
+        "renderOnlineDraft",
+        "confirmOnlineDraftPick",
+        "onlineResourceChoices",
+        "onlineResourceConfirmed",
+        "onlineResourceActivePlayer",
+        "syncOnlineDebugRulesFromUI",
+        "prepareOnlineGameState",
+        "startOnlineResourceSelection",
+        "renderOnlineResourceSelection",
+        "confirmOnlineResources",
+        "autoCompleteOnlineDebugSetup",
+        "openOnlineCharacterScreen",
+        "closeOnlineCharacterScreen",
+        "SUPABASE_URL",
+        "SUPABASE_PUBLISHABLE_KEY",
+        "sbClient",
+        "realLobbyChannel",
+        "realLobbyRoomKey",
+        "realLobbyName",
+        "realLobbyClientId",
+        "realOnlineCharacterMode",
+        "realLobbyCharSelection",
+        "realLobbyCharReady",
+        "realLobbyJoinedAt",
+        "realLobbyCharPending",
+        "realOnlineDraftMode",
+        "realDraftState",
+        "realDraftPendingIndex",
+        "realDraftInitSent",
+        "realOnlineResourceMode",
+        "realResourceState",
+        "realResourceInitSent",
+        "realOnlineMainMode",
+        "realMainApplying",
+        "realMainStarted",
+        "realMainRoster",
+        "realLobbyPhase",
+        "realLobbyHostId",
+        "realOnlineDeckId",
+        "realOnlineDeckConfig",
+        "realOnlineDeckName",
+        "realDeckSubmissions",
+        "realOnlineRules",
+        "REAL_SESSION_KEY",
+        "makeOnlineClientId",
+        "makeRoomKey",
+        "saveRealOnlineResume",
+        "clearRealOnlineResume",
+        "loadRealOnlineResume",
+        "isRealLobbyHost",
+        "realHostReconcilePending",
+        "reconcileRealLobbyHost",
+        "setRealOnlinePhase",
+        "broadcastRealPhase",
+        "ensureSupabaseClient",
+        "flattenLobbyPresence",
+        "escapeHtml",
+        "setRealLobbyConnection",
+        "trackRealLobbyPresence",
+        "realAvailableCharacterFamilies",
+        "realCharacterSelectionAllowed",
+        "realFamilyTaken",
+        "realOnlineCharacterDuplicate",
+        "renderRealOnlineCharacterScreen",
+        "renderRealOnlineCharacterOptions",
+        "realLobbyPlayers",
+        "realMyPlayerIndex",
+        "realPlayerName",
+        "stdCardFromKey",
+        "makeRealDraftInitialState",
+        "applyRealDraftInit",
+        "applyRealDraftPick",
+        "maybeStartRealOnlineDraft",
+        "renderRealOnlineDraft",
+        "confirmRealOnlineDraftPick",
+        "makeRealResourceInitialState",
+        "applyRealResourceInit",
+        "maybeStartRealOnlineResources",
+        "renderRealOnlineResources",
+        "applyRealResourceConfirm",
+        "confirmRealOnlineResources",
+        "realMainSnapshot",
+        "applyRealMainSnapshot",
+        "broadcastRealMainState",
+        "broadcastRealGameFinished",
+        "prepareRealMainGame",
+        "maybeStartRealOnlineMain",
+        "realMainBroadcastTimer",
+        "scheduleRealMainBroadcast",
+        "openRealOnlineCharacterScreen",
+        "closeRealOnlineCharacterScreen",
+        "refreshRealLobbySubmitDeckSelect",
+        "saveSharedDeckLocally",
+        "submitRealLobbyDeck",
+        "selectRealLobbyDeck",
+        "renderRealLobbyDeckCandidates",
+        "applyRealOnlineRules",
+        "renderRealLobbyRules",
+        "changeRealLobbyRule",
+        "broadcastRealRules",
+        "renderRealLobby",
+        "broadcastRealDeckConfig",
+        "sendRealStateSync",
+        "applyRealStateSync",
+        "enterRealOnlineLobby",
+        "teardownRealOnlineLobby",
+        "leaveRealOnlineLobby",
+        "kickRealLobbyPlayer",
+        "enterOnlineDebugLobby",
+        "leaveOnlineDebugLobby"
+      ]
+    },
+    {
+      "id": "S0126",
+      "file": "bot.js",
+      "symbols": [
+        "BOT_FEATURES",
+        "enforceBotRestrictions",
+        "updateBotLobbyRestrictions",
+        "botIsPlayer",
+        "botGameStage",
+        "botStandardPriority",
+        "botScoreCard",
+        "botCardNeeds",
+        "botTargetCard",
+        "botChooseResourceColor",
+        "botTryHire",
+        "botTryScout",
+        "botPreferredColor",
+        "enterBotMatch",
+        "botFillCharacters",
+        "botDraftTimer",
+        "queueBotDraft",
+        "queueBotResources",
+        "botLog",
+        "botResolveStart",
+        "botDebtRepayState",
+        "botTryRepayDebt",
+        "botTryExchangeForInstall",
+        "botTryInstall",
+        "botDiscardOverflow",
+        "botPause",
+        "botWaitForParkChoice",
+        "botExecuteTurn",
+        "queueBotTurn",
+        "botDraftConfirmOriginal"
+      ]
+    },
+    {
+      "id": "S0127",
+      "file": "bootstrap.js",
+      "symbols": [
+        "handleEntryJoin",
+        "initialEntryName",
+        "entryJoin",
+        "leaveRealLobbyBtn",
+        "realLobbyEditDeck",
+        "realLobbySubmitDeckBtn",
+        "realLobbyEditDeckBtn",
+        "realRulePack1",
+        "realRulePack2",
+        "realRulesPack1",
+        "realRCMode",
+        "realRCChoice",
+        "dre",
+        "drc",
+        "setDebugPackEnabled",
+        "debugPack1",
+        "debugPack2",
+        "debugRulesPack1",
+        "debugRCMode",
+        "debugRCChoice",
+        "onlineDebugDeckPreset",
+        "onlineDebugEditDeck",
+        "realLobbyCharacterSelectBtn"
+      ]
+    },
+    {
+      "id": "S0128",
+      "file": "game.js",
+      "symbols": [
+        "turnClockConvertNormalDie",
+        "turnClockState",
+        "TURN_CLOCK_INITIAL",
+        "TURN_CLOCK_INCREMENT",
+        "TURN_CLOCK_CANCEL",
+        "turnClockVisible",
+        "turnClockReset",
+        "turnClockAccount",
+        "turnClockBeginTurn",
+        "turnClockStop",
+        "turnClockLeaseValid"
+      ]
+    },
+    {
+      "id": "S0129",
+      "file": "bot.js",
+      "symbols": [
+        "turnClockBotValid"
+      ]
+    },
+    {
+      "id": "S0130",
+      "file": "ui.js",
+      "symbols": [
+        "turnClockRender"
+      ]
+    },
+    {
+      "id": "S0131",
+      "file": "game.js",
+      "symbols": [
+        "turnClockTick",
+        "turnClockPrompt",
+        "turnClockConfirm",
+        "turnClockResolvePending",
+        "turnClockDiscardOverflow",
+        "turnClockCloseChoices",
+        "turnClockExpire",
+        "completeEnd"
+      ]
+    },
+    {
+      "id": "S0132",
+      "file": "bootstrap.js",
+      "symbols": []
+    },
+    {
+      "id": "S0133",
+      "file": "online.js",
+      "symbols": [
+        "turnClockNet",
+        "turnClockStartPending",
+        "turnClockChoice",
+        "turnClockResetNet",
+        "turnClockNonce",
+        "turnClockClone",
+        "turnClockInitializeAuthority",
+        "turnClockSnapshot",
+        "turnClockValidMetadata",
+        "turnClockImport",
+        "turnClockAcceptSnapshot",
+        "turnClockAfterSnapshot",
+        "turnClockRestoreChoice",
+        "turnClockStartOwnTurn",
+        "beginTurnForClockTimeout",
+        "turnClockSend",
+        "turnClockCommit",
+        "turnClockResendState",
+        "turnClockPublishAction",
+        "turnClockRequestEnd",
+        "turnClockReceiveAction",
+        "turnClockRequestPark",
+        "turnClockReceivePark",
+        "turnClockReceiveState",
+        "turnClockReceivePulse",
+        "turnClockHostChanged",
+        "turnClockNetworkTick"
+      ]
+    },
+    {
+      "id": "S0134",
+      "file": "bootstrap.js",
+      "symbols": [
+        "global q / existing outer event handlers"
+      ],
+      "epilogue": true
+    }
+  ]
+}

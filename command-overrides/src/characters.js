@@ -40,7 +40,7 @@ const CHARACTER_FAMILIES=[
 // Ver.0.3.77: 固有能力は本体で一元管理。追加パックは uniqueAbility 名だけを宣言する。
 const UNIQUE_ABILITY_DEFS=Object.freeze({
  '神の贈り物':{text:'ターン開始時、サイコロを2個追加で振って獲得し、好きな資源を3個獲得する。',props:{extraDice:2,extraLordResource:3,chooseResource:true,amount:3}},
- '等価交換':{stackable:false,text:'ターン開始時に資金5を獲得する。資源コストは種類を問わず合計量で支払い、資源を参照する可変VPは全体で最適化する。資金・食料・兵力の獲得不可を無視する。',props:{equivalentExchange:true}},
+ '等価交換':{stackable:false,text:'ターン開始時に資金5を獲得する。資源コストは種類を問わず合計量で支払い、資源を参照する可変VPは全体で最適化する。資金・食料・兵力の獲得不可を無視する。',props:{exchangeRate:1,equivalentExchange:true}},
  '神算鬼謀':{text:'ターン開始時、命令書を2枚獲得する。この個体での初回発動時は、さらに4枚獲得する。',props:{turnBread:2,firstBreadBonus:4}},
  'おねだり':{text:'通常カードを設置するとき、必要なサイコロのうち好きな1つを使わずに設置できる。',props:{installDiceDiscount:1}},
  'オーバークロック':{copyable:false,stackable:true,text:'この個体での初回のみ、ターン開始時に好きな資源を合計20個、任意に配分して獲得する。',props:{overclockResources:20}},

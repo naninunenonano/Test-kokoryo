@@ -1,3 +1,7 @@
+# TEST Ver.0.3.229
+
+《等価交換》の開始時資金5、資源コスト自由化、合計可変VP最適化、資源獲得不可無視。TEST所有ソースのみで構築。詳細は `command-overrides/docs/VER229_REPORT.md`。
+
 # TEST Ver.0.3.228
 
 Ver227の読み違いを訂正。初期手札はドラフト5枚、標準の手札上限は10枚。領主共通資源3個を維持。本番は変更しない。詳細は `command-overrides/docs/VER228_REPORT.md`。
