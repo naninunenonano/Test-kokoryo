@@ -391,7 +391,7 @@ function prepareRealMainGame(){
 }
 async function maybeStartRealOnlineMain(){
  if(!realResourceState||!realResourceState.confirmed.every(Boolean)||realMainStarted||!isRealLobbyHost())return;
- if(realLobbyPlayers().some(p=>p.clock_protocol!==1)){setRealLobbyConnection('全員が Ver.0.3.229 以降へ再読み込みしてから対戦を開始してください。','error');return}
+ if(realLobbyPlayers().some(p=>p.clock_protocol!==1)){setRealLobbyConnection('全員が Ver.0.3.230 以降へ再読み込みしてから対戦を開始してください。','error');return}
  realMainStarted=true;
  prepareRealMainGame();
  realLobbyPhase='main';

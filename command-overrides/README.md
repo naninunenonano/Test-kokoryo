@@ -1,3 +1,7 @@
+# TEST Ver.0.3.230
+
+変更・検証は docs/VER230_REPORT.md、ZIP全ファイルの変更有無は FILE_CHANGES.tsv を参照。本番未反映。
+
 # TEST Ver.0.3.229
 
 《等価交換》4仕様の変更と今回の検証結果は docs/VER229_REPORT.md を参照。ZIPの全ファイルの変更有無は FILE_CHANGES.tsv に記載。

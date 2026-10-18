@@ -24,7 +24,7 @@ function makeEnv(names){
   discard:[],market:[],deck:[],breadHands:[[],[]],breadDeck:[],breadDiscard:[],commandCounts:[0,0],
   graveyardUsed:[false,false],publicMarketUsed:[false,false],hiredThisTurn:false,nextHireMinRarity:null,nextHireExtra:0,
   triggerNotices:[],pendingOverclockChoices:[],pendingCastResourceChoices:[],lordFirstBreadUsed:[],lordOverclockUsed:[],
-  lordOracleUsed:[],lordTributeUsed:[],nightEscapeResetNext:[],elekiterUsed:[],organizationUsed:[],
+  playerTurnCounts:[],lastCountedTurnToken:-1,oracleUpgradesThisTurn:[],turnClockState:{token:1},lordOracleUsed:[],lordTributeUsed:[],nightEscapeResetNext:[],elekiterUsed:[],organizationUsed:[],
   endgameStarter:null,gameEnded:false,copiedAbility:null,abilityProfile:()=>null,realMainRoster:[],
   turnClockBeginTurn(){},turnClockRender(){},turnClockAcceptSnapshot:()=>true,turnClockAfterSnapshot(){},turnClockSnapshot:()=>null,
   turnClockStartPending:false,turnClockChoice:null,turnStartPostPending:false,depressionStartSuppressed:false,stdAbilityUsed:{},
@@ -49,7 +49,7 @@ function makeEnv(names){
  };
  vm.createContext(c);
  for(const name of ['resourceCostPlan','canPayResourceCost','payResourceCost'])vm.runInContext(fn(name),c);
- c.hasEquivalentExchange=()=>false;
+ c.hasEquivalentExchange=()=>false;c.legendAcquisitionAllowed=()=>true;vm.runInContext(fn("isLegendCard"),c);
  for(const name of [...html.matchAll(/^function (command\w+)\(/gm)].map(m=>m[1]))vm.runInContext(fn(name),c);
  vm.runInContext(html.match(/^const cardCommands=.*$/m)[0],c);
  for(const name of names)vm.runInContext(fn(name),c);
