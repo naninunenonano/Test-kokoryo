@@ -4,7 +4,7 @@ const {JSDOM,requestInterceptor,VirtualConsole}=require('jsdom');
 const fs=require('node:fs');
 const path=require('node:path');
 const assert=require('node:assert/strict');
-const root=path.resolve(__dirname,'../_site');
+const root=process.env.KOKORYO_TEST_SITE?path.resolve(process.env.KOKORYO_TEST_SITE):path.resolve(__dirname,'../_site');
 const origin='https://naninunenonano.github.io/Test-kokoryo/';
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 async function waitUntil(predicate){

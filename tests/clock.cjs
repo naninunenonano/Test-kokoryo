@@ -182,8 +182,8 @@ test('reroll does not reset time; a new game does reset each player to 300',asyn
  h.run('resetGameEndState()');assert.deepEqual(h.read('testClockState.remaining'),[300000,300000,300000,300000]);assert.equal(h.read('testClockState.active'),null);
 });
 test('reentrant end hooks cannot add recovery twice or skip a player',async t=>{
- const h=await fixture(t);h.advance(40000);h.run("const oldHook=runInstalledPackHooks;runInstalledPackHooks=(name,p)=>{if(name==='turnEnd')completeEnd();return oldHook(name,p)};completeEnd()");
- assert.equal(h.read('turn'),1);assert.equal(h.read('testClockState.remaining[0]'),300000);
+ const h=await fixture(t);h.advance(100000);h.run("const oldHook=runInstalledPackHooks;runInstalledPackHooks=(name,p)=>{if(name==='turnEnd')completeEnd();return oldHook(name,p)};completeEnd()");
+ assert.equal(h.read('turn'),1);assert.equal(h.read('testClockState.remaining[0]'),260000);
 });
 test('a sleeping Bot cannot act on the new turn after timeout',async t=>{
  const h=await fixture(t);h.run("botMatchMode=true;onlineDebugMode=true;onlineDebugPlayers=['human','bot1','bot2','bot3'];turn=1;testClockState.active=null;testClockBeginTurn()");
