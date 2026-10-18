@@ -27,7 +27,7 @@ function debtIgnoredForHand(p){return specialOwners((cfg,c,owner)=>owner===p&&cf
 
 // @kokoryo-section S0025
 
-function eraGainAllowed(p,key,source='effect'){for(const {c,cfg} of specialOwners((cfg,c,owner)=>owner===p&&Array.isArray(cfg.resourceGain?.ownerBlock)&&cfg.resourceGain.ownerBlock.includes(key))){if(c._eraAcquiredThisTurn&&cfg.resourceGain.acquireTurnAllSources)return false;let allowed=cfg.resourceGain.afterAcquireAllowedSources;if(Array.isArray(allowed)&&!allowed.includes(source))return false}return true}
+function eraGainAllowed(p,key,source='effect'){if(hasEquivalentExchange(p))return true;for(const {c,cfg} of specialOwners((cfg,c,owner)=>owner===p&&Array.isArray(cfg.resourceGain?.ownerBlock)&&cfg.resourceGain.ownerBlock.includes(key))){if(c._eraAcquiredThisTurn&&cfg.resourceGain.acquireTurnAllSources)return false;let allowed=cfg.resourceGain.afterAcquireAllowedSources;if(Array.isArray(allowed)&&!allowed.includes(source))return false}return true}
 // @kokoryo-end-section S0025
 
 // @kokoryo-section S0036
@@ -47,7 +47,7 @@ function legendAllFacesChoices(needed=6){
  for(const o of legendAnyChoices())if(o.kind==='bread'&&breadHands[turn][o.i]?.value==='any'){out.push(o);if(out.length===needed)return out}
  return null
 }
-function payLegendResources(cost={}){for(let k of ['y','r','p'])if(powers[turn][k]<(cost[k]||0))return false;for(let k of ['y','r','p'])powers[turn][k]-=(cost[k]||0);return true}
+function payLegendResources(cost={}){return payResourceCost(cost)}
 function consumeLegendItems(items){
  let breadIdx=items.filter(x=>x.kind==='bread').map(x=>x.i).sort((a,b)=>b-a);
  items.filter(x=>x.kind==='die').forEach(x=>useDie(x.id));
@@ -113,7 +113,7 @@ async function takeLegend(id){
  if((onlineDebugMode||realOnlineMainMode)&&viewer!==turn)return alert('相手ターン中はレジェンドを獲得できません。');
  if(depressionLegendLocked(turn))return alert('《世界恐慌》の所有者は他のレジェンドを獲得できません。');if(legendPaymentPending)return; if(legendTakenThisTurn)return alert('レジェンドカードは1ターンに1枚までです。');let L=legends.find(x=>x.id===id);if(!L||L.taken)return;if(specialEffectId(L)==='goldenAge'||specialEffectId(L)==='greatDepression')return alert('このレジェンドはターン開始時の確認ポップアップから獲得します。');if(!L.unlocked)return alert('まだ解放されていません。');
  if(L.tier==='lower'){
-  if(L.special==='moneyLaundering'){if(powers[turn].y<20)return alert('資金20が必要です。');powers[turn].y-=20}
+  if(L.special==='moneyLaundering'){if(!canPayResourceCost({["y"]:(20)},turn))return alert('資金20が必要です。');payResourceCost({["y"]:(20)},turn);}
   else if(L.special==='boom'||L.special==='recession'){
    const faces=L.special==='boom'?[1,2]:[3,4,5,6];
    const options=legendAnyChoices().filter(o=>o.kind==='die'?faces.includes(unusedDice().find(d=>d.id===o.id)?.value):breadHands[turn][o.i]?.value==='any'||faces.includes(breadHands[turn][o.i]?.value));
@@ -121,22 +121,22 @@ async function takeLegend(id){
    legendPaymentPending=true;let chosen=await selectLegendPayment({...L,faces},'faces',5);legendPaymentPending=false;
    if(!chosen)return;consumeLegendItems(chosen)
   }
-  else if(L.special==='talentRecruit'){if((employees[turn]||[]).length>=effectiveHireLimit())return alert('《ビギニング・オブ・レジェンド》には空き雇用枠が1つ必要です。');let rs=legendAnyChoices();if(rs.length<3)return alert('任意のサイコロ／命令書が3個必要です。');if(powers[turn].y<15)return alert('資金15が必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'any',3);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);powers[turn].y-=15}
-  else if(L.special==='scorchedEarth'){let rs=legendAllFacesChoices(4);if(!rs)return alert('1～6のうち異なる4種類のサイコロ／命令書が必要です。');if(powers[turn].y<4||powers[turn].r<4||powers[turn].p<4)return alert('資金・兵力・食料が4個ずつ必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'distinct',4);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);powers[turn].y-=4;powers[turn].r-=4;powers[turn].p-=4}
-  else if(L.special==='greatRefresh'){let rs=legendAnyChoices();if(rs.length<4)return alert('任意のサイコロ／命令書が4個必要です。');if(powers[turn].y<6||powers[turn].r<6||powers[turn].p<6)return alert('資金・兵力・食料が6個ずつ必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'any',4);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);powers[turn].y-=6;powers[turn].r-=6;powers[turn].p-=6}
-  else{let amount=['legendmine','legendfarm','legendbarracks'].includes(L.special)?12:8,ri=L.resource==='資金'?'y':L.resource==='食料'?'p':'r';if(powers[turn][ri]<amount)return alert(L.resource+amount+'が必要です。');let rs=legendCostChoices(L);if(rs.length<3)return alert('対応するサイコロ／命令書が3個必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'faces',3);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);powers[turn][ri]-=amount}
+  else if(L.special==='talentRecruit'){if((employees[turn]||[]).length>=effectiveHireLimit())return alert('《ビギニング・オブ・レジェンド》には空き雇用枠が1つ必要です。');let rs=legendAnyChoices();if(rs.length<3)return alert('任意のサイコロ／命令書が3個必要です。');if(!canPayResourceCost({["y"]:(15)},turn))return alert('資金15が必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'any',3);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);payResourceCost({["y"]:(15)},turn);}
+  else if(L.special==='scorchedEarth'){let rs=legendAllFacesChoices(4);if(!rs)return alert('1～6のうち異なる4種類のサイコロ／命令書が必要です。');if(!canPayResourceCost({["y"]:(4),["r"]:(4),["p"]:(4)},turn))return alert('資金・兵力・食料が4個ずつ必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'distinct',4);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);payResourceCost({["y"]:(4),["r"]:(4),["p"]:(4)},turn);}
+  else if(L.special==='greatRefresh'){let rs=legendAnyChoices();if(rs.length<4)return alert('任意のサイコロ／命令書が4個必要です。');if(!canPayResourceCost({["y"]:(6),["r"]:(6),["p"]:(6)},turn))return alert('資金・兵力・食料が6個ずつ必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'any',4);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);payResourceCost({["y"]:(6),["r"]:(6),["p"]:(6)},turn);}
+  else{let amount=['legendmine','legendfarm','legendbarracks'].includes(L.special)?12:8,ri=L.resource==='資金'?'y':L.resource==='食料'?'p':'r';if(!canPayResourceCost({[ri]:(amount)},turn))return alert(L.resource+amount+'が必要です。');let rs=legendCostChoices(L);if(rs.length<3)return alert('対応するサイコロ／命令書が3個必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'faces',3);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);payResourceCost({[ri]:(amount)},turn);}
  }else if(L.special==='changeOfHeart'){
-  if(powers[turn].y<18)return alert('資金18が必要です。');let targets=[];for(let p=0;p<playerCount;p++)if(p!==turn)(employees[p]||[]).forEach((e,i)=>targets.push({p,i,e}));if(!targets.length)return alert('奪える雇用キャラクターがいません。');let msg=targets.map((x,i)=>(i+1)+'. P'+(x.p+1)+' '+x.e.rarity+' '+castDisplayName(x.e)).join('\n');let raw=turnClockPrompt('《シークレット・サーティーン》\n奪う雇用キャラクターを選んでください。\n\n'+msg,'1');let n=Math.floor(+raw);if(!n||!targets[n-1])return;let x=targets[n-1];powers[turn].y-=18;let e=cardCommands.choice({zone:'employees',owner:x.p},1,{select:[x.i]})[0];cardCommands.move(e,{zone:'employees',owner:x.p},{zone:'employees',owner:turn});triggerNotices.push('《シークレット・サーティーン》：P'+(x.p+1)+'の「'+castDisplayName(e)+'」をP'+(turn+1)+'が獲得しました。');
+  if(!canPayResourceCost({["y"]:(18)},turn))return alert('資金18が必要です。');let targets=[];for(let p=0;p<playerCount;p++)if(p!==turn)(employees[p]||[]).forEach((e,i)=>targets.push({p,i,e}));if(!targets.length)return alert('奪える雇用キャラクターがいません。');let msg=targets.map((x,i)=>(i+1)+'. P'+(x.p+1)+' '+x.e.rarity+' '+castDisplayName(x.e)).join('\n');let raw=turnClockPrompt('《シークレット・サーティーン》\n奪う雇用キャラクターを選んでください。\n\n'+msg,'1');let n=Math.floor(+raw);if(!n||!targets[n-1])return;let x=targets[n-1];payResourceCost({["y"]:(18)},turn);let e=cardCommands.choice({zone:'employees',owner:x.p},1,{select:[x.i]})[0];cardCommands.move(e,{zone:'employees',owner:x.p},{zone:'employees',owner:turn});triggerNotices.push('《シークレット・サーティーン》：P'+(x.p+1)+'の「'+castDisplayName(e)+'」をP'+(turn+1)+'が獲得しました。');
  }else if(L.special==='resourceWipe'){
   return alert('《'+L.name+'》はターン開始時の特殊取得でのみ獲得できます。');
  }else if(L.special==='abilityCopy'){
-  let rs=legendAllFacesChoices(4);if(!rs)return alert('1～6のうち異なる4種類のサイコロ／命令書が必要です。');if(powers[turn].y<4||powers[turn].r<4||powers[turn].p<4)return alert('資金・兵力・食料が4個ずつ必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'distinct',4);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);powers[turn].y-=4;powers[turn].r-=4;powers[turn].p-=4;
+  let rs=legendAllFacesChoices(4);if(!rs)return alert('1～6のうち異なる4種類のサイコロ／命令書が必要です。');if(!canPayResourceCost({["y"]:(4),["r"]:(4),["p"]:(4)},turn))return alert('資金・兵力・食料が4個ずつ必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'distinct',4);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);payResourceCost({["y"]:(4),["r"]:(4),["p"]:(4)},turn);
  }else if(L.special==='amanomurakumo'){
   let face=[2,3,4,5].find(v=>legendSameFaceChoices(v).length>=6);if(!face)return alert('2・3・4・5のいずれか同じ出目を6個そろえる必要があります。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'same',6,face);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);
  }else if(L.special==='mayqueen'){
-  if(powers[turn].y<12)return alert('資金12が必要です。');let rs=legendSameFaceChoices(2);if(rs.length<3)return alert('出目2のサイコロ／命令書が3個必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'same',3,2);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);powers[turn].y-=12;
+  if(!canPayResourceCost({["y"]:(12)},turn))return alert('資金12が必要です。');let rs=legendSameFaceChoices(2);if(rs.length<3)return alert('出目2のサイコロ／命令書が3個必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'same',3,2);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);payResourceCost({["y"]:(12)},turn);
  }else if(L.special==='eggharp'){
-  if(powers[turn].r<12)return alert('兵力12が必要です。');let rs=legendSameFaceChoices(5);if(rs.length<3)return alert('出目5のサイコロ／命令書が3個必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'same',3,5);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);powers[turn].r-=12;
+  if(!canPayResourceCost({["r"]:(12)},turn))return alert('兵力12が必要です。');let rs=legendSameFaceChoices(5);if(rs.length<3)return alert('出目5のサイコロ／命令書が3個必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'same',3,5);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);payResourceCost({["r"]:(12)},turn);
  }
  L.taken=true;legendTakenThisTurn=true;
  if(L.layoutSet&&L.exclusiveLayoutSet)legends.forEach(x=>{if(x!==L&&x.layoutSet===L.layoutSet&&x.tier===L.tier&&!x.taken){x.taken=true;x.eraBlocked=true}});
@@ -355,8 +355,52 @@ function offerEraLegendAtTurnStart(timing){
 
 // @kokoryo-section S0064
 
+// Resource VP uses one shared virtual budget. No powers are changed.
+function resourceVPFormula(c){
+ return specialConfig(c).vpFormula||(['naroppaGuild','inadamashii'].includes(c.special)?{resources:['y','p','r'],divisor:3,round:'floor'}:null);
+}
+const equivalentVPCache=new Map();
+function equivalentResourceVP(p){
+ const cards=allFieldCards(p).filter(c=>resourceVPFormula(c));
+ const total=['y','p','r'].reduce((n,k)=>n+Math.max(0,Math.floor(powers[p]?.[k]||0)),0);
+ const key=JSON.stringify(cards.map(c=>resourceVPFormula(c)));
+ const old=equivalentVPCache.get(p);
+ if(old&&old.total===total&&old.key===key&&old.cards.length===cards.length&&cards.every((c,i)=>c===old.cards[i]))return old.values;
+ // Existing formulas have disjoint scoring/shortfall colors and unit penalties.
+ // First satisfy unit shortfalls, then the rounded linear scoring term.
+ // A sliding maximum and residue recurrence give O(cards * total resources).
+ let dp=new Float64Array(total+1);const traces=[];
+ for(const c of cards){
+  const f=resourceVPFormula(c),d=Math.max(1,Math.floor(+f.divisor||1));
+  const penalty=(f.penalties||[]).reduce((n,x)=>n+Math.max(0,+x.target||0),0);
+  const base=(+f.flat||0)-penalty;
+  const first=f.round==='floor'?d:f.round==='round'?Math.ceil(d/2):1;
+  const head=new Float64Array(total+1),origin=new Int32Array(total+1),queue=new Int32Array(total+1);let lo=0,hi=0;
+  for(let n=0;n<=total;n++){
+   while(lo<hi&&queue[lo]<n-penalty)lo++;
+   while(lo<hi&&dp[queue[hi-1]]-queue[hi-1]<=dp[n]-n)hi--;
+   queue[hi++]=n;origin[n]=queue[lo];head[n]=dp[queue[lo]]+n-queue[lo]+base;
+  }
+  const next=head.slice(),parents=origin.slice(),residueValue=new Float64Array(d).fill(-Infinity),residueIndex=new Int32Array(d);
+  for(let n=0;n<=total;n++){
+   const j=n-first;if(j<0)continue;const r=j%d,q=Math.floor(j/d),v=head[j]-q;
+   if(v>residueValue[r]){residueValue[r]=v;residueIndex[r]=j;}
+   const candidate=residueValue[r]+q+1;
+   if(candidate>next[n]){next[n]=candidate;parents[n]=origin[residueIndex[r]];}
+  }
+  traces.push(parents);dp=next;
+ }
+ const values=new Map();let budget=total;
+ for(let i=cards.length-1;i>=0;i--){const previous=traces[i][budget],n=budget-previous,f=resourceVPFormula(cards[i]);
+  const penalty=(f.penalties||[]).reduce((s,x)=>s+Math.max(0,+x.target||0),0),used=Math.min(n,penalty),score=Math.max(0,n-penalty)/Math.max(1,+f.divisor||1);
+  const rounded=f.round==='floor'?Math.floor(score):f.round==='round'?Math.round(score):Math.ceil(score);
+  values.set(cards[i],used-penalty+rounded+(+f.flat||0));budget=previous;
+ }
+ equivalentVPCache.set(p,{total,key,cards,values});return values;
+}
 function dynamicSpecialVP(c,p){let f=specialConfig(c).vpFormula;if(!f)return null;let sum=(f.resources||[]).reduce((n,k)=>n+(powers[p]?.[k]||0),0),d=Math.max(1,+f.divisor||1),v=f.round==='floor'?Math.floor(sum/d):f.round==='round'?Math.round(sum/d):Math.ceil(sum/d);for(const x of f.penalties||[])v-=Math.max(0,(+x.target||0)-(powers[p]?.[x.resource]||0))*(+x.multiplier||1);return v+(+f.flat||0)}
 function cardVP(c,p){
+ if(hasEquivalentExchange(p)&&resourceVPFormula(c)){const v=equivalentResourceVP(p).get(c);if(v!==undefined)return v+(c.special==='greatDepression'?Math.ceil((commandCounts[p]||0)/10):0);}
  if(c.special==='greatDepression')return dynamicSpecialVP(c,p)+Math.ceil((commandCounts[p]||0)/10);
  if(c.special==='bigCompany')return (employees[p]||[]).length;
  if(c.special==='naroppaFestival'){let keys=new Set(['S1','S2','S3','S4','S5','S6','S7','S8','S9','S10']);return allFieldCards(p).filter(x=>keys.has(x.key)).reduce((n,x)=>n+fixedVP(x),0)*2;}
@@ -400,8 +444,8 @@ function consumeOneOf(choice,values){if(String(choice).startsWith('free:request:
 function installStandard(handIndex,choice){if(balancedInstallCost(hands[turn][handIndex]))return installBalancedCard(handIndex,[choice]);let c=hands[turn][handIndex],p=powers[turn];if(!c||c.type!=='S')return;let need={y:0,r:0,p:0},vals=null;
  if(c.special==='plan')need.r=2;else if(c.special==='adjust')need.r=4;else if(c.special==='restrict'||c.special==='permit')need.r=3;
  else if(c.special==='warehouse')vals=[1,3,5];
- if(p.y<need.y||p.r<need.r||p.p<need.p)return alert('資源が足りません。必要：'+c.costText);if(vals&&!consumeOneOf(choice,vals))return alert('必要な出目を満たすサイコロまたは命令書を選んでください。');
- p.y-=need.y;p.r-=need.r;p.p-=need.p;let got=hands[turn].splice(handIndex,1)[0];registerInstallation(turn,got);renderGame()}
+ if(!canPayResourceCost({["y"]:(need.y),["r"]:(need.r),["p"]:(need.p)},turn))return alert('資源が足りません。必要：'+c.costText);if(vals&&!consumeOneOf(choice,vals))return alert('必要な出目を満たすサイコロまたは命令書を選んでください。');
+ payResourceCost({["y"]:(need.y),["r"]:(need.r),["p"]:(need.p)},turn);let got=hands[turn].splice(handIndex,1)[0];registerInstallation(turn,got);renderGame()}
 function useStdAbility(cardId,mode,dieId,delta=0){let key=cardId;if(!cardCommands.once(1,'turn',{cardId:key,usage:stdAbilityUsed}))return;let d=dice.find(x=>x.id===+dieId&&!x.used);if(!d)return alert('未使用のサイコロを選んでください。');if(mode==='plan')cardCommands.dice('reroll',{dieId});if(mode==='adjust')cardCommands.dice('adjust',{dieId,delta});if(mode==='restrict')cardCommands.dice('set',{dieId,value:1});if(mode==='permit')cardCommands.dice('set',{dieId,value:6});cardCommands.once(1,'turn',{cardId:key,usage:stdAbilityUsed,consume:true});renderGame()}
 // @kokoryo-end-section S0083
 
@@ -441,9 +485,9 @@ function consumeThreeAny(a,b,c){if(!a||!b||!c||new Set([a,b,c]).size<3)return fa
 // @kokoryo-section S0091
 
 function installNewNormal(handIndex,choices){if(balancedInstallCost(hands[turn][handIndex]))return installBalancedCard(handIndex,choices);let c=hands[turn][handIndex],p=powers[turn];if(!c)return;
- if(c.special==='graveyard'){if(p.p<1||p.r<2)return alert('食料1・兵力2が必要です。');if(!consumeOneOf(choices[0],[4,5]))return alert('🎲4または5が必要です。');p.p--;p.r-=2}
- else if(c.special==='publicmarket'){if(p.y<1||p.p<1||p.r<1)return alert('資金・食料・兵力が1個ずつ必要です。');if(!consumeCostChoice(choices[0]))return alert('任意のサイコロ1個が必要です。');p.y--;p.p--;p.r--}
- else if(c.special==='scout'){if(!cardCommands.can(null,'hire-space'))return alert('雇用枠が上限のため設置できません。');if(p.y<2||p.p<2||p.r<2)return alert('資金・食料・兵力が2個ずつ必要です。');p.y-=2;p.p-=2;p.r-=2}
+ if(c.special==='graveyard'){if(!canPayResourceCost({["p"]:(1),["r"]:(2)},turn))return alert('食料1・兵力2が必要です。');if(!consumeOneOf(choices[0],[4,5]))return alert('🎲4または5が必要です。');payResourceCost({["p"]:(1),["r"]:(2)},turn);}
+ else if(c.special==='publicmarket'){if(!canPayResourceCost({["y"]:(1),["p"]:(1),["r"]:(1)},turn))return alert('資金・食料・兵力が1個ずつ必要です。');if(!consumeCostChoice(choices[0]))return alert('任意のサイコロ1個が必要です。');payResourceCost({["y"]:(1),["p"]:(1),["r"]:(1)},turn);}
+ else if(c.special==='scout'){if(!cardCommands.can(null,'hire-space'))return alert('雇用枠が上限のため設置できません。');if(!canPayResourceCost({["y"]:(2),["p"]:(2),["r"]:(2)},turn))return alert('資金・食料・兵力が2個ずつ必要です。');payResourceCost({["y"]:(2),["p"]:(2),["r"]:(2)},turn);}
 
  else return;
  let got=hands[turn].splice(handIndex,1)[0];registerInstallation(turn,got);renderGame()
@@ -485,7 +529,7 @@ function usePublicMarket(cardIndex){
  const owner=turn,c=installed[owner]?.[cardIndex];
  if(!c||c.special!=='publicmarket')return;
  if(normalCardActionUsed(publicMarketUsed,c))return alert('この交易場はこのターン使用済みです。');
- if(powers[turn].y<2)return alert('交易場の使用には資金2個が必要です。');
+ if(!canPayResourceCost({["y"]:(2)},turn))return alert('交易場の使用には資金2個が必要です。');
  let g=groups();if(!g.size)return alert('公開カードがありません。');
  let keys=[...g.keys()];
  let mraw=turnClockPrompt('獲得する公開カードの番号を入力してください。\n'+keys.map((k,i)=>(i+1)+': '+g.get(k)[0].name+' ×'+g.get(k).length).join('\n'));
@@ -497,9 +541,9 @@ function usePublicMarket(cardIndex){
  let hraw=turnClockPrompt('獲得後に捨てる手札の番号を入力してください。\n'+candidates.map((c,i)=>(i+1)+': '+c.name).join('\n'));
  if(hraw===null)return;
  let hi=Number(hraw)-1;if(!Number.isInteger(hi)||hi<0||hi>=candidates.length)return alert('正しい手札番号を入力してください。');
- if(turn!==owner||!isViewingOwnTurn()||!installed[owner].includes(c)||normalCardActionUsed(publicMarketUsed,c)||powers[owner].y<2)return;
+ if(turn!==owner||!isViewingOwnTurn()||!installed[owner].includes(c)||normalCardActionUsed(publicMarketUsed,c)||!canPayResourceCost({["y"]:(2)},owner))return;
  blockAllMarketUndo('交易場で公開場が変更されました。');
- powers[turn].y-=2;
+ payResourceCost({["y"]:(2)},turn);
  cardCommands.move(got,'market',{zone:'hand',owner:turn},{replaceSource:true});
  let out=cardCommands.choice('hand',1,{select:[hi]})[0];cardCommands.move(out,'hand','discard');
  addDialog('交易場：P'+(turn+1)+'が公開場から「'+got[0].name+'」'+(got.length>1?'×'+got.length:'')+'を獲得し、手札を1枚捨てました。');
@@ -516,26 +560,26 @@ function installPackCard(handIndex,choices=[]){
  let c=hands[turn][handIndex],spec=c?.installSpec;if(!c||!spec)return;
  if(typeof spec.resolve==='function'){let result=spec.resolve({handIndex,choices,card:c,owner:turn,api:packRuntimeApi(turn)});if(result===false)return;if(result==='handled'){renderGame();return}}
  let faces=spec.faces||[],anyNeed=typeof spec.any==='function'?Math.max(0,+spec.any({card:c,owner:turn,api:packRuntimeApi(turn)})||0):Math.max(0,+spec.any||0),needs=[...faces,...Array.from({length:anyNeed},()=>null)];
- let res=spec.resources||{},p=powers[turn];if(p.y<(res.y||0)||p.p<(res.p||0)||p.r<(res.r||0))return alert('設置に必要な資源が足りません。');
+ let res=spec.resources||{},p=powers[turn];if(!canPayResourceCost({["y"]:(res.y||0),["p"]:(res.p||0),["r"]:(res.r||0)},turn))return alert('設置に必要な資源が足りません。');
  if(choices.length!==needs.length||new Set(choices).size!==choices.length)return alert('異なるサイコロまたは命令書を選んでください。');
  // すべて検証してから消費する。命令書はインデックスの大きい順に消費する。
  for(let i=0;i<needs.length;i++){let choice=String(choices[i]),[kind,n]=choice.split(':'),face=needs[i];if(kind==='d'){let d=unusedDice().find(x=>x.id===+n);if(!d||face&&!face.includes(d.value))return alert('必要な出目を満たしていません。')}else if(kind==='b'){let b=breadHands[turn][+n];if(!b||face&&b.value!=='any'&&!face.includes(b.value))return alert('必要な命令書がありません。')}else if(!choice.startsWith('free:request:'))return alert('設置コストが不正です。')}
  let ordered=choices.map((v,i)=>({v,i})).sort((a,b)=>{let ai=String(a.v).startsWith('b:')?Number(String(a.v).split(':')[1]):-1,bi=String(b.v).startsWith('b:')?Number(String(b.v).split(':')[1]):-1;return bi-ai});
  for(const x of ordered){let face=needs[x.i],v=x.v;if(face){if(!face.some(n=>consumePackFaceCostDry(v,n)))return alert('設置コストの処理に失敗しました。')}else if(!consumeCostChoice(v))return alert('設置コストの処理に失敗しました。')}
- p.y-=res.y||0;p.p-=res.p||0;p.r-=res.r||0;let got=hands[turn].splice(handIndex,1)[0];registerInstallation(turn,got);renderGame()
+ payResourceCost({["y"]:(res.y||0),["p"]:(res.p||0),["r"]:(res.r||0)},turn);let got=hands[turn].splice(handIndex,1)[0];registerInstallation(turn,got);renderGame()
 }
 function consumePackFaceCostDry(choice,required){let [kind,n]=String(choice).split(':');if(kind==='d'){let d=unusedDice().find(x=>x.id===+n&&x.value===required);if(!d)return false;d.used=true;return true}if(kind==='b'){let b=breadHands[turn][+n];if(!b||b.value!=='any'&&b.value!==required)return false;breadDiscard.push(breadHands[turn].splice(+n,1)[0]);recycleBreadIfEmpty();return true}return consumeCostChoice(choice,required)}
 // @kokoryo-end-section S0094
 
 // @kokoryo-section S0099
 
-function installElekiter(handIndex,a,b){let p=powers[turn];if(p.y<1||p.r<1||p.p<1)return alert('設置には資金・兵力・食料のパワーが1個ずつ必要です。');if(!distinctCostChoices(a,b))return alert('異なる2枚/2個を選んでください。');if(!consumeCostChoice(a,2)||!consumeCostChoice(b,5))return alert('出目2と出目5を満たすサイコロまたは命令書を選んでください。');p.y--;p.r--;p.p--;registerInstallation(turn,hands[turn].splice(handIndex,1)[0]);renderGame()}
-function installNanban(handIndex,a,b){let p=powers[turn];if(p.y<2||p.r<2||p.p<2)return alert('設置には資金・兵力・食料のパワーが2個ずつ必要です。');if(!distinctCostChoices(a,b))return alert('異なる2枚/2個を選んでください。');if(!consumeCostChoice(a)||!consumeCostChoice(b))return alert('使用するサイコロまたは命令書を2つ選んでください。');p.y-=2;p.r-=2;p.p-=2;registerInstallation(turn,hands[turn].splice(handIndex,1)[0]);renderGame()}
-function installNinjaGuild(handIndex,a){let p=powers[turn];if(p.y<5)return alert('設置には資金5が必要です。');let ok=(String(a).startsWith('free:request:')&&lordInstallDiceDiscount()>Number(String(a).split(':')[2]))?true:(String(a).startsWith('d:')?(()=>{let d=unusedDice().find(x=>'d:'+x.id===a&&(x.value===1||x.value===2));if(!d)return false;d.used=true;return true})():(()=>{let i=+String(a).split(':')[1],b=breadHands[turn][i];if(!b||!(b.value==='any'||b.value===1||b.value===2))return false;breadDiscard.push(breadHands[turn].splice(i,1)[0]);recycleBreadIfEmpty();return true})());if(!ok)return alert('出目1または2を満たすサイコロまたは命令書を選んでください。');p.y-=5;registerInstallation(turn,hands[turn].splice(handIndex,1)[0]);renderGame()}
-function installTenkuCat(handIndex,a,b,trashIndex){let p=powers[turn];if(p.y<2||p.r<1||p.p<2)return alert('設置には資金2・兵力1・食料2が必要です。');if(!distinctCostChoices(a,b))return alert('異なる2枚/2個を選んでください。');if(!installed[turn].length)return alert('天駆猫の設置には、正式に設置済みの他のマーケットカード1枚を捨て札にする必要があります。仮設置カードは選べません。');let idx=Number(trashIndex);if(!Number.isInteger(idx)||idx<0||idx>=installed[turn].length)return alert('捨て札にする設置済みカードを選んでください。');if(!consumeCostChoice(a,1)||!consumeCostChoice(b,6))return alert('出目1と出目6を満たすサイコロまたは命令書を選んでください。');p.y-=2;p.r-=1;p.p-=2;discard.push(installed[turn].splice(idx,1)[0]);registerInstallation(turn,hands[turn].splice(handIndex,1)[0]);renderGame()}
-function installCursedClock(handIndex,a){let p=powers[turn];if(p.p<3)return alert('設置には食料が3個必要です。');let ok=(String(a).startsWith('free:request:')&&lordInstallDiceDiscount()>Number(String(a).split(':')[2]))?true:(String(a).startsWith('d:')?(()=>{let d=unusedDice().find(x=>'d:'+x.id===a&&(x.value===5||x.value===6));if(!d)return false;d.used=true;return true})():(()=>{let i=+String(a).split(':')[1],b=breadHands[turn][i];if(!b||!(b.value==='any'||b.value===5||b.value===6))return false;breadDiscard.push(breadHands[turn].splice(i,1)[0]);recycleBreadIfEmpty();return true})());if(!ok)return alert('出目5または6を満たすサイコロまたは命令書を選んでください。');p.p-=3;let c=hands[turn].splice(handIndex,1)[0];registerInstallation(turn,c);renderGame()}
+function installElekiter(handIndex,a,b){let p=powers[turn];if(!canPayResourceCost({["y"]:(1),["r"]:(1),["p"]:(1)},turn))return alert('設置には資金・兵力・食料のパワーが1個ずつ必要です。');if(!distinctCostChoices(a,b))return alert('異なる2枚/2個を選んでください。');if(!consumeCostChoice(a,2)||!consumeCostChoice(b,5))return alert('出目2と出目5を満たすサイコロまたは命令書を選んでください。');payResourceCost({["y"]:(1),["r"]:(1),["p"]:(1)},turn);registerInstallation(turn,hands[turn].splice(handIndex,1)[0]);renderGame()}
+function installNanban(handIndex,a,b){let p=powers[turn];if(!canPayResourceCost({["y"]:(2),["r"]:(2),["p"]:(2)},turn))return alert('設置には資金・兵力・食料のパワーが2個ずつ必要です。');if(!distinctCostChoices(a,b))return alert('異なる2枚/2個を選んでください。');if(!consumeCostChoice(a)||!consumeCostChoice(b))return alert('使用するサイコロまたは命令書を2つ選んでください。');payResourceCost({["y"]:(2),["r"]:(2),["p"]:(2)},turn);registerInstallation(turn,hands[turn].splice(handIndex,1)[0]);renderGame()}
+function installNinjaGuild(handIndex,a){let p=powers[turn];if(!canPayResourceCost({["y"]:(5)},turn))return alert('設置には資金5が必要です。');let ok=(String(a).startsWith('free:request:')&&lordInstallDiceDiscount()>Number(String(a).split(':')[2]))?true:(String(a).startsWith('d:')?(()=>{let d=unusedDice().find(x=>'d:'+x.id===a&&(x.value===1||x.value===2));if(!d)return false;d.used=true;return true})():(()=>{let i=+String(a).split(':')[1],b=breadHands[turn][i];if(!b||!(b.value==='any'||b.value===1||b.value===2))return false;breadDiscard.push(breadHands[turn].splice(i,1)[0]);recycleBreadIfEmpty();return true})());if(!ok)return alert('出目1または2を満たすサイコロまたは命令書を選んでください。');payResourceCost({["y"]:(5)},turn);registerInstallation(turn,hands[turn].splice(handIndex,1)[0]);renderGame()}
+function installTenkuCat(handIndex,a,b,trashIndex){let p=powers[turn];if(!canPayResourceCost({["y"]:(2),["r"]:(1),["p"]:(2)},turn))return alert('設置には資金2・兵力1・食料2が必要です。');if(!distinctCostChoices(a,b))return alert('異なる2枚/2個を選んでください。');if(!installed[turn].length)return alert('天駆猫の設置には、正式に設置済みの他のマーケットカード1枚を捨て札にする必要があります。仮設置カードは選べません。');let idx=Number(trashIndex);if(!Number.isInteger(idx)||idx<0||idx>=installed[turn].length)return alert('捨て札にする設置済みカードを選んでください。');if(!consumeCostChoice(a,1)||!consumeCostChoice(b,6))return alert('出目1と出目6を満たすサイコロまたは命令書を選んでください。');payResourceCost({["y"]:(2),["r"]:(1),["p"]:(2)},turn);discard.push(installed[turn].splice(idx,1)[0]);registerInstallation(turn,hands[turn].splice(handIndex,1)[0]);renderGame()}
+function installCursedClock(handIndex,a){let p=powers[turn];if(!canPayResourceCost({["p"]:(3)},turn))return alert('設置には食料が3個必要です。');let ok=(String(a).startsWith('free:request:')&&lordInstallDiceDiscount()>Number(String(a).split(':')[2]))?true:(String(a).startsWith('d:')?(()=>{let d=unusedDice().find(x=>'d:'+x.id===a&&(x.value===5||x.value===6));if(!d)return false;d.used=true;return true})():(()=>{let i=+String(a).split(':')[1],b=breadHands[turn][i];if(!b||!(b.value==='any'||b.value===5||b.value===6))return false;breadDiscard.push(breadHands[turn].splice(i,1)[0]);recycleBreadIfEmpty();return true})());if(!ok)return alert('出目5または6を満たすサイコロまたは命令書を選んでください。');payResourceCost({["p"]:(3)},turn);let c=hands[turn].splice(handIndex,1)[0];registerInstallation(turn,c);renderGame()}
 
-function installTreasureShip(handIndex,color){let p=powers[turn];if(!['y','r','p'].includes(color)||p[color]<30)return alert('選んだ1色のパワーが30個必要です。');p[color]-=30;let c=hands[turn].splice(handIndex,1)[0];registerInstallation(turn,c);renderGame()}
+function installTreasureShip(handIndex,color){let p=powers[turn];if(!['y','r','p'].includes(color)||!canPayResourceCost({[color]:(30)},turn))return alert('選んだ1色のパワーが30個必要です。');payResourceCost({[color]:(30)},turn);let c=hands[turn].splice(handIndex,1)[0];registerInstallation(turn,c);renderGame()}
 function installInadamashii(handIndex){if(installed[turn].length<8)return alert('正式に設置済みのマーケットカードが8枚必要です。');let names=installed[turn].map((c,i)=>(i+1)+': '+c.name).join('\n');let raw=turnClockPrompt('捨てる設置済みカード8枚の番号をカンマ区切りで入力してください。\n'+names);if(raw===null)return;let idx=[...new Set(raw.split(',').map(x=>Number(x.trim())-1))];if(idx.length!==8||idx.some(i=>!Number.isInteger(i)||i<0||i>=installed[turn].length))return alert('異なる8枚の番号を正しく入力してください。');idx.sort((a,b)=>b-a).forEach(i=>discard.push(installed[turn].splice(i,1)[0]));let c=hands[turn].splice(handIndex,1)[0];registerInstallation(turn,c);renderGame()}
 function resolveOnInstall(c,owner){
  if(c.special==='lordmeeting')resolveLordMeetingInstall(owner);

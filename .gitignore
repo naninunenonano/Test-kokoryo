@@ -3,3 +3,6 @@ _site-before-clock/
 __pycache__/
 *.pyc
 node_modules/
+test-baseline-228/
+command-overrides/js/
+command-overrides/images/

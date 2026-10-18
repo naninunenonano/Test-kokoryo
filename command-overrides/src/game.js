@@ -73,7 +73,7 @@ function totalHandCount(p){return hands[p].length+breadHands[p].length+(debtIgno
 
 function gainResource(p,key,n=1,source='effect'){
  n=Math.max(0,Math.floor(+n||0));if(!n||!powers[p]||!['y','p','r'].includes(key))return 0;
- if((depressionStartSuppressed&&p===turn)||!eraGainAllowed(p,key,source))return 0;powers[p][key]+=n;return n
+ if((depressionStartSuppressed&&p===turn&&!hasEquivalentExchange(p))||!eraGainAllowed(p,key,source))return 0;powers[p][key]+=n;return n
 }
 // Shared card commands do not render, consume an activation, or broadcast state.
 function commandQuantity(value){
@@ -161,9 +161,9 @@ function commandChange(target,quantity='all',options={}){
  target=({'資源変換':'convert','資源交換':'exchange','公開場':'market'})[target]||target;
  const {owner=turn,kind='die',dieId,index,color,from,to,undo=false,record=false,source=target==='exchange'?'exchange':'dieConvert'}=options;
  if(target==='market'){
-  const cost=options.cost||{};if(Object.entries(cost).some(([k,n])=>powers[owner][k]<n))return false;
+  const cost=options.cost||{};if(!canPayResourceCost(cost,owner))return false;
   const cards=Array.isArray(quantity)?commandChoice('market','all',{select:quantity}):commandChoice('market',quantity);
-  for(const [k,n]of Object.entries(cost))powers[owner][k]-=n;
+  payResourceCost(cost,owner);
   commandMove(cards,'market','discard',{replaceSource:true});commandPlus('market');return cards
  }
  if(target==='convert'){
@@ -266,9 +266,24 @@ function commandCast(program,{owner=turn,times=1}={}){
 
 // One balance specification feeds display, availability, payment and Bot planning.
 const BALANCED_INSTALL_COSTS=Object.freeze({"mine":{"faces":[[1,2]],"resources":{"y":4}},"farm":{"faces":[[3,4]],"resources":{"p":4}},"barracks":{"faces":[[5,6]],"resources":{"r":4}},"commandroom":{"faces":[[3,4]],"resources":{"y":4,"r":2}},"church":{"faces":[[1,4]],"resources":{"y":4,"p":2}},"lordmeeting":{"faces":[[1,6]],"resources":{"y":6}},"blackcasino":{"faces":[2,5],"resources":{"p":5}},"greatermine":{"faces":[1,2],"resources":{"y":7}},"greaterfarm":{"faces":[3,4],"resources":{"p":7}},"greaterbarracks":{"faces":[5,6],"resources":{"r":7}},"greatercommand":{"faces":[3,4],"resources":{"y":4,"r":3}},"famine":{"faces":[3,3,3],"resources":{"p":6}},"swordhunt":{"faces":[6],"resources":{"r":7}},"laws":{"faces":[],"resources":{"y":8}},"landgrab":{"faces":[2,5],"resources":{"y":3,"p":3,"r":3}},"bandit":{"faces":[null,null,null],"resources":{"y":7,"p":5}}});
+// A pure complete payment plan; failed validation never consumes resources.
+function resourceCostPlan(cost={},owner=turn){
+ const held=powers[owner];if(!held)return null;const plan={y:0,p:0,r:0};
+ if(Object.keys(cost).some(k=>!['y','p','r'].includes(k)))return null;
+ for(const k of ['y','p','r'])if(!Number.isSafeInteger(cost[k]??0)||(cost[k]??0)<0)return null;
+ if(!hasEquivalentExchange(owner)){for(const k of ['y','p','r']){plan[k]=cost[k]||0;if(held[k]<plan[k])return null;}return plan;}
+ let remaining=['y','p','r'].reduce((n,k)=>n+(cost[k]||0),0);
+ if(['y','p','r'].reduce((n,k)=>n+held[k],0)<remaining)return null;
+ for(const k of ['y','p','r']){plan[k]=Math.min(held[k],cost[k]||0);remaining-=plan[k];}
+ for(const k of ['y','p','r']){const n=Math.min(remaining,held[k]-plan[k]);plan[k]+=n;remaining-=n;}
+ return plan;
+}
+function canPayResourceCost(cost={},owner=turn){return resourceCostPlan(cost,owner)!==null}
+function payResourceCost(cost={},owner=turn){const plan=resourceCostPlan(cost,owner);if(!plan)return false;for(const k of ['y','p','r'])powers[owner][k]-=plan[k];return true;}
+
 function balancedInstallCost(c){return BALANCED_INSTALL_COSTS[c?.special]||null}
 function balancedCostValid(c,choices,{upgrade=false}={}){
- const spec=balancedInstallCost(c);if(!spec||Object.entries(spec.resources).some(([k,n])=>powers[turn][k]<n))return false;
+ const spec=balancedInstallCost(c);if(!spec||!canPayResourceCost(spec.resources))return false;
  const needs=upgrade?[]:spec.faces;if(choices.length!==needs.length||new Set(choices).size!==choices.length)return false;
  return needs.every((face,i)=>{const [kind,n]=String(choices[i]).split(':'),values=Array.isArray(face)?face:face===null?null:[face];
   if(kind==='free')return installCostOptions(null).some(o=>o.id===choices[i]);
@@ -295,7 +310,7 @@ function installBalancedCard(handIndex,choices,upgradeIndex=null){
  choices.map((v,i)=>({v,i})).sort((a,b)=>{const index=x=>x.v.startsWith('b:')?+x.v.split(':')[1]:-1;return index(b)-index(a)}).forEach(({v,i})=>{
   const face=spec.faces[i];if(Array.isArray(face))consumeOneOf(v,face);else consumeCostChoice(v,face)
  });
- for(const [k,n]of Object.entries(spec.resources))powers[turn][k]-=n;
+ payResourceCost(spec.resources);
  if(upgrade)cardCommands.move(replaced,'installed','discard');
  registerInstallation(turn,hands[turn].splice(handIndex,1)[0]);renderGame();return true
 }
@@ -479,11 +494,13 @@ function continueBeginTurn(){
  let hasGuild=installed[turn].some(c=>c.special==='naroppaGuild'); if(hasGuild){}
  if(suppressDepressionStart){
   // 獲得ターンだけ、通常・追加・選択式の全ダイスと開始時資源獲得を抑止する。
-  dice=[];pendingSSRBonus=0;pendingLordResource=0;pendingNanban=0;pendingTenkuCat=0;pendingCastResourceChoices=[];pendingOverclockChoices=[];
-  for(const k of ['y','p','r'])powers[turn][k]=Math.min(powers[turn][k],depressionResourceBaseline[k]);
+  dice=[];pendingSSRBonus=0;
+  if(!hasEquivalentExchange(turn)){pendingLordResource=0;pendingNanban=0;pendingTenkuCat=0;pendingCastResourceChoices=[];pendingOverclockChoices=[];
+  for(const k of ['y','p','r'])powers[turn][k]=Math.min(powers[turn][k],depressionResourceBaseline[k]);}
   triggerNotices.push('《世界恐慌》：獲得したターンの開始時資源獲得と全サイコロ獲得を無効化しました。');
  }
  depressionStartSuppressed=false;
+ if(hasEquivalentExchange(turn))cardCommands.pool('y',5);
  turnStartPostPending=true;nightEscapePostAvailable=false;renderGame()
 }
 // @kokoryo-end-section S0054

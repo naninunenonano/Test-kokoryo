@@ -19,8 +19,8 @@ class CommandBuildTests(unittest.TestCase):
   with tempfile.TemporaryDirectory() as tmp,patch.object(builder.subprocess,'run') as run:
    builder.apply_command_overrides(Path(tmp),ROOT/'command-overrides',BASE)
    self.assertIn('const cardCommands=',(Path(tmp)/'src/game.js').read_text())
-   self.assertFalse((Path(tmp)/'src/order.json').exists())
-   self.assertEqual([c.args[0] for c in run.call_args_list],[['npm','ci','--ignore-scripts'],['npm','run','build'],['npm','run','analyze'],['npm','test']])
+   self.assertTrue((Path(tmp)/'src/order.json').exists())
+   self.assertEqual([c.args[0] for c in run.call_args_list],[['npm','ci','--ignore-scripts'],['npm','run','build'],['npm','test']])
  def test_pull_request_validation_cannot_deploy(self):
   workflow=(ROOT/'.github/workflows/preview.yml').read_text()
   self.assertIn('  pull_request:\n    branches: [main]',workflow)

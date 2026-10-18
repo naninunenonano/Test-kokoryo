@@ -11,6 +11,7 @@ root=Path(__file__).resolve().parents[1]
 parser=argparse.ArgumentParser()
 parser.add_argument('--site',type=Path,required=True)
 parser.add_argument('--output',type=Path,required=True)
+parser.add_argument('--baseline',type=Path,required=True,help='Verified TEST228 test-build.json for per-file status')
 args=parser.parse_args()
 site=args.site.resolve()
 metadata=json.loads((site/'test-build.json').read_text())
@@ -33,6 +34,23 @@ for folder in ['tools','docs','tests']:
 for name in ['README.md','package.json','package-lock.json']:
     entries[name]=root/name
 assert all(name in entries for name in ['index.html','js/app.js','packs/pack1.js','packs/pack2.js','packs/rules_pack1.js'])
+baseline=json.loads(args.baseline.read_text())['files']
+import subprocess
+changes=['path\tstatus\tbaseline']
+for relative,p in sorted(entries.items()):
+    if relative in baseline:
+        previous=baseline[relative]
+    else:
+        try:
+            previous=hashlib.sha256(subprocess.check_output(['git','show','497bf842335048f23133bbfefd0e809448d770fd:command-overrides/'+relative],stderr=subprocess.DEVNULL)).hexdigest()
+        except subprocess.CalledProcessError:
+            previous=None
+    status='追加' if previous is None else '変更なし' if hashlib.sha256(p.read_bytes()).hexdigest()==previous else '変更あり'
+    changes.append(relative+'\t'+status+'\tTEST Ver.0.3.228')
+status_file=args.output.parent/'FILE_CHANGES.tsv'
+status_file.parent.mkdir(parents=True,exist_ok=True)
+status_file.write_text('\n'.join(changes)+'\n')
+entries['FILE_CHANGES.tsv']=status_file
 args.output.parent.mkdir(parents=True,exist_ok=True)
 with zipfile.ZipFile(args.output,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=6) as archive:
     for relative,p in sorted(entries.items()):

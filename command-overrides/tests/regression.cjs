@@ -48,6 +48,8 @@ function makeEnv(names){
   runPackCardHook(){},packCastPool:()=>[{id:'CUR1',name:'歌音',rarity:'UR'}],upgradeRarity:r=>({N:'R',R:'SR',SR:'SSR',SSR:'UR'})[r]
  };
  vm.createContext(c);
+ for(const name of ['resourceCostPlan','canPayResourceCost','payResourceCost'])vm.runInContext(fn(name),c);
+ c.hasEquivalentExchange=()=>false;
  for(const name of [...html.matchAll(/^function (command\w+)\(/gm)].map(m=>m[1]))vm.runInContext(fn(name),c);
  vm.runInContext(html.match(/^const cardCommands=.*$/m)[0],c);
  for(const name of names)vm.runInContext(fn(name),c);

@@ -40,7 +40,7 @@ const CHARACTER_FAMILIES=[
 // Ver.0.3.77: 固有能力は本体で一元管理。追加パックは uniqueAbility 名だけを宣言する。
 const UNIQUE_ABILITY_DEFS=Object.freeze({
  '神の贈り物':{text:'ターン開始時、サイコロを2個追加で振って獲得し、好きな資源を3個獲得する。',props:{extraDice:2,extraLordResource:3,chooseResource:true,amount:3}},
- '等価交換':{stackable:false,text:'好きな資源1つを、別の好きな資源1つに交換できる。',props:{exchangeRate:1}},
+ '等価交換':{stackable:false,text:'ターン開始時に資金5を獲得する。資源コストは種類を問わず合計量で支払い、資源を参照する可変VPは全体で最適化する。資金・食料・兵力の獲得不可を無視する。',props:{exchangeRate:1,equivalentExchange:true}},
  '神算鬼謀':{text:'ターン開始時、命令書を2枚獲得する。この個体での初回発動時は、さらに4枚獲得する。',props:{turnBread:2,firstBreadBonus:4}},
  'おねだり':{text:'通常カードを設置するとき、必要なサイコロのうち好きな1つを使わずに設置できる。',props:{installDiceDiscount:1}},
  'オーバークロック':{copyable:false,stackable:true,text:'この個体での初回のみ、ターン開始時に好きな資源を合計20個、任意に配分して獲得する。',props:{overclockResources:20}},
@@ -228,6 +228,7 @@ function resolveReactiveRolls(acquired=dice,clearNotices=true){
 // @kokoryo-section S0053
 
 function characterEffectSources(p){let a=[],lord=CHARACTER_DATA[charOf(p)];if(lord)a.push(lord);(employees[p]||[]).forEach(e=>{if(e)a.push(effectiveEmployeeAbility(e,p))});return a}
+function hasEquivalentExchange(p=turn){return characterEffectSources(p).some(x=>x.uniqueAbility==='等価交換'||x.grantedAbilities?.includes('等価交換'))||(p===turn&&copiedAbility==='等価交換')}
 function stackedNumericEffect(p,key){let total=0,groups=new Map();characterEffectSources(p).forEach(x=>{let v=+x[key]||0;if(!v)return;if(x.effectStackGroup)groups.set(x.effectStackGroup,Math.max(groups.get(x.effectStackGroup)||0,v));else total+=v});groups.forEach(v=>total+=v);return total}
 function groupedCharacterVP(p){let values=[],groups=new Map();characterEffectSources(p).forEach(x=>{let v=+(x.vpOverride??x.vp)||0;if(!v)return;if(x.vpStackGroup)groups.set(x.vpStackGroup,Math.max(groups.get(x.vpStackGroup)||0,v));else values.push(v)});return cardCommands.function({target:values.concat([...groups.values()]),value:v=>v})}
 
@@ -277,7 +278,7 @@ function resolveAbilityCopyLegend(onDone){
 
 // @kokoryo-section S0069
 
-function handCardLikelyInstallable(c){if(balancedInstallCost(c)){const choices=balancedCostChoices(c);const base={greatermine:'mine',greaterfarm:'farm',greaterbarracks:'barracks',greatercommand:'commandroom'}[c.special];return !!(choices&&balancedCostValid(c,choices)||base&&installed[turn].some(x=>x.special===base)&&balancedCostValid(c,[],{upgrade:true}))}let p=powers[turn],opts=n=>installCostOptions(n).length,any=()=>installCostOptions(null).length;if(c.installSpec?.any)return any()>=c.installSpec.any;if(c.type==='S'){let need={plan:[0,2,0,0],adjust:[0,4,0,0],restrict:[0,3,0,0],permit:[0,3,0,0],mine:[2,0,0,1],farm:[0,0,2,3],barracks:[0,2,0,5],commandroom:[3,1,0,3],warehouse:[0,0,0,1],church:[3,0,1,1]}[c.special];if(!need)return true;if(p.y<need[0]||p.r<need[1]||p.p<need[2])return false;let faces={mine:[1,2],farm:[3,4],barracks:[5,6],commandroom:[3,4],warehouse:[1,3,5],church:[1,4]}[c.special];return !faces||faces.some(v=>opts(v)>0)}if(c.special==='laws')return p.y>=5;if(c.special==='scout')return p.y>=2&&p.r>=2&&p.p>=2&&(employees[turn]||[]).length<gameSettings.hireLimit;if(c.special==='famine')return p.p>=3&&opts(3)>=3;if(c.special==='swordhunt')return p.r>=4&&opts(6)>0;if(c.special==='graveyard')return p.p>=1&&p.r>=2&&(opts(4)+opts(5)>0);if(c.special==='landgrab')return p.y>=2&&p.r>=2&&p.p>=2&&opts(2)>0&&opts(5)>0;if(c.special==='bandit')return p.y>=4&&p.p>=3&&any()>=3;if(c.special==='publicmarket')return p.y>=1&&p.r>=1&&p.p>=1&&any()>0;if(c.special==='lordmeeting')return p.y>=4&&(opts(1)+opts(6)>0);if(c.special==='blackcasino')return p.p>=5&&opts(2)>0&&opts(5)>0;if(c.special==='cursedclock')return p.p>=3&&(opts(5)+opts(6)>0);if(c.special==='ninjaguild')return p.y>=5&&(opts(1)+opts(2)>0);if(c.special==='paneteria')return any()>0;if(c.special==='elekiter')return p.y>=1&&p.r>=1&&p.p>=1&&opts(2)>0&&opts(5)>0;if(c.special==='nanban')return p.y>=2&&p.r>=2&&p.p>=2&&any()>=2;if(c.special==='tenkucat')return p.y>=2&&p.r>=1&&p.p>=2&&opts(1)>0&&opts(6)>0&&installed[turn].length>0;if(c.special==='treasureship')return Math.max(p.y,p.r,p.p)>=30;if(c.special==='inadamashii')return installed[turn].length>=8;return true}
+function handCardLikelyInstallable(c){if(balancedInstallCost(c)){const choices=balancedCostChoices(c);const base={greatermine:'mine',greaterfarm:'farm',greaterbarracks:'barracks',greatercommand:'commandroom'}[c.special];return !!(choices&&balancedCostValid(c,choices)||base&&installed[turn].some(x=>x.special===base)&&balancedCostValid(c,[],{upgrade:true}))}let p=powers[turn],opts=n=>installCostOptions(n).length,any=()=>installCostOptions(null).length;if(c.installSpec){let spec=c.installSpec;return canPayResourceCost(spec.resources||{})&&installCostOptions(null).length>=((spec.faces||[]).length+(typeof spec.any==='function'?spec.any({owner:turn,card:c,api:packRuntimeApi(turn)}):(+spec.any||0)))}if(c.type==='S'){let need={plan:[0,2,0,0],adjust:[0,4,0,0],restrict:[0,3,0,0],permit:[0,3,0,0],mine:[2,0,0,1],farm:[0,0,2,3],barracks:[0,2,0,5],commandroom:[3,1,0,3],warehouse:[0,0,0,1],church:[3,0,1,1]}[c.special];if(!need)return true;if(!canPayResourceCost({["y"]:(need[0]),["r"]:(need[1]),["p"]:(need[2])},turn))return false;let faces={mine:[1,2],farm:[3,4],barracks:[5,6],commandroom:[3,4],warehouse:[1,3,5],church:[1,4]}[c.special];return !faces||faces.some(v=>opts(v)>0)}if(c.special==='laws')return canPayResourceCost({["y"]:(5)},turn);if(c.special==='scout')return canPayResourceCost({["y"]:(2),["r"]:(2),["p"]:(2)},turn)&&(employees[turn]||[]).length<gameSettings.hireLimit;if(c.special==='famine')return canPayResourceCost({["p"]:(3)},turn)&&opts(3)>=3;if(c.special==='swordhunt')return canPayResourceCost({["r"]:(4)},turn)&&opts(6)>0;if(c.special==='graveyard')return canPayResourceCost({["p"]:(1),["r"]:(2)},turn)&&(opts(4)+opts(5)>0);if(c.special==='landgrab')return canPayResourceCost({["y"]:(2),["r"]:(2),["p"]:(2)},turn)&&opts(2)>0&&opts(5)>0;if(c.special==='bandit')return canPayResourceCost({["y"]:(4),["p"]:(3)},turn)&&any()>=3;if(c.special==='publicmarket')return canPayResourceCost({["y"]:(1),["r"]:(1),["p"]:(1)},turn)&&any()>0;if(c.special==='lordmeeting')return canPayResourceCost({["y"]:(4)},turn)&&(opts(1)+opts(6)>0);if(c.special==='blackcasino')return canPayResourceCost({["p"]:(5)},turn)&&opts(2)>0&&opts(5)>0;if(c.special==='cursedclock')return canPayResourceCost({["p"]:(3)},turn)&&(opts(5)+opts(6)>0);if(c.special==='ninjaguild')return canPayResourceCost({["y"]:(5)},turn)&&(opts(1)+opts(2)>0);if(c.special==='paneteria')return any()>0;if(c.special==='elekiter')return canPayResourceCost({["y"]:(1),["r"]:(1),["p"]:(1)},turn)&&opts(2)>0&&opts(5)>0;if(c.special==='nanban')return canPayResourceCost({["y"]:(2),["r"]:(2),["p"]:(2)},turn)&&any()>=2;if(c.special==='tenkucat')return canPayResourceCost({["y"]:(2),["r"]:(1),["p"]:(2)},turn)&&opts(1)>0&&opts(6)>0&&installed[turn].length>0;if(c.special==='treasureship')return hasEquivalentExchange(turn)?canPayResourceCost({y:30}):Math.max(p.y,p.r,p.p)>=30;if(c.special==='inadamashii')return installed[turn].length>=8;return true}
 // @kokoryo-end-section S0069
 
 // @kokoryo-section S0071
@@ -301,9 +302,9 @@ function hireEmployee(dieId){
  if(hiredThisTurn)return alert('雇用は1ターンに1回までです。');
  if((employees[turn]||[]).length>=effectiveHireLimit())return alert('雇用できる部下は最大'+effectiveHireLimit()+'人です。');
  if(!isHireFree()){
-  if(powers[turn].y<5)return alert('雇用には資金5が必要です。');
+  if(!canPayResourceCost({["y"]:(5)},turn))return alert('雇用には資金5が必要です。');
   let d=useDie(dieId);if(!d)return alert('未使用のサイコロを1個選んでください。');
-  powers[turn].y-=5;
+  payResourceCost({["y"]:(5)},turn);
  }
  return cardCommands.koyou('gacha',1,{accept:e=>{if(nextHireMinRarity){let order=['N','R','SR','SSR','UR'],min=order.indexOf(nextHireMinRarity);let pool=packCastPool(nextHireMinRarity).concat(...order.slice(min+1).map(r=>packCastPool(r)));if(pool.length)e={...pool[Math.floor(Math.random()*pool.length)]};nextHireMinRarity=null;}if(!e)return alert('雇用できるキャストが実装されていません。');
  // 通常は即雇用。URかつ、すでに所持しているキャラと固有能力が同名の場合だけ再抽選を選べる。
@@ -464,10 +465,10 @@ function useOracleUpgrade(sourceType,sourceIndex,targetIndex){
  if(!oracleCanUpgradeTarget(target))return alert('SSRはドッペルゲンガー以外、《神託》の対象にできません。');
  let upgraded=oracleUpgradeTarget(target);if(!upgraded)return alert('このキャラクターには《神託》のレベルアップ先が設定されていません。');
  let nr=upgraded.rarity;
- if(powers[turn].y<5)return alert('《神託》には資金5が必要です。');
+ if(!canPayResourceCost({["y"]:(5)},turn))return alert('《神託》には資金5が必要です。');
  let d=unusedDice()[0];if(!d)return alert('《神託》には未使用のサイコロ1個が必要です。');
  let usedDie=useDie(d.id);if(!usedDie)return alert('《神託》に使用するサイコロを消費できませんでした。');
- powers[turn].y-=5;
+ payResourceCost({["y"]:(5)},turn);
  let ne=applyUniqueAbilityDef(upgraded);if(ne.doppelganger)ne=resolveDoppelCopy(ne);
  let before=castDisplayName(target);markOracleSourceUsed(sourceType,sourceIndex);if(sourceType!=='lord'&&sourceType!=='copy'&&sourceIndex===targetIndex)ne.oracleUsedTurn=target.oracleUsedTurn;cardCommands.koyou('select',1,{pool:[ne],selected:[ne],canHire:()=>true,accept:next=>{cardCommands.move(target,{zone:'employees',owner:turn},[]);cardCommands.move(next,[next],{zone:'employees',owner:turn},{index:targetIndex})}});hiredThisTurn=true;
  triggerNotices.push('《神託》：'+before+' → '+castDisplayName(ne)+'（'+nr+'）へレベルアップしました。');renderGame()
@@ -535,7 +536,7 @@ function oneStepUpgradeCast(target,{allowUR=true}={}){
 }
 function organizationMaterialGroups(){let staff=employees[turn]||[],by={};staff.forEach((e,i)=>{if(e.rarity!=='UR')(by[e.rarity]||(by[e.rarity]=[])).push({e,i})});return by}
 function usePromoteCastPair(card,spec,rarity,firstIndex,secondIndex){
- if(!isViewingOwnTurn())return alert('相手ターン中は使用できません。');if(organizationUsed.includes(card.id))return alert('このカードはこのターン使用済みです。');let cost=spec.cost||{},p=powers[turn];if(p.y<(cost.y||0)||p.p<(cost.p||0)||p.r<(cost.r||0))return alert('起動に必要な資源が足りません。');let by=organizationMaterialGroups(),cand=by[rarity]||[];let a=cand.find(x=>x.i===+firstIndex),b=cand.find(x=>x.i===+secondIndex);if(!a||!b||a.i===b.i)return alert('同じレアリティの異なる2人を選んでください。');let nextR=upgradeRarity(rarity),pool=packCastPool(nextR);if(!nextR||!pool.length)return alert('1段階上の排出候補がありません。');p.y-=cost.y||0;p.p-=cost.p||0;p.r-=cost.r||0;let staff=employees[turn]||[];[a.i,b.i].sort((x,y)=>y-x).forEach(i=>staff.splice(i,1));let e=pool[Math.floor(Math.random()*pool.length)];staff.push({...e});organizationUsed.push(card.id);triggerNotices.push('《'+card.name+'》：'+rarity+'2人を再編し、'+nextR+'「'+castDisplayName(e)+'」を雇用しました。');renderGame()
+ if(!isViewingOwnTurn())return alert('相手ターン中は使用できません。');if(organizationUsed.includes(card.id))return alert('このカードはこのターン使用済みです。');let cost=spec.cost||{},p=powers[turn];if(!canPayResourceCost({["y"]:(cost.y||0),["p"]:(cost.p||0),["r"]:(cost.r||0)},turn))return alert('起動に必要な資源が足りません。');let by=organizationMaterialGroups(),cand=by[rarity]||[];let a=cand.find(x=>x.i===+firstIndex),b=cand.find(x=>x.i===+secondIndex);if(!a||!b||a.i===b.i)return alert('同じレアリティの異なる2人を選んでください。');let nextR=upgradeRarity(rarity),pool=packCastPool(nextR);if(!nextR||!pool.length)return alert('1段階上の排出候補がありません。');payResourceCost({["y"]:(cost.y||0),["p"]:(cost.p||0),["r"]:(cost.r||0)},turn);let staff=employees[turn]||[];[a.i,b.i].sort((x,y)=>y-x).forEach(i=>staff.splice(i,1));let e=pool[Math.floor(Math.random()*pool.length)];staff.push({...e});organizationUsed.push(card.id);triggerNotices.push('《'+card.name+'》：'+rarity+'2人を再編し、'+nextR+'「'+castDisplayName(e)+'」を雇用しました。');renderGame()
 }
 // @kokoryo-end-section S0095
 
