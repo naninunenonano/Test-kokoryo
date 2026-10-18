@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 18682)
-Total output lines: 655
-
 // Editing source only. Build with npm run build; do not load this file directly.
 // Section order and the shared private scope are preserved by src/order.json.
 
@@ -30,7 +27,7 @@ function debtIgnoredForHand(p){return specialOwners((cfg,c,owner)=>owner===p&&cf
 
 // @kokoryo-section S0025
 
-function eraGainAllowed(p,key,source='effect'){for(const {c,cfg} of specialOwners((cfg,c,owner)=>owner===p&&Array.isArray(cfg.resourceGain?.ownerBlock)&&cfg.resourceGain.ownerBlock.includes(key))){if(c._eraAcquiredThisTurn&&cfg.resourceGain.acquireTurnAllSources)return false;let allowed=cfg.resourceGain.afterAcquireAllowedSources;if(Array.isArray(allowed)&&!allowed.includes(source))return false}return true}
+function eraGainAllowed(p,key,source='effect'){if(hasEquivalentExchange(p))return true;for(const {c,cfg} of specialOwners((cfg,c,owner)=>owner===p&&Array.isArray(cfg.resourceGain?.ownerBlock)&&cfg.resourceGain.ownerBlock.includes(key))){if(c._eraAcquiredThisTurn&&cfg.resourceGain.acquireTurnAllSources)return false;let allowed=cfg.resourceGain.afterAcquireAllowedSources;if(Array.isArray(allowed)&&!allowed.includes(source))return false}return true}
 // @kokoryo-end-section S0025
 
 // @kokoryo-section S0036
@@ -286,7 +283,46 @@ function syncEconomyLegendUnlock(){
  if(ownedLowerIds.size){for(const L of lower){if(ownedLowerIds.has(L.id)){L.taken=true;L.eraBlocked=false}else{L.taken=true;L.eraBlocked=true}}}
 
  if(!lower.some(L=>L.taken&&!L.eraBlocked)&&!installed.some(cards=>(cards||[]).some(c=>c.key==='LL8'||c.key==='LL9')))return;
- for(const L of upper)if(!L.taken&&!L.eraBlocked)L.un…682 tokens truncated…sTurn||depressionLegendLocked(turn)||!eraLegendCondition(L))return false;
+ for(const L of upper)if(!L.taken&&!L.eraBlocked)L.unlocked=true;
+}
+// 診断専用。対戦処理は変更せず、ターン開始時の実行履歴だけ保持する。
+let economyAcquireTrace=[];
+function traceEconomyAcquire(stage,details={}){
+ try{
+  economyAcquireTrace.push({stage,turnPlayer:turn+1,viewerPlayer:viewer+1,
+   onlineDebug:!!onlineDebugMode,realOnline:!!realOnlineMainMode,
+   money:powers[turn]?.y||0,food:powers[turn]?.p||0,military:powers[turn]?.r||0,
+   ownDebt:commandCounts[turn]||0,totalDebt:commandCounts.reduce((a,n)=>a+(n||0),0),
+   legendTakenThisTurn:!!legendTakenThisTurn,...details});
+  if(economyAcquireTrace.length>80)economyAcquireTrace.shift();
+ }catch(e){}
+}
+function runTurnStartSpecialAcquirePhase(timing){
+ traceEconomyAcquire('phase_enter',{timing});
+ if((onlineDebugMode||realOnlineMainMode)&&viewer!==turn){traceEconomyAcquire('phase_skipped_viewer',{timing});return false;}
+ // ① pre: ターン開始時効果より前に条件判定する特殊獲得。③ post: 開始時効果処理後に条件判定する特殊獲得。
+ let acquired=false;
+ if(timing==='pre'){syncEconomyLegendUnlock();runInstalledPackHooks('turnStartAcquirePre',turn);if(offerFreeResourceWipeLegend())return true;offerEraLegendAtTurnStart('pre')}
+ if(timing==='post'){syncEconomyLegendUnlock();runInstalledPackHooks('turnStartAcquirePost',turn);offerEraLegendAtTurnStart('post')}
+ traceEconomyAcquire('phase_exit',{timing});
+ return acquired
+}
+function ensureDepressionDebtSupply(){for(const L of legends.filter(x=>!x.taken&&!x.eraBlocked&&x.unlocked)){let n=specialConfig(L).onAcquire?.ensureDebtSupplyPerPlayer;if(n){let total=komePlace+commandCounts.reduce((a,v)=>a+(v||0),0),need=playerCount*n;if(total<need)komePlace+=need-total}}}
+function eraLegendCondition(L){
+ if(legendTakenThisTurn||depressionLegendLocked(turn))return false;
+ const c=specialConfig(L).condition||{},total=commandCounts.reduce((a,n)=>a+(n||0),0);
+ if(c.moneyPerTotalDebt!=null)return (powers[turn]?.y||0)>=total*c.moneyPerTotalDebt;
+ if(c.foodMilitaryBase!=null)return ((powers[turn]?.p||0)+(powers[turn]?.r||0))>=Math.max(0,c.foodMilitaryBase-(commandCounts[turn]||0)*(c.debtDiscount||0));
+ if(c.debtTotalAtLeast!=null&&total<c.debtTotalAtLeast)return false;
+ if(c.allDebtZero&&!commandCounts.every(n=>(n||0)===0))return false;
+ return Object.keys(c).length>0;
+}
+function blockOtherEraLegend(chosen){
+ if(chosen.layoutSet&&chosen.exclusiveLayoutSet){legends.forEach(L=>{if(L!==chosen&&L.layoutSet===chosen.layoutSet&&L.tier===chosen.tier&&!L.taken){L.eraBlocked=true;L.taken=true}});return}
+ let group=chosen.specialGroup||'era';legends.forEach(L=>{if(L!==chosen&&(L.specialGroup||'era')===group&&!L.taken)L.eraBlocked=true});
+}
+function resolveEraAcquire(L){
+ if(legendTakenThisTurn||depressionLegendLocked(turn)||!eraLegendCondition(L))return false;
  let cfg=specialConfig(L),a=cfg.onAcquire||{},owner=turn;
  if(specialEffectId(L)==='goldenAge')powers[owner].y=0;
  if(specialEffectId(L)==='greatDepression'){powers[owner].y=0;powers[owner].p=0;powers[owner].r=0;

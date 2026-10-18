@@ -73,7 +73,7 @@ function totalHandCount(p){return hands[p].length+breadHands[p].length+(debtIgno
 
 function gainResource(p,key,n=1,source='effect'){
  n=Math.max(0,Math.floor(+n||0));if(!n||!powers[p]||!['y','p','r'].includes(key))return 0;
- if((depressionStartSuppressed&&p===turn)||!eraGainAllowed(p,key,source))return 0;powers[p][key]+=n;return n
+ if((depressionStartSuppressed&&p===turn&&!hasEquivalentExchange(p))||!eraGainAllowed(p,key,source))return 0;powers[p][key]+=n;return n
 }
 // Shared card commands do not render, consume an activation, or broadcast state.
 function commandQuantity(value){
@@ -470,7 +470,7 @@ function beginTurn(){
  continueBeginTurn();
 }
 function continueBeginTurn(){
- const suppressDepressionStart=depressionDebtLocked(turn)&&allFieldCards(turn).some(c=>specialEffectId(c)==='greatDepression'&&c._eraAcquiredThisTurn);
+ const suppressDepressionStart=!hasEquivalentExchange(turn)&&depressionDebtLocked(turn)&&allFieldCards(turn).some(c=>specialEffectId(c)==='greatDepression'&&c._eraAcquiredThisTurn);
  const depressionResourceBaseline=suppressDepressionStart?{...powers[turn]}:null;
  depressionStartSuppressed=suppressDepressionStart;
  if(depressionDebtLocked(turn)&&!suppressDepressionStart){gainResource(turn,'p',5,'depressionBonus');gainResource(turn,'r',5,'depressionBonus');}
@@ -499,7 +499,7 @@ function continueBeginTurn(){
   triggerNotices.push('《世界恐慌》：獲得したターンの開始時資源獲得と全サイコロ獲得を無効化しました。');
  }
  depressionStartSuppressed=false;
- if(hasEquivalentExchange(turn))cardCommands.pool('y',5,{respectRestrictions:false});
+ if(hasEquivalentExchange(turn))cardCommands.pool('y',5);
  turnStartPostPending=true;nightEscapePostAvailable=false;renderGame()
 }
 // @kokoryo-end-section S0054
