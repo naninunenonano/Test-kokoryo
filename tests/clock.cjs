@@ -197,3 +197,12 @@ test('Bot timeout during its final pause cannot end the following player turn',a
  assert.ok(h.delays().includes(1200),'Bot reached final pause');
  await h.expire();h.jump(1200);await h.flush();await bot;assert.equal(h.read('turn'),2);assert.equal(h.read('botBusy'),false);
 });
+
+test('233 TEST notice clears the actual fixed banner and tracks mobile font/orientation resizes without touching game state',async t=>{
+ const h=await fixture(t);assert.equal(h.run('typeof updateTestEndgameNoticeOffset'),'function');
+ const doc=h.dom.window.document,banner=doc.querySelector('#testBanner'),gameover=doc.querySelector('#gameover');
+ for(const bottom of [40,88,126]){banner.getBoundingClientRect=()=>({bottom});h.dom.window.dispatchEvent(new h.dom.window.Event('resize'));assert.equal(doc.documentElement.style.getPropertyValue('--test-banner-bottom'),bottom+'px')}
+ assert.equal(h.run('endgameStarter'),null);assert.equal(h.run('gameEnded'),false);
+ const rules=[...doc.styleSheets].flatMap(s=>[...s.cssRules]).filter(r=>r.selectorText==='#gameover.endgame-progress'),rule=rules.at(-1);assert.equal(rule.style.getPropertyValue('z-index'),'30001');assert.match(rule.style.getPropertyValue('top'),/var\(--test-banner-bottom,65px\)/);assert.equal(rule.style.getPropertyValue('box-sizing'),'border-box');assert.match(rule.style.getPropertyValue('max-width'),/100vw - 24px/);
+ h.run("gameSettings.winVP=30;installed[0]=[{vp:30,name:'VP',type:'N'}];renderGame();finishGame()");assert.equal(gameover.style.top,'','final result positioning is not overwritten by inline top');
+});
