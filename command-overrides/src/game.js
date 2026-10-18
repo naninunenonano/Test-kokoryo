@@ -645,7 +645,7 @@ function turnClockTick(){
  if(s.active!==null&&s.remaining[s.active]<=0&&!s.expiring&&!s.ending&&!gameEnded&&turnClockVisible())turnClockExpire(s.token);
 }
 function turnClockPrompt(message,initial){
- if(turnClockState?.resolving)return initial??'1';
+ if(turnClockState?.resolving||botIsPlayer(turn))return initial??'1';
  const result=window.prompt(message,initial);turnClockAccount();
  if(turnClockState?.active!==null&&turnClockState.remaining[turnClockState.active]<=0){queueMicrotask(turnClockTick);return null}
  return result;

@@ -296,7 +296,7 @@ function hasSameOwnedUniqueAbility(e,p=turn){
 }
 function sameUniqueAbilityAsLord(e,p=turn){return hasSameOwnedUniqueAbility(e,p)}
 function redrawSameRarityCast(e){let pool=implementedCastPool(e.rarity).filter(x=>x.id!==e.id);if(!pool.length)pool=allImplementedCastPool(e.rarity).filter(x=>x.id!==e.id);return pool.length?{...pool[Math.floor(Math.random()*pool.length)]}:null}
-function resolveDoppelCopy(e){if(!e?.doppelganger)return e;let targets=[];for(let p=0;p<playerCount;p++)(employees[p]||[]).forEach((x,i)=>{if(x&&x.rarity===e.rarity&&!x.doppelganger)targets.push({p,i,x})});if(!targets.length){e.copiedFrom=null;return e}let msg=targets.map((t,i)=>(i+1)+'. P'+(t.p+1)+' '+castDisplayName(t.x)).join('\n');let n=Math.floor(+(turnClockPrompt('《ドッペルゲンガー》\nコピーする同レアリティの雇用キャラクターを選んでください。\n\n'+msg,'1')||0));if(!n||!targets[n-1]){e.copiedFrom=null;return e}let src=targets[n-1].x;let copied={...e,copiedFrom:src.id,uniqueAbility:src.uniqueAbility,abilityText:castEffectText(src),copySourceName:castDisplayName(src)};return applyUniqueAbilityDef(copied) }
+function resolveDoppelCopy(e){if(!e?.doppelganger)return e;let targets=[];for(let p=0;p<playerCount;p++)(employees[p]||[]).forEach((x,i)=>{if(x&&x.rarity===e.rarity&&!x.doppelganger)targets.push({p,i,x})});if(!targets.length){e.copiedFrom=null;return e}let msg=targets.map((t,i)=>(i+1)+'. P'+(t.p+1)+' '+castDisplayName(t.x)).join('\n');let n=Math.floor(+(botIsPlayer(turn)?'1':turnClockPrompt('《ドッペルゲンガー》\nコピーする同レアリティの雇用キャラクターを選んでください。\n\n'+msg,'1')||0));if(!n||!targets[n-1]){e.copiedFrom=null;return e}let src=targets[n-1].x;let copied={...e,copiedFrom:src.id,uniqueAbility:src.uniqueAbility,abilityText:castEffectText(src),copySourceName:castDisplayName(src)};return applyUniqueAbilityDef(copied) }
 function finalizeHire(e,label=''){
  e=resolveDoppelCopy(e);employees[turn].push(e);if(employeeUniqueAbilitiesEnabled(turn)&&e.hireBread){for(let i=0;i<e.hireBread;i++)drawBread(turn);}
  let agency=allFieldCards(turn).filter(c=>c.special==='staffingAgency').length;if(agency){for(let i=0;i<agency;i++){drawBread(turn);let gain=playerCount>=4?1:playerCount===3?2:3;gainResource(turn,'y',gain,'effect');gainResource(turn,'p',gain,'effect');gainResource(turn,'r',gain,'effect')}}
@@ -352,6 +352,7 @@ function chooseLRAbilities(base,onDone){
  let choices=[...(base?.abilityChoices||[])];
  let need=Math.min(2,choices.length);
  if(!need){onDone(applyUniqueAbilityDef({...base,grantedAbilities:[]}));return}
+ if(botIsPlayer(turn)){onDone(applyUniqueAbilityDef({...base,grantedAbilities:choices.slice(0,need)}));return}
  let modal=q('#lrAbilitySelectModal');
  if(!modal){
   modal=document.createElement('div');modal.id='lrAbilitySelectModal';modal.className='imgmodal hidden';modal.style.zIndex='10030';
@@ -410,10 +411,10 @@ function synthesisOptions(p=turn,kind=null,stages=1,{ignoreTurnLimit=false}={}){
  return out.filter(o=>{const used=[];for(const id of o.materials||[o.from,...(o.materialCount===2?[o.mimic||o.from]:[])]){const e=staff.find(e=>e.id===id&&!used.includes(e));if(!e)return false;used.push(e)}return castResultAllowed(o.b,used,p)})
 }
 // The generic command owns no cost or usage ledger. Callers commit those only after validation.
-function commandEvolve(mode,stages,{kind='通常',targetIndex=null,selected=null,beforeCommit=()=>true,commitCost=()=>{},onSuccess=()=>{},render=true}={}){
+function commandEvolve(mode,stages,{kind='通常',targetIndex=null,selected=null,targetFilter=()=>true,beforeCommit=()=>true,commitCost=()=>{},onSuccess=()=>{},render=true}={}){
  if(!Number.isSafeInteger(stages)||stages<1||!isViewingOwnTurn()||gameEnded)return [];
  const owner=turn,staff=employees[owner]||[],token=turnClockState.token;
- let options=mode==='レベルアップ'?staff.map((e,i)=>({from:e.id,to:castEvolution(e.id,stages)?.id,index:i})).filter(o=>o.to&&castResultAllowed(CAST_TYPES[o.to],[staff[o.index]],owner)):synthesisOptions(owner,kind,stages,{ignoreTurnLimit:true});
+ let options=mode==='レベルアップ'?staff.map((e,i)=>({from:e.id,to:castEvolution(e.id,stages)?.id,index:i})).filter(o=>o.to&&targetFilter(staff[o.index],CAST_TYPES[o.to])&&castResultAllowed(CAST_TYPES[o.to],[staff[o.index]],owner)):synthesisOptions(owner,kind,stages,{ignoreTurnLimit:true});
  if(mode==='レベルアップ'&&targetIndex!==null)options=options.filter(o=>o.index===targetIndex);
  if(selected)options=options.filter(o=>o.from===selected.from&&o.to===selected.to&&o.mimic===selected.mimic&&JSON.stringify(o.materials)===JSON.stringify(selected.materials));
  if(!options.length)return [];
@@ -454,7 +455,7 @@ const ORACLE_UPGRADE_MAP=Object.freeze({
  CN6:'CR6',CR6:'CSR8',CN7:'CR7',CR7:'CSR9',CSR9:'CSSR8',CSSR8:'CUR13'
 });
 function oracleUpgradeTarget(target){
- let next=castEvolution(target?.id,1);
+ let next=ORACLE_UPGRADE_MAP[target?.id]&&castEvolution(target.id,1);
  return next?{...next}:null
 }
 function oracleCanUpgradeTarget(target){

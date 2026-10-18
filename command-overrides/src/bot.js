@@ -6,10 +6,10 @@
 
 // Ver.0.3.133 BOT戦（試験版）。通常の対戦処理を使い、BOTの操作だけを自動化する。
 // BOT機能の段階的解放設定。対応完了後は true に切り替えるだけでUI制限を解除できる。
-const BOT_FEATURES={deckSelection:true,additionalPacks:false,rulePacks:false,randomizer:false};
+const BOT_FEATURES={deckSelection:true,additionalPacks:true,rulePacks:false,randomizer:false};
 function enforceBotRestrictions(){
  if(!botMatchMode)return;
- if(!['standard1','standard2'].includes(gameSettings.deckId))gameSettings.deckId='standard1';
+ if(!['standard1','standard2','standard3'].includes(gameSettings.deckId))gameSettings.deckId='standard1';
  if(!BOT_FEATURES.additionalPacks)gameSettings.enabledPacks=(q('#onlineDebugPack1')?.checked?['pack1']:[]); // パック1は手動チェック、パック2は禁止
  if(!BOT_FEATURES.rulePacks)gameSettings.enabledRulePacks=[];
  if(!BOT_FEATURES.randomizer){gameSettings.randomizerEnabled=false;gameSettings.randomizerCount=0}
@@ -29,7 +29,7 @@ function updateBotLobbyRestrictions(){
  ];
  for(const [selector,enabled] of rules){const el=q(selector);if(el)el.disabled=botMatchMode&&!enabled}
  if(!botMatchMode)return;
- const allowedBotDecks=new Set(['standard1','standard2']);
+ const allowedBotDecks=new Set(['standard1','standard2','standard3']);
  const deckChoices=q('#onlineDebugDeckPreset');
  if(deckChoices){
   for(const opt of deckChoices.options)opt.disabled=!allowedBotDecks.has(opt.value);
@@ -71,7 +71,7 @@ function botScoreCard(c){
   +Math.max(0,+c.vp||0)*(stage===2?8:2);
 }
 // 目標カードを毎回再評価し、設置に不足する資源を優先する。
-function botCardNeeds(c){if(balancedInstallCost(c))return balancedInstallCost(c).resources;
+function botCardNeeds(c){if(c?.installSpec)return c.installSpec.resources||{};if(balancedInstallCost(c))return balancedInstallCost(c).resources;
  const fixed={mine:{y:2},farm:{p:2},barracks:{r:2},commandroom:{y:3,r:1},church:{y:3,p:1},plan:{r:2},adjust:{r:4},restrict:{r:3},permit:{r:3},swordhunt:{r:4},graveyard:{p:1,r:2},landgrab:{y:2,p:2,r:2},bandit:{y:4,p:3},publicmarket:{y:1,p:1,r:1},famine:{p:3},laws:{y:5},scout:{y:2,p:2,r:2},swordhunt:{r:4},graveyard:{p:1,r:2},landgrab:{y:2,p:2,r:2},bandit:{y:4,p:3},publicmarket:{y:1,p:1,r:1}};
  return fixed[c?.special]||{y:0,p:0,r:0};
 }
@@ -259,10 +259,26 @@ function botTryExchangeForInstall(){
  }
  return false;
 }
+// Search distinct existing payment options, then use the same installer as a human.
+function botTryPackInstall(c,index){
+ const spec=c.installSpec;if(!spec||typeof spec.resolve==='function'||!canPayResourceCost(spec.resources||{}))return false;
+ const any=typeof spec.any==='function'?spec.any({card:c,owner:turn,api:packRuntimeApi(turn)}):spec.any||0;
+ const needs=[...(spec.faces||[]),...Array.from({length:any},()=>null)],opts=installCostOptions(null),used=new Set(),selected=[];
+ function search(i){if(i===needs.length)return true;for(const o of opts){if(used.has(o.id))continue;const [kind,n]=o.id.split(':'),v=kind==='d'?unusedDice().find(d=>d.id===+n)?.value:kind==='b'?breadHands[turn][+n]?.value:'any';if(v===undefined||needs[i]&&v!=='any'&&!needs[i].includes(v))continue;used.add(o.id);selected.push(o.id);if(search(i+1))return true;used.delete(o.id);selected.pop()}return false}
+ if(!search(0))return false;const before=hands[turn].length,old=viewer;viewer=turn;
+ try{installPackCard(index,selected)}finally{viewer=old}return hands[turn].length<before
+}
+function botTryFusion(){
+ const options=synthesisOptions(turn);if(!options.length)return false;
+ const before=(employees[turn]||[]).length,old=viewer;viewer=turn;
+ try{synthesizeCast(options.find(o=>o.clrFusion)||options[0])}finally{viewer=old}
+ return (employees[turn]||[]).length<before||fusionUsedThisTurn
+}
 function botTryInstall(){
  let h=hands[turn]||[],ps=powers[turn];
  let order=h.map((c,i)=>({c,i,v:botScoreCard(c)})).sort((a,b)=>b.v-a.v);
  for(let {c,i} of order){
+  if(c.installSpec){if(botTryPackInstall(c,i)){botLog(c.name+'を設置');return true}continue}
   if(balancedInstallCost(c)){
    const choices=balancedCostChoices(c),base={greatermine:'mine',greaterfarm:'farm',greaterbarracks:'barracks',greatercommand:'commandroom'}[c.special];
    const index=base?installed[turn].findIndex(x=>x.special===base):-1;
@@ -401,6 +417,7 @@ async function botExecuteTurn(){
    if(!botTryInstall()&&!botTryOracle()){if(!botTryExchangeForInstall()||!botTryInstall())break;}
    renderGame();await botWaitForParkChoice(actor);if(!turnClockBotValid(actor,clockBotToken))return;await botPause(950);if(!turnClockBotValid(actor,clockBotToken))return;
   }
+  if(botTryFusion()){renderGame();await botPause(500)}
   // サイコロを使い切った後も、命令書が余っていれば通常ルールで返済する。
   for(let k=0;k<30&&turn===actor&&(commandCounts[turn]||0)>0;k++){
    if(!botTryRepayDebt())break;
