@@ -112,7 +112,7 @@ function renderLegends(){
    const name=document.createElement('strong');name.textContent=L.name;detail.appendChild(name);
    const status=document.createElement('div');status.className='small';status.textContent=(L.taken?'獲得済み ／ ':'')+L.vp+'VP'+(L.eraBlocked?' ／ 選択不可':tier==='upper'&&!L.unlocked?' ／ 未解放':'');detail.appendChild(status);
    const hint=document.createElement('div');hint.className='small muted';hint.textContent='タッチで効果確認';detail.appendChild(hint);item.appendChild(detail);
-   if(!L.taken){const locked=(tier==='upper'&&!L.unlocked)||!!L.eraBlocked;const button=document.createElement('button');button.className='secondary';button.textContent=L.eraBlocked?'選択不可':locked?'未解放':'獲得';button.disabled=locked||legendTakenThisTurn||((onlineDebugMode||realOnlineMainMode)&&viewer!==turn);button.onclick=()=>takeLegend(L.id);item.appendChild(button)}
+   if(!L.taken){const locked=(tier==='upper'&&!L.unlocked)||!!L.eraBlocked;const button=document.createElement('button');button.className='secondary';button.textContent=L.eraBlocked?'選択不可':locked?'未解放':'獲得';button.disabled=locked||!legendAcquisitionAllowed(turn)||legendTakenThisTurn||((onlineDebugMode||realOnlineMainMode)&&viewer!==turn);button.onclick=()=>takeLegend(L.id);item.appendChild(button)}
    column.appendChild(item);
   }
   box.appendChild(column);
@@ -219,8 +219,11 @@ function appendActiveAbilityControls(parent,sourceType,sourceIndex,entity){
   let row=document.createElement('div');row.className='row';row.style.marginTop='6px';
   let sel=document.createElement('select');
   (employees[turn]||[]).forEach((x,i)=>{if(!oracleCanUpgradeTarget(x))return;let nx=oracleUpgradeTarget(x);if(nx){let o=document.createElement('option');o.value=i;o.textContent=castDisplayName(x)+' → '+castDisplayName(nx)+'（'+nx.rarity+'）';sel.appendChild(o)}});
-  let b=document.createElement('button');b.type='button';b.className='secondary';b.textContent='《神託》を使用';b.disabled=(hiredThisTurn&&!oracleAnyUsed())||oracleSourceUsed(sourceType,sourceIndex)||!sel.options.length||!unusedDice().length||!canPayResourceCost({["y"]:(5)},turn);
-  b.onclick=()=>useOracleUpgrade(sourceType,sourceIndex,+sel.value);row.append(sel,b);parent.appendChild(row)
+  const costs=[];for(let n=0;n<3;n++){const cost=document.createElement('select');cost.setAttribute('aria-label','神託で捨てる通常手札'+(n+1));oracleDiscardCandidates().forEach(({c,i})=>{const o=document.createElement('option');o.value=i;o.textContent=c.name;cost.appendChild(o)});if(cost.options.length>n)cost.selectedIndex=n;costs.push(cost);row.append('捨てる手札'+(n+1)+' ',cost);}
+  let b=document.createElement('button');b.type='button';b.className='secondary';b.textContent='《神託》：手札3枚でレベルアップ＋山札1枚設置（残り'+Math.max(0,3-(+oracleUpgradesThisTurn[turn]||0))+'回）';
+  const refresh=()=>{const selected=costs.map(c=>+c.value);b.disabled=!isViewingOwnTurn()||!oracleCanPay()||!sel.options.length||costs.some(c=>!c.options.length)||new Set(selected).size!==3;};
+  costs.forEach(c=>c.onchange=refresh);sel.onchange=refresh;
+  b.onclick=()=>useOracleUpgrade(sourceType,sourceIndex,+sel.value,costs.map(c=>+c.value));row.prepend(sel);row.appendChild(b);refresh();parent.appendChild(row)
  }
  if(entity.tributeInstall){
   let row=document.createElement('div');row.className='row';row.style.marginTop='6px';
@@ -805,7 +808,7 @@ function openCardImage(img,c=null,context='view',index=null){
   action.textContent='設置';action.disabled=!own;action.classList.remove('hidden');
   action.onclick=()=>{if(!own||index==null)return;modal.classList.add('hidden');selectedHandDetailIndex=index;openSelectedInstall()};
  }else if(context==='legend'){
-  action.textContent='設置';action.disabled=!own||c.taken||c.eraBlocked||(c.tier==='upper'&&!c.unlocked)||legendTakenThisTurn;action.classList.remove('hidden');
+  action.textContent='設置';action.disabled=!own||!legendAcquisitionAllowed(turn)||c.taken||c.eraBlocked||(c.tier==='upper'&&!c.unlocked)||legendTakenThisTurn;action.classList.remove('hidden');
   action.onclick=()=>{if(action.disabled)return;modal.classList.add('hidden');takeLegend(c.id)};
  }else{hint.textContent='閲覧のみ';}
  modal.classList.remove('hidden');

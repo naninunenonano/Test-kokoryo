@@ -43,7 +43,7 @@ function debugGainDebt(mode){
 let debugCardSerial=0;
 let debugInitialMarketSnapshot=null;
 function debugCreateCard(base){
- if(!base)return;
+ if(!base||isLegendCard(base)&&!legendAcquisitionAllowed(turn))return;
  let c={...base,id:base.key+'-DBG-'+(++debugCardSerial)};
  registerInstallation(turn,c);
  
@@ -92,7 +92,7 @@ function cloneDebugState(v){
 function saveDebugInitialMarketSnapshot(){
  // 初期資源・ゲーム開始時効果の処理直後、公開場を初めて配置する直前の状態を保存する。
  // デバッグ画面を開き直しても参照できるよう、windowにも同じスナップショットを保持する。
- const keys=['playerCount','characters','hands','powers','installed','temporary','elekiterUsed','commandCounts','komePlace','pendingParkPlayers','pendingParkTaken','breadDeck','breadDiscard','breadHands','employees','lordFirstBreadUsed','lordOverclockUsed','pendingOverclockChoices','graveyardUsed','publicMarketUsed','market','discard','deck','turn','dice','legends','legendTakenThisTurn','endgameStarter','endgameRemaining','gameEnded','pendingLordResource','pendingNanban','pendingTenkuCat','pendingSSRBonus','pendingCastResourceChoices','hiredThisTurn','organizationUsed','fusionUsedThisTurn','nightEscapePostAvailable','nightEscapeResetNext','debugVP','copiedAbility','copiedOracleUsed','copiedTributeUsed','triggerNotices','dialogLog','initialPowerChoices','initialPowerPlayer'];
+ const keys=['playerTurnCounts','lastCountedTurnToken','oracleUpgradesThisTurn','playerCount','characters','hands','powers','installed','temporary','elekiterUsed','commandCounts','komePlace','pendingParkPlayers','pendingParkTaken','breadDeck','breadDiscard','breadHands','employees','lordFirstBreadUsed','lordOverclockUsed','pendingOverclockChoices','graveyardUsed','publicMarketUsed','market','discard','deck','turn','dice','legends','legendTakenThisTurn','endgameStarter','endgameRemaining','gameEnded','pendingLordResource','pendingNanban','pendingTenkuCat','pendingSSRBonus','pendingCastResourceChoices','hiredThisTurn','organizationUsed','fusionUsedThisTurn','nightEscapePostAvailable','nightEscapeResetNext','debugVP','copiedAbility','copiedOracleUsed','copiedTributeUsed','triggerNotices','dialogLog','initialPowerChoices','initialPowerPlayer'];
  const snap={};
  keys.forEach(k=>{try{const value=eval(k);if(typeof value!=='undefined')snap[k]=cloneDebugState(value)}catch(e){}});
  snap.market=[];snap.selectedMarketKey=null;snap.marketUndoHistory=[];snap.commandUndoHistory=[];snap.dialogLog=[];
@@ -107,7 +107,7 @@ function debugResetToInitialMarketPlacement(){
  if(!snap)return alert('まだ最初のカード配置直前の状態が保存されていません。ゲーム開始直後まで進めてから実行してください。');
  const previousMarketKeys=market.map(c=>c.key).join('|');
  const previousLegendKeys=legends.map(L=>L.id).join('|');
- const keys=['playerCount','characters','hands','powers','installed','temporary','elekiterUsed','commandCounts','komePlace','pendingParkPlayers','pendingParkTaken','breadDeck','breadDiscard','breadHands','employees','lordFirstBreadUsed','lordOverclockUsed','pendingOverclockChoices','graveyardUsed','publicMarketUsed','market','discard','deck','turn','dice','legends','legendTakenThisTurn','endgameStarter','endgameRemaining','gameEnded','pendingLordResource','pendingNanban','pendingTenkuCat','pendingSSRBonus','pendingCastResourceChoices','hiredThisTurn','organizationUsed','fusionUsedThisTurn','nightEscapePostAvailable','nightEscapeResetNext','debugVP','copiedAbility','copiedOracleUsed','copiedTributeUsed','triggerNotices','dialogLog','initialPowerChoices','initialPowerPlayer'];
+ const keys=['playerTurnCounts','lastCountedTurnToken','oracleUpgradesThisTurn','playerCount','characters','hands','powers','installed','temporary','elekiterUsed','commandCounts','komePlace','pendingParkPlayers','pendingParkTaken','breadDeck','breadDiscard','breadHands','employees','lordFirstBreadUsed','lordOverclockUsed','pendingOverclockChoices','graveyardUsed','publicMarketUsed','market','discard','deck','turn','dice','legends','legendTakenThisTurn','endgameStarter','endgameRemaining','gameEnded','pendingLordResource','pendingNanban','pendingTenkuCat','pendingSSRBonus','pendingCastResourceChoices','hiredThisTurn','organizationUsed','fusionUsedThisTurn','nightEscapePostAvailable','nightEscapeResetNext','debugVP','copiedAbility','copiedOracleUsed','copiedTributeUsed','triggerNotices','dialogLog','initialPowerChoices','initialPowerPlayer'];
  keys.forEach(k=>{if(Object.prototype.hasOwnProperty.call(snap,k))eval(k+'=cloneDebugState(snap[k])')});
  market=[];selectedMarketKey=null;marketUndoHistory=[];commandUndoHistory=[];dialogLog=[];resetGameEndState();
  // 保存した山札をそのまま引くと毎回同じ公開場になる。再配置時は改めてシャッフルする。
@@ -219,7 +219,7 @@ function showDebugEraLegendDiagnosis(){
  });
  const totalDebt=commandCounts.reduce((a,n)=>a+(n||0),0);
  const pw=powers[turn]||{};
- const report={version:'0.3.229',trace:economyAcquireTrace.slice(),turnPlayer:turn+1,viewerPlayer:viewer+1,
+ const report={version:'0.3.230',trace:economyAcquireTrace.slice(),turnPlayer:turn+1,viewerPlayer:viewer+1,
   localDebug:!!debugLocalMode,onlineDebug:!!onlineDebugMode,realOnline:!!realOnlineMainMode,
   legendTakenThisTurn:!!legendTakenThisTurn,depressionLegendLocked:!!depressionLegendLocked(turn),
   money:pw.y||0,food:pw.p||0,military:pw.r||0,
@@ -337,8 +337,8 @@ function playLogChanges(reason){
  }catch(_){/* ログの失敗でゲームを止めない */}
 }
 function playLogExport(){
- try{playLogChanges('export');const data={schema:'kokoryo-playlog',schemaVersion:PLAYLOG_VERSION,gameVersion:'0.3.229',startedAt:playLogStart,exportedAt:new Date().toISOString(),finished:!!gameEnded,settings:{deckId:gameSettings.deckId,deckName:activeDeckConfig(gameSettings.deckId)?.name||gameSettings.deckId,winVP:gameSettings.winVP,playerCount,enabledPacks:[...(gameSettings.enabledPacks||[])],enabledRulePacks:[...(gameSettings.enabledRulePacks||[])],activeRules:(gameSettings.activeRuleCards||[]).map(x=>x.id||x.key||''),randomizerEnabled:!!gameSettings.randomizerEnabled,randomizerCount:gameSettings.randomizerCount,deckComposition:(typeof normalCardsForDeck==='function'?normalCardsForDeck(gameSettings.deckId):[]).map(playLogCard)},events:playLogEvents,latestState:playLogSnapshot()};
- const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='kokoryo_playlog_0.3.229_'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
+ try{playLogChanges('export');const data={schema:'kokoryo-playlog',schemaVersion:PLAYLOG_VERSION,gameVersion:'0.3.230',startedAt:playLogStart,exportedAt:new Date().toISOString(),finished:!!gameEnded,settings:{deckId:gameSettings.deckId,deckName:activeDeckConfig(gameSettings.deckId)?.name||gameSettings.deckId,winVP:gameSettings.winVP,playerCount,enabledPacks:[...(gameSettings.enabledPacks||[])],enabledRulePacks:[...(gameSettings.enabledRulePacks||[])],activeRules:(gameSettings.activeRuleCards||[]).map(x=>x.id||x.key||''),randomizerEnabled:!!gameSettings.randomizerEnabled,randomizerCount:gameSettings.randomizerCount,deckComposition:(typeof normalCardsForDeck==='function'?normalCardsForDeck(gameSettings.deckId):[]).map(playLogCard)},events:playLogEvents,latestState:playLogSnapshot()};
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='kokoryo_playlog_0.3.230_'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
  }catch(err){console.error('Playlog export error',err);alert('プレイログの保存に失敗しました。')}
 }
 function playLogDownloadButton(){const b=document.createElement('button');b.type='button';b.className='secondary';b.textContent='プレイログを保存';b.onclick=playLogExport;return b}

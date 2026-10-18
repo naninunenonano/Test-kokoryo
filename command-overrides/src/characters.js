@@ -43,12 +43,12 @@ const UNIQUE_ABILITY_DEFS=Object.freeze({
  '等価交換':{stackable:false,text:'ターン開始時に資金5を獲得する。資源コストは種類を問わず合計量で支払い、資源を参照する可変VPは全体で最適化する。資金・食料・兵力の獲得不可を無視する。',props:{exchangeRate:1,equivalentExchange:true}},
  '神算鬼謀':{text:'ターン開始時、命令書を2枚獲得する。この個体での初回発動時は、さらに4枚獲得する。',props:{turnBread:2,firstBreadBonus:4}},
  'おねだり':{text:'通常カードを設置するとき、必要なサイコロのうち好きな1つを使わずに設置できる。',props:{installDiceDiscount:1}},
- 'オーバークロック':{copyable:false,stackable:true,text:'この個体での初回のみ、ターン開始時に好きな資源を合計20個、任意に配分して獲得する。',props:{overclockResources:20}},
+ 'オーバークロック':{copyable:false,stackable:true,text:'この個体での初回のみ、ターン開始時に好きな資源を合計20個、任意に配分して獲得する。この能力を持つ間、自分の最初の2ターンはレジェンドを獲得できない。',props:{overclockResources:20}},
  '神の見えざる手':{text:'ターン開始時、通常カードを2枚引く。通常手札を1枚捨て、好きな資源を2個獲得できる。',props:{invisibleHand:2}},
  'リクリエイション':{copyable:true,stackable:false,text:'自分の設置済み通常カード1枚を、VP差±2以内の通常手札1枚と入れ替えて仮設置する。設置時効果は発動する。レジェンドカードは対象外。',props:{recreationRange:2}},
  '無限の黄金':{copyable:false,stackable:false,text:'領主マイン・雇用ゴルドは10VPを持つ。雇用キャラクターの固有能力は無効化しない。この能力はコピーできない。',props:{copyable:false,uncopyable:true,vpOverride:10}},
  '神の恩恵':{text:'ターン開始時、サイコロを2個追加で獲得する。サイコロを好きな種類の資源に変換でき、サイコロ変換の獲得量を＋2する（基本3個から合計5個、命令書は対象外）。',props:{extraDice:2,dieResourceBonus:2,anyResourceDieConversionAmount:5}},
- '神託':{text:'各個体につき1ターン2回、通常雇用の代わりにサイコロ1個と資金5を支払い、雇用1人を既定の1段階上へレベルアップする。',props:{oracleUpgrade:true,oracleUses:2}},
+ '神託':{text:'通常雇用は通常コストで行う。1ターン合計3回まで、通常手札3枚を捨て、雇用1人を既定の1段階上へレベルアップする。そのたび、山札の上から通常カード1枚をコストなしで仮設置し、設置時効果を発動する。',props:{oracleUpgrade:true,oracleUses:3}},
  '貢ぎ物':{text:'ターン1回、通常手札のカード1枚を設置コストを支払わずに設置できる。この効果を使用したとき、命令書を1枚獲得する。この能力は所持している個体ごとに1回使用できる。',props:{tributeInstall:true}},
  'デッドマンズトリガー':{text:'ターン開始時、通常カード2枚と命令書2枚を獲得する。通常手札1枚を捨てて命令書1枚を獲得できる。重複可。',props:{deadMansTrigger:true,deadMansDraw:2,deadMansBread:2}},
  'クレシェンティア・ギフテッド':{copyable:false,stackable:false,text:'ターン開始時、好きな出目のサイコロ2個を獲得する。さらに、このCLRに設定された2つの固有能力を、それぞれ能力全体として得る。',props:{extraChosenDice:2}}
@@ -228,6 +228,11 @@ function resolveReactiveRolls(acquired=dice,clearNotices=true){
 // @kokoryo-section S0053
 
 function characterEffectSources(p){let a=[],lord=CHARACTER_DATA[charOf(p)];if(lord)a.push(lord);(employees[p]||[]).forEach(e=>{if(e)a.push(effectiveEmployeeAbility(e,p))});return a}
+function isLegendCard(c){return !!c&&(c.type==='LEGEND'||c.tier==='upper'||c.tier==='lower'||/^L[LU]\d+$/.test(c.key||c.id||''))}
+function legendAcquisitionAllowed(p=turn){
+ const overclock=characterEffectSources(p).some(x=>x.uniqueAbility==='オーバークロック'||x.grantedAbilities?.includes('オーバークロック'))||(p===turn&&copiedAbility==='オーバークロック');
+ return !overclock||(+playerTurnCounts[p]||0)>=3;
+}
 function hasEquivalentExchange(p=turn){return characterEffectSources(p).some(x=>x.uniqueAbility==='等価交換'||x.grantedAbilities?.includes('等価交換'))||(p===turn&&copiedAbility==='等価交換')}
 function stackedNumericEffect(p,key){let total=0,groups=new Map();characterEffectSources(p).forEach(x=>{let v=+x[key]||0;if(!v)return;if(x.effectStackGroup)groups.set(x.effectStackGroup,Math.max(groups.get(x.effectStackGroup)||0,v));else total+=v});groups.forEach(v=>total+=v);return total}
 function groupedCharacterVP(p){let values=[],groups=new Map();characterEffectSources(p).forEach(x=>{let v=+(x.vpOverride??x.vp)||0;if(!v)return;if(x.vpStackGroup)groups.set(x.vpStackGroup,Math.max(groups.get(x.vpStackGroup)||0,v));else values.push(v)});return cardCommands.function({target:values.concat([...groups.values()]),value:v=>v})}
@@ -450,28 +455,33 @@ function oracleSource(sourceType,sourceIndex){
  if(sourceType==='lord')return CHARACTER_DATA[charOf(turn)]||null;
  return employeeUniqueAbilitiesEnabled(turn)?(employees[turn]?.[sourceIndex]||null):null
 }
-function oracleAnyUsed(){return (+copiedOracleUsed||0)>0||(+lordOracleUsed[turn]||0)>0||(employees[turn]||[]).some(e=>(+e.oracleUsedTurn||0)>0)}
-function oracleSourceUsed(sourceType,sourceIndex){const n=sourceType==='copy'?copiedOracleUsed:sourceType==='lord'?lordOracleUsed[turn]:employees[turn]?.[sourceIndex]?.oracleUsedTurn;return (+n||0)>=2}
+function oracleAnyUsed(){return (+oracleUpgradesThisTurn[turn]||0)>0}
+function oracleSourceUsed(sourceType,sourceIndex){return (+oracleUpgradesThisTurn[turn]||0)>=3}
+function oracleDiscardCandidates(){return (hands[turn]||[]).map((c,i)=>({c,i})).filter(x=>!isLegendCard(x.c)&&x.c.kind!=='bread')}
+function oracleCanPay(){return !oracleSourceUsed()&&oracleDiscardCandidates().length>=3&&(deck.length>0||discard.length>0)&&!pendingParkPlayers.length&&!installEffectStack.length&&!installEffectRunning}
 function markOracleSourceUsed(sourceType,sourceIndex){
- if(sourceType==='copy'){const ledger={uses:+copiedOracleUsed||0};cardCommands.once(2,'turn',{usage:ledger,cardId:'uses',consume:true});copiedOracleUsed=ledger.uses}
- else if(sourceType==='lord')cardCommands.once(2,'turn',{usage:lordOracleUsed,cardId:turn,consume:true});
- else if(employees[turn]?.[sourceIndex])cardCommands.once(2,'turn',{usage:employees[turn][sourceIndex],cardId:'oracleUsedTurn',consume:true})
+ cardCommands.once(3,'turn',{usage:oracleUpgradesThisTurn,cardId:turn,consume:true});
+ if(sourceType==='copy')copiedOracleUsed=(+copiedOracleUsed||0)+1;
+ else if(sourceType==='lord')lordOracleUsed[turn]=(+lordOracleUsed[turn]||0)+1;
+ else if(employees[turn]?.[sourceIndex])employees[turn][sourceIndex].oracleUsedTurn=(+employees[turn][sourceIndex].oracleUsedTurn||0)+1;
 }
-function useOracleUpgrade(sourceType,sourceIndex,targetIndex){
- let source=oracleSource(sourceType,sourceIndex);if(!source?.oracleUpgrade)return;
- if(hiredThisTurn&&!oracleAnyUsed())return alert('《神託》は通常の雇用の代わりに使用するため、このターンはすでに雇用済みです。');
- if(oracleSourceUsed(sourceType,sourceIndex))return alert('この個体の《神託》はこのターン使用済みです。');
- let target=employees[turn]?.[targetIndex];if(!target)return alert('レベルアップする雇用キャラクターを選んでください。');
- if(!oracleCanUpgradeTarget(target))return alert('SSRはドッペルゲンガー以外、《神託》の対象にできません。');
- let upgraded=oracleUpgradeTarget(target);if(!upgraded)return alert('このキャラクターには《神託》のレベルアップ先が設定されていません。');
- let nr=upgraded.rarity;
- if(!canPayResourceCost({["y"]:(5)},turn))return alert('《神託》には資金5が必要です。');
- let d=unusedDice()[0];if(!d)return alert('《神託》には未使用のサイコロ1個が必要です。');
- let usedDie=useDie(d.id);if(!usedDie)return alert('《神託》に使用するサイコロを消費できませんでした。');
- payResourceCost({["y"]:(5)},turn);
+function useOracleUpgrade(sourceType,sourceIndex,targetIndex,discardIndices=null){
+ if(!isViewingOwnTurn()||gameEnded)return false;
+ const owner=turn,source=oracleSource(sourceType,sourceIndex);if(!source?.oracleUpgrade||!oracleCanPay())return false;
+ const target=employees[turn]?.[targetIndex];if(!oracleCanUpgradeTarget(target))return false;
+ const upgraded=oracleUpgradeTarget(target);if(!upgraded)return false;
+ const candidates=oracleDiscardCandidates(),indices=discardIndices??candidates.slice(0,3).map(x=>x.i);
+ if(!Array.isArray(indices)||indices.length!==3||new Set(indices).size!==3||indices.some(i=>!Number.isInteger(i)||!candidates.some(x=>x.i===i)))return false;
+ const cost=indices.map(i=>hands[owner][i]);
  let ne=applyUniqueAbilityDef(upgraded);if(ne.doppelganger)ne=resolveDoppelCopy(ne);
- let before=castDisplayName(target);markOracleSourceUsed(sourceType,sourceIndex);if(sourceType!=='lord'&&sourceType!=='copy'&&sourceIndex===targetIndex)ne.oracleUsedTurn=target.oracleUsedTurn;cardCommands.koyou('select',1,{pool:[ne],selected:[ne],canHire:()=>true,accept:next=>{cardCommands.move(target,{zone:'employees',owner:turn},[]);cardCommands.move(next,[next],{zone:'employees',owner:turn},{index:targetIndex})}});hiredThisTurn=true;
- triggerNotices.push('《神託》：'+before+' → '+castDisplayName(ne)+'（'+nr+'）へレベルアップしました。');renderGame()
+ if(turn!==owner||employees[owner][targetIndex]!==target||cost.some(c=>!hands[owner].includes(c))||!oracleCanPay())return false;
+ const before=castDisplayName(target);markOracleSourceUsed(sourceType,sourceIndex);
+ if(sourceType==='employee'&&sourceIndex===targetIndex)ne.oracleUsedTurn=target.oracleUsedTurn;
+ cardCommands.move(cost,{zone:'hand',owner},{zone:'discard'});
+ cardCommands.koyou('select',1,{pool:[ne],selected:[ne],canHire:()=>true,accept:next=>{cardCommands.move(target,{zone:'employees',owner},[]);cardCommands.move(next,[next],{zone:'employees',owner},{index:targetIndex})}});
+ // Existing toba is exactly one deck-top installation, with all shared hooks.
+ const placed=cardCommands.toba({owner});
+ triggerNotices.push('《神託》：'+before+' → '+castDisplayName(ne)+'（'+ne.rarity+'）。通常手札3枚を捨て、'+(placed?'山札から「'+placed.name+'」を仮設置しました。':'山札から設置できませんでした。'));renderGame();return true;
 }
 function tributeSource(sourceType,sourceIndex){
  if(sourceType==='copy')return abilityProfile(copiedAbility);

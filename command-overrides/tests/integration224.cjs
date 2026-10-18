@@ -120,10 +120,9 @@ test('224 overclock twenty can be split across all resources and cannot be grant
 test('224 invisible hand draws two per source and discards one for two per source',async t=>{
  const h=await setup(t);h.run("characters[0]='P11';employees[0]=[applyUniqueAbilityDef({...CAST_TYPES.CUR6})];beginTurn()");assert.equal(h.run('hands[0].length'),4);h.run("useInvisibleHand(0,'r')");assert.equal(h.run('hands[0].length'),3);assert.equal(h.run('discard.length'),1);assert.equal(h.run('powers[0].r'),4);
 });
-test('224 oracle: two per individual, failed target does not consume; ordinary hire still blocks',async t=>{
- const h=await setup(t);h.run("employees[0]=[applyUniqueAbilityDef({id:'oracle1',name:'o1',uniqueAbility:'神託'}),applyUniqueAbilityDef({id:'oracle2',name:'o2',uniqueAbility:'神託'}),{...CAST_TYPES.CN1}];powers[0].y=30;dice=Array.from({length:6},(_,i)=>({id:i+1,value:1,used:false}));");
- h.run("useOracleUpgrade('employee',0,99)");assert.equal(h.run('oracleSourceUsed("employee",0)'),false);h.run("useOracleUpgrade('employee',0,2);useOracleUpgrade('employee',0,2)");assert.equal(h.run('employees[0][0].oracleUsedTurn'),2);const before=h.run('powers[0].y');h.run("useOracleUpgrade('employee',0,2)");assert.equal(h.run('powers[0].y'),before);assert.equal(h.run('oracleSourceUsed("employee",1)'),false);
- h.run('employees[0][0].oracleUsedTurn=false;employees[0][1].oracleUsedTurn=false;hiredThisTurn=true');h.run("useOracleUpgrade('employee',1,2)");assert.equal(h.run('employees[0][1].oracleUsedTurn'),false);
+test('230 Oracle regression: hand cost replaces dice/money and does not consume normal hire',async t=>{
+ const h=await setup(t);h.run("employees[0]=[applyUniqueAbilityDef({id:'oracle1',name:'o1',uniqueAbility:'神託'}),{...CAST_TYPES.CN1}];hands[0]=Array.from({length:6},(_,i)=>({id:'c'+i,type:'N',name:'cost',vp:0}));deck=Array.from({length:8},(_,i)=>({id:'top'+i,type:'N',name:'top',vp:0}));powers[0]={y:0,p:0,r:0};dice=[]");
+ assert.equal(h.run("useOracleUpgrade('employee',0,99)"),false);assert.equal(h.run('hands[0].length'),6);assert.equal(h.run("useOracleUpgrade('employee',0,1)"),true);assert.equal(h.run('hands[0].length'),3);assert.equal(h.run('hiredThisTurn'),false);assert.equal(h.run('powers[0].y'),0);
 });
 test('224 recreation range ±2, dead man start 2+2, Mine abilities enabled and Gold ten VP',async t=>{
  const h=await setup(t);h.run("employees[0]=[applyUniqueAbilityDef({id:'r',uniqueAbility:'リクリエイション'})]");assert.equal(h.run('recreationRangeForTurn()'),2);

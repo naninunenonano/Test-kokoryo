@@ -1,3 +1,7 @@
+# TEST Ver.0.3.230
+
+《オーバークロック》の最初の2自ターンのレジェンド取得制限、《神託》の手札3枚による強化・山札1枚設置。詳細は command-overrides/docs/VER230_REPORT.md。本番反映・スタンダード①の再編は行わない。
+
 # TEST Ver.0.3.229
 
 《等価交換》の開始時資金5、資源コスト自由化、合計可変VP最適化、資源獲得不可無視。TEST所有ソースのみで構築。詳細は `command-overrides/docs/VER229_REPORT.md`。

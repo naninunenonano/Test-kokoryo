@@ -94,6 +94,16 @@ function botChooseResourceColor(allowed){
  if(colors.includes('y')&&!hiredThisTurn&&(employees[turn]||[]).length<effectiveHireLimit()&&(ps.y||0)<5)return 'y';
  return colors.slice().sort((a,b)=>(ps[a]||0)-(ps[b]||0))[0]||'y';
 }
+function botTryOracle(){
+ if(!oracleCanPay())return false;
+ const sources=[];if(CHARACTER_DATA[charOf(turn)]?.oracleUpgrade)sources.push(['lord',-1]);
+ if(abilityProfile(copiedAbility)?.oracleUpgrade)sources.push(['copy',-1]);
+ if(employeeUniqueAbilitiesEnabled(turn))(employees[turn]||[]).forEach((e,i)=>{if(e.oracleUpgrade)sources.push(['employee',i])});
+ if(!sources.length)return false;
+ const target=(employees[turn]||[]).findIndex(oracleCanUpgradeTarget);if(target<0)return false;
+ const selected=oracleDiscardCandidates().sort((a,b)=>fixedVP(a.c)-fixedVP(b.c)).slice(0,3).map(x=>x.i),previous=viewer;viewer=turn;
+ try{return useOracleUpgrade(...sources[0],target,selected)}finally{viewer=previous}
+}
 function botTryHire(){
  if(hiredThisTurn||(employees[turn]||[]).length>=effectiveHireLimit())return false;
  if(!isHireFree()&&(!canPayResourceCost({["y"]:(5)},turn)||!unusedDice().length))return false;
@@ -334,7 +344,7 @@ async function botExecuteTurn(){
   viewer=0;renderGame();botLog('ターン開始');await botPause(900);if(!turnClockBotValid(actor,clockBotToken))return;
   botResolveStart();renderGame();await botPause(500);if(!turnClockBotValid(actor,clockBotToken))return;await botWaitForParkChoice(actor);if(!turnClockBotValid(actor,clockBotToken))return;
   for(let k=0;k<10&&turn===actor;k++){
-   if(!botTryInstall()){if(!botTryExchangeForInstall()||!botTryInstall())break;}
+   if(!botTryInstall()&&!botTryOracle()){if(!botTryExchangeForInstall()||!botTryInstall())break;}
    renderGame();await botWaitForParkChoice(actor);if(!turnClockBotValid(actor,clockBotToken))return;await botPause(950);if(!turnClockBotValid(actor,clockBotToken))return;
   }
   if(botTryScout()){renderGame();await botPause(700)}
@@ -388,7 +398,7 @@ async function botExecuteTurn(){
    if(botTryHire()){renderGame();await botPause(600)}
   }
   for(let k=0;k<10&&turn===actor;k++){
-   if(!botTryInstall()){if(!botTryExchangeForInstall()||!botTryInstall())break;}
+   if(!botTryInstall()&&!botTryOracle()){if(!botTryExchangeForInstall()||!botTryInstall())break;}
    renderGame();await botWaitForParkChoice(actor);if(!turnClockBotValid(actor,clockBotToken))return;await botPause(950);if(!turnClockBotValid(actor,clockBotToken))return;
   }
   // サイコロを使い切った後も、命令書が余っていれば通常ルールで返済する。
