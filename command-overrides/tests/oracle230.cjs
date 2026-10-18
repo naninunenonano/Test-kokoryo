@@ -22,3 +22,10 @@ test('235 shared ability rows: lord/copy Oracle and Tribute retain their control
  const style=doc.querySelector('#mobile-selection-235');assert.ok(style);const rules=[...style.sheet.cssRules];assert.equal(rules.length,1);assert.match(rules[0].conditionText,/max-width: ?700px/);const css=style.textContent;assert.match(css,/overflow-y:auto/);assert.match(css,/position:sticky; bottom:0/);assert.match(css,/safe-area-inset-(top|bottom)/);assert.match(css,/safe-area-inset-left/);assert.match(css,/100dvh/);assert.match(css,/#legendChoiceCards/);assert.match(css,/viewport/);
  assert.match(doc.querySelector('meta[name="viewport"]').content,/viewport-fit=cover/);
 });
+
+test('235 Noel lord UI and other-lord Level Up card: selections execute existing shared evolution unchanged',async t=>{
+ const h=await oracle(t);h.run("characters[0]='P19';employees[0]=[{...CAST_TYPES.CN1},{...CAST_TYPES.CN2}];renderHireActions()");
+ const row=h.dom.window.document.querySelector('#employees > .actionblock .row'),selects=row.querySelectorAll('select');selects[0].value='1';[4,6,8].forEach((v,i)=>{selects[i+1].value=String(v);selects[i+1].onchange()});assert.equal(row.querySelector('button').disabled,false);row.querySelector('button').click();
+ assert.equal(h.run('employees[0][1].id'),'CR2');assert.deepEqual(h.read('discard.map(c=>c.id)'),['cost4','cost6','cost8']);assert.equal(h.run('temporary[0][0].id'),'top0');
+ h.run("characters[0]='P1';window.prompt=()=> '1';resolveOnInstall({special:'castLevelUp'},0)");assert.equal(h.run('employees[0][0].id'),'CR1');assert.equal(h.run('oracleUpgradesThisTurn[0]'),1);
+});
