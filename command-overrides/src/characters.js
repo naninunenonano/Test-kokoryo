@@ -113,8 +113,8 @@ window.KOKORYO_CHARACTER_FAMILIES=CHARACTER_FAMILIES;
 // 領主予約ID：P1-100。
 // スタンダードは8種類を複数枚採用し、合計30枚（N12 / R9 / SR6 / SSR3）。
 const CLR_FUSION_RULES=[];
-function registerCLRFusionRule(materials,result){CLR_FUSION_RULES.push({materials:[...materials],result})}
-function clrFusionOptions(p=turn){let st=employees[p]||[];return CLR_FUSION_RULES.filter(r=>r.materials.every(id=>st.some(e=>e.id===id))).map(r=>({rule:r}))}
+function registerCLRFusionRule(materials,result,stages=1){CLR_FUSION_RULES.push({materials:[...materials],result,...(stages===1?{}:{stages})})}
+function clrFusionOptions(p=turn,stages=1){let st=employees[p]||[];return CLR_FUSION_RULES.filter(r=>(r.stages||1)===stages&&r.materials.every(id=>st.filter(e=>e.id===id).length>=r.materials.filter(x=>x===id).length)).map(r=>({rule:r}))}
 const CLR_TYPES={
  CLR1:{id:'CLR1',name:'柊 歌音',title:'かけがえのない仲間',rarity:'CLR',uniqueAbility:'クレシェンティア・ギフテッド',abilityChoices:['神の贈り物','神の恩恵']},
  CLR2:{id:'CLR2',name:'榎 奏音',title:'かけがえのない仲間',rarity:'CLR',uniqueAbility:'クレシェンティア・ギフテッド',abilityChoices:['神の贈り物','神の恩恵']}
@@ -296,7 +296,7 @@ function hasSameOwnedUniqueAbility(e,p=turn){
 }
 function sameUniqueAbilityAsLord(e,p=turn){return hasSameOwnedUniqueAbility(e,p)}
 function redrawSameRarityCast(e){let pool=implementedCastPool(e.rarity).filter(x=>x.id!==e.id);if(!pool.length)pool=allImplementedCastPool(e.rarity).filter(x=>x.id!==e.id);return pool.length?{...pool[Math.floor(Math.random()*pool.length)]}:null}
-function resolveDoppelCopy(e){if(!e?.doppelganger)return e;let targets=[];for(let p=0;p<playerCount;p++)(employees[p]||[]).forEach((x,i)=>{if(x&&x.rarity===e.rarity&&!x.doppelganger)targets.push({p,i,x})});if(!targets.length){e.copiedFrom=null;return e}let msg=targets.map((t,i)=>(i+1)+'. P'+(t.p+1)+' '+castDisplayName(t.x)).join('\n');let n=Math.floor(+(turnClockPrompt('《ドッペルゲンガー》\nコピーする同レアリティの雇用キャラクターを選んでください。\n\n'+msg,'1')||0));if(!n||!targets[n-1]){e.copiedFrom=null;return e}let src=targets[n-1].x;let copied={...e,copiedFrom:src.id,uniqueAbility:src.uniqueAbility,abilityText:castEffectText(src),copySourceName:castDisplayName(src)};return applyUniqueAbilityDef(copied) }
+function resolveDoppelCopy(e){if(!e?.doppelganger)return e;let targets=[];for(let p=0;p<playerCount;p++)(employees[p]||[]).forEach((x,i)=>{if(x&&x.rarity===e.rarity&&!x.doppelganger)targets.push({p,i,x})});if(!targets.length){e.copiedFrom=null;return e}let msg=targets.map((t,i)=>(i+1)+'. P'+(t.p+1)+' '+castDisplayName(t.x)).join('\n');let n=Math.floor(+(botIsPlayer(turn)?'1':turnClockPrompt('《ドッペルゲンガー》\nコピーする同レアリティの雇用キャラクターを選んでください。\n\n'+msg,'1')||0));if(!n||!targets[n-1]){e.copiedFrom=null;return e}let src=targets[n-1].x;let copied={...e,copiedFrom:src.id,uniqueAbility:src.uniqueAbility,abilityText:castEffectText(src),copySourceName:castDisplayName(src)};return applyUniqueAbilityDef(copied) }
 function finalizeHire(e,label=''){
  e=resolveDoppelCopy(e);employees[turn].push(e);if(employeeUniqueAbilitiesEnabled(turn)&&e.hireBread){for(let i=0;i<e.hireBread;i++)drawBread(turn);}
  let agency=allFieldCards(turn).filter(c=>c.special==='staffingAgency').length;if(agency){for(let i=0;i<agency;i++){drawBread(turn);let gain=playerCount>=4?1:playerCount===3?2:3;gainResource(turn,'y',gain,'effect');gainResource(turn,'p',gain,'effect');gainResource(turn,'r',gain,'effect')}}
@@ -352,6 +352,7 @@ function chooseLRAbilities(base,onDone){
  let choices=[...(base?.abilityChoices||[])];
  let need=Math.min(2,choices.length);
  if(!need){onDone(applyUniqueAbilityDef({...base,grantedAbilities:[]}));return}
+ if(botIsPlayer(turn)){onDone(applyUniqueAbilityDef({...base,grantedAbilities:choices.slice(0,need)}));return}
  let modal=q('#lrAbilitySelectModal');
  if(!modal){
   modal=document.createElement('div');modal.id='lrAbilitySelectModal';modal.className='imgmodal hidden';modal.style.zIndex='10030';
@@ -377,59 +378,71 @@ function chooseLRAbilities(base,onDone){
 }
 function growthPromotionActive(){return hasActiveRule('RC5')}
 function normalFusionMaterialCount(){return growthPromotionActive()?1:2}
-function synthesisOptions(p=turn){
- if(fusionUsedThisTurn)return [];
- let staff=employees[p]||[],counts={};staff.forEach(e=>counts[e.id]=(counts[e.id]||0)+1);
- let need=normalFusionMaterialCount();
- let out=Object.entries(CAST_SYNTHESIS)
-  .filter(([from])=>(counts[from]||0)>=need)
-  .map(([from,to])=>({from,to,a:CAST_TYPES[from],b:CAST_TYPES[to],materialCount:need,growthPromotion:need===1}));
- // モノマネ師を使う2素材融合は通常ルール時のみ候補に出す。
- if(!growthPromotionActive()){
-  [['CN6','N'],['CR6','R'],['CSR8','SR']].forEach(([m,r])=>{staff.forEach((e,i)=>{if(e.rarity===r&&e.id!==m&&(counts[m]||0)>0&&CAST_SYNTHESIS[e.id])out.push({from:e.id,to:CAST_SYNTHESIS[e.id],a:e,b:CAST_TYPES[CAST_SYNTHESIS[e.id]],mimic:m,materialCount:2})})});
-  if((counts.CSR8||0)&&(counts.CSR9||0))out.push({from:'CSR9',to:'CSSR8',a:CAST_TYPES.CSR9,b:CAST_TYPES.CSSR8,mimic:'CSR8',materialCount:2});
+// Stages follow registered edges without creating intermediate employees.
+function castEvolution(id,stages=1,{fusion=false}={}){
+ if(!Number.isSafeInteger(stages)||stages<1)return null;
+ const edges=fusion?CAST_SYNTHESIS:{...ORACLE_UPGRADE_MAP,...CAST_SYNTHESIS};
+ for(let n=0;n<stages;n++){id=edges[id];if(!id||!CAST_TYPES[id])return null}
+ return CAST_TYPES[id]
+}
+function castResultAllowed(base,materials,p=turn){
+ if(!base||!(employees[p]||[]).length)return false;
+ // Replacements do not require a free slot, but may not increase an overfull staff.
+ if((employees[p]||[]).length-materials.length+1>Math.max(effectiveHireLimit(p),(employees[p]||[]).length))return false;
+ if(base.rarity!=='UR'||base.doppelUniqueException)return true;
+ return !employees.some((staff,owner)=>(staff||[]).some(e=>!(owner===p&&materials.includes(e))&&e.rarity==='UR'&&(e.id===base.id||(base.uniquePersonGroup&&e.uniquePersonGroup===base.uniquePersonGroup)||e.name===base.name)))
+}
+function synthesisOptions(p=turn,kind=null,stages=1,{ignoreTurnLimit=false}={}){
+ if(!ignoreTurnLimit&&fusionUsedThisTurn)return [];
+ if(!Number.isSafeInteger(stages)||stages<1)return [];
+ const staff=employees[p]||[],counts={};staff.forEach(e=>counts[e.id]=(counts[e.id]||0)+1);
+ const need=normalFusionMaterialCount(),out=[];
+ if(!kind||kind==='通常')Object.keys(CAST_SYNTHESIS).forEach(from=>{
+  const b=castEvolution(from,stages,{fusion:true});if((counts[from]||0)>=need&&b)out.push({from,to:b.id,a:CAST_TYPES[from],b,materialCount:need,growthPromotion:need===1,stages,kind:'通常'})
+ });
+ if((!kind||kind==='モノマネ')&&!growthPromotionActive()){
+  [['CN6','N'],['CR6','R'],['CSR8','SR']].forEach(([m,r])=>staff.forEach(e=>{
+   const b=castEvolution(e.id,stages,{fusion:true});if(e.rarity===r&&e.id!==m&&counts[m]&&b&&!out.some(o=>o.from===e.id&&o.mimic===m))out.push({from:e.id,to:b.id,a:e,b,mimic:m,materialCount:2,stages,kind:'モノマネ'})
+  }));
+  const b=stages===1?CAST_TYPES.CSSR8:castEvolution('CSSR8',stages-1);
+  if(counts.CSR8&&counts.CSR9&&b&&!out.some(o=>o.from==='CSR9'&&o.mimic==='CSR8'&&o.to===b.id))out.push({from:'CSR9',to:b.id,a:CAST_TYPES.CSR9,b,mimic:'CSR8',materialCount:2,stages,kind:'モノマネ'});
  }
- // LR融合は《成長促進》の対象外。必要素材は従来どおり。
- clrFusionOptions(p).forEach(({rule})=>{let a=CAST_TYPES[rule.materials[0]],m=CAST_TYPES[rule.materials[1]],b=CAST_TYPES[rule.result];if(a&&m&&b)out.push({clrFusion:true,materials:[...rule.materials],to:rule.result,a,m,b,materialCount:rule.materials.length})});
- return out
+ if(!kind||kind==='特殊')clrFusionOptions(p,stages).forEach(({rule})=>{const a=CAST_TYPES[rule.materials[0]],m=CAST_TYPES[rule.materials[1]],b=CAST_TYPES[rule.result];if(a&&m&&b)out.push({clrFusion:true,materials:[...rule.materials],to:b.id,a,m,b,materialCount:rule.materials.length,stages,kind:'特殊'})});
+ return out.filter(o=>{const used=[];for(const id of o.materials||[o.from,...(o.materialCount===2?[o.mimic||o.from]:[])]){const e=staff.find(e=>e.id===id&&!used.includes(e));if(!e)return false;used.push(e)}return castResultAllowed(o.b,used,p)})
+}
+// The generic command owns no cost or usage ledger. Callers commit those only after validation.
+function commandEvolve(mode,stages,{kind='通常',targetIndex=null,selected=null,targetFilter=()=>true,beforeCommit=()=>true,commitCost=()=>{},onSuccess=()=>{},render=true}={}){
+ if(!Number.isSafeInteger(stages)||stages<1||!isViewingOwnTurn()||gameEnded)return [];
+ const owner=turn,staff=employees[owner]||[],token=turnClockState.token;
+ let options=mode==='レベルアップ'?staff.map((e,i)=>({from:e.id,to:castEvolution(e.id,stages)?.id,index:i})).filter(o=>o.to&&targetFilter(staff[o.index],CAST_TYPES[o.to])&&castResultAllowed(CAST_TYPES[o.to],[staff[o.index]],owner)):synthesisOptions(owner,kind,stages,{ignoreTurnLimit:true});
+ if(mode==='レベルアップ'&&targetIndex!==null)options=options.filter(o=>o.index===targetIndex);
+ if(selected)options=options.filter(o=>o.from===selected.from&&o.to===selected.to&&o.mimic===selected.mimic&&JSON.stringify(o.materials)===JSON.stringify(selected.materials));
+ if(!options.length)return [];
+ let opt=options[0];
+ if(options.length>1&&targetIndex===null&&!selected){
+  const n=botIsPlayer(owner)?1:Number(turnClockPrompt('雇用'+mode+'：対象を選択してください。\n'+options.map((o,i)=>(i+1)+'. '+castDisplayName(CAST_TYPES[o.from]||o.a)+' → '+castDisplayName(CAST_TYPES[o.to])).join('\n'),'1'));
+  if(!Number.isInteger(n)||!options[n-1])return [];opt=options[n-1]
+ }
+ const used=mode==='レベルアップ'?[staff[opt.index]]:[];
+ if(mode!=='レベルアップ')for(const id of opt.materials||[opt.from,...(opt.materialCount===2?[opt.mimic||opt.from]:[])]){const e=staff.find(e=>e.id===id&&!used.includes(e));if(!e)return [];used.push(e)}
+ const base=CAST_TYPES[opt.to],hired=[];
+ const commit=made=>{
+  if(turn!==owner||turnClockState.token!==token||gameEnded||employees[owner]!==staff||used.some(e=>!staff.includes(e))||!castResultAllowed(base,used,owner)||!beforeCommit())return false;
+  const index=mode==='レベルアップ'?staff.indexOf(used[0]):staff.length-used.length;
+  commitCost(made);used.map(e=>staff.indexOf(e)).sort((a,b)=>b-a).forEach(i=>staff.splice(i,1));staff.splice(index,0,made);hired.push(made);
+  onSuccess(made,used);if(render)renderGame();return true
+ };
+ if(opt.clrFusion){chooseLRAbilities({...base},commit);return hired}
+ let made=applyUniqueAbilityDef({...base});if(made.doppelganger)made=resolveDoppelCopy(made);commit(made);return hired
 }
 function synthesizeCast(opt){
  if(!isViewingOwnTurn())return alert('相手ターン中は雇用融合できません。');
  if(fusionUsedThisTurn)return alert('雇用融合は1ターンに1回までです。');
- let o=typeof opt==='string'?{from:opt}:opt,staff=employees[turn]||[];
- if(o.clrFusion){
-  let used=[];
-  for(const id of o.materials||[]){let i=staff.findIndex((e,idx)=>e.id===id&&!used.includes(idx));if(i<0)return alert('LR融合に必要な雇用キャラクターが足りません。');used.push(i)}
-  let base={...CAST_TYPES[o.to]};
-  chooseLRAbilities(base,made=>{
-   if(fusionUsedThisTurn)return alert('このターンはすでに雇用融合済みです。');
-   let check=[];
-   for(const id of o.materials||[]){let i=staff.findIndex((e,idx)=>e.id===id&&!check.includes(idx));if(i<0)return alert('LR融合に必要な雇用キャラクターが足りなくなりました。');check.push(i)}
-   check.sort((a,b)=>b-a).forEach(i=>staff.splice(i,1));
-   staff.push(made);fusionUsedThisTurn=true;
-   triggerNotices.push('LR融合：'+o.materials.map(id=>castDisplayName(CAST_TYPES[id])).join('＋')+' → '+castDisplayName(made)+'。取得能力：'+(made.grantedAbilities||[]).map(x=>'《'+x+'》').join('＋'));
-   renderGame()
-  });
-  return
- }
- let to=o.to||CAST_SYNTHESIS[o.from];
- if(!to)return alert('融合先がありません。');
- let used=[];
- let first=staff.findIndex(e=>e.id===o.from);
- if(first<0)return alert('融合に必要な雇用キャラクターが足りません。');
- used.push(first);
- if(!growthPromotionActive()){
-  let second=o.mimic
-   ? staff.findIndex((e,i)=>e.id===o.mimic&&!used.includes(i))
-   : staff.findIndex((e,i)=>e.id===o.from&&!used.includes(i));
-  if(second<0)return alert('融合に必要な雇用キャラクターが足りません。');
-  used.push(second);
- }
- used.sort((a,b)=>b-a).forEach(i=>staff.splice(i,1));
- let made=applyUniqueAbilityDef({...CAST_TYPES[to]});if(made.doppelganger)made=resolveDoppelCopy(made);staff.push(made);
- fusionUsedThisTurn=true;
- triggerNotices.push('雇用融合：'+CAST_TYPES[o.from].name+(growthPromotionActive()?'×1（《成長促進》）':(o.mimic?'＋モノマネ師':'×2'))+' → '+CAST_TYPES[to].name+'。');
- renderGame()
+ const o=typeof opt==='string'?{from:opt}:opt,kind=o.clrFusion?'特殊':o.mimic?'モノマネ':'通常';
+ return cardCommands.koyou('融合',kind,o.stages||1,{selected:o.to?o:{...o,to:CAST_SYNTHESIS[o.from]},beforeCommit:()=>!fusionUsedThisTurn,onSuccess:made=>{
+  const usage={used:fusionUsedThisTurn};cardCommands.once(1,'turn',{usage,cardId:'used',consume:true});fusionUsedThisTurn=usage.used;
+  triggerNotices.push('雇用融合：'+castDisplayName(CAST_TYPES[o.from]||CAST_TYPES[o.materials?.[0]])+' → '+castDisplayName(made)+'。')
+ }})
 }
 const ORACLE_UPGRADE_MAP=Object.freeze({
  CN1:'CR1',CR1:'CSR2',CSR2:'CSSR2',
@@ -442,7 +455,7 @@ const ORACLE_UPGRADE_MAP=Object.freeze({
  CN6:'CR6',CR6:'CSR8',CN7:'CR7',CR7:'CSR9',CSR9:'CSSR8',CSSR8:'CUR13'
 });
 function oracleUpgradeTarget(target){
- let id=ORACLE_UPGRADE_MAP[target?.id],next=id&&CAST_TYPES[id];
+ let next=ORACLE_UPGRADE_MAP[target?.id]&&castEvolution(target.id,1);
  return next?{...next}:null
 }
 function oracleCanUpgradeTarget(target){
@@ -473,14 +486,13 @@ function useOracleUpgrade(sourceType,sourceIndex,targetIndex,discardIndices=null
  const candidates=oracleDiscardCandidates(),indices=discardIndices??candidates.slice(0,3).map(x=>x.i);
  if(!Array.isArray(indices)||indices.length!==3||new Set(indices).size!==3||indices.some(i=>!Number.isInteger(i)||!candidates.some(x=>x.i===i)))return false;
  const cost=indices.map(i=>hands[owner][i]);
- let ne=applyUniqueAbilityDef(upgraded);if(ne.doppelganger)ne=resolveDoppelCopy(ne);
- if(turn!==owner||employees[owner][targetIndex]!==target||cost.some(c=>!hands[owner].includes(c))||!oracleCanPay())return false;
- const before=castDisplayName(target);markOracleSourceUsed(sourceType,sourceIndex);
- if(sourceType==='employee'&&sourceIndex===targetIndex)ne.oracleUsedTurn=target.oracleUsedTurn;
- cardCommands.move(cost,{zone:'hand',owner},{zone:'discard'});
- cardCommands.koyou('select',1,{pool:[ne],selected:[ne],canHire:()=>true,accept:next=>{cardCommands.move(target,{zone:'employees',owner},[]);cardCommands.move(next,[next],{zone:'employees',owner},{index:targetIndex})}});
- // Existing toba is exactly one deck-top installation, with all shared hooks.
- const placed=cardCommands.toba({owner});
+ const before=castDisplayName(target);
+ const result=cardCommands.koyou('レベルアップ',1,{targetIndex,render:false,
+  beforeCommit:()=>turn===owner&&employees[owner][targetIndex]===target&&cost.every(c=>hands[owner].includes(c))&&oracleCanPay(),
+  commitCost:ne=>{markOracleSourceUsed(sourceType,sourceIndex);if(sourceType==='employee'&&sourceIndex===targetIndex)ne.oracleUsedTurn=target.oracleUsedTurn;cardCommands.move(cost,{zone:'hand',owner},{zone:'discard'})}
+ });
+ if(!result.length)return false;
+ const ne=result[0],placed=cardCommands.toba({owner});
  triggerNotices.push('《神託》：'+before+' → '+castDisplayName(ne)+'（'+ne.rarity+'）。通常手札3枚を捨て、'+(placed?'山札から「'+placed.name+'」を仮設置しました。':'山札から設置できませんでした。'));renderGame();return true;
 }
 function tributeSource(sourceType,sourceIndex){

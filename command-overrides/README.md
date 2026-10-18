@@ -1,3 +1,7 @@
+# TEST Ver.0.3.231
+
+変更・検証は docs/VER231_REPORT.md、ZIP全ファイルの変更有無は FILE_CHANGES.tsv を参照。本番未反映。
+
 # TEST Ver.0.3.230
 
 変更・検証は docs/VER230_REPORT.md、ZIP全ファイルの変更有無は FILE_CHANGES.tsv を参照。本番未反映。
