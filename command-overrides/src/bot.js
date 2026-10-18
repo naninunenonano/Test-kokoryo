@@ -96,7 +96,7 @@ function botChooseResourceColor(allowed){
 }
 function botTryHire(){
  if(hiredThisTurn||(employees[turn]||[]).length>=effectiveHireLimit())return false;
- if(!isHireFree()&&(powers[turn].y<5||!unusedDice().length))return false;
+ if(!isHireFree()&&(!canPayResourceCost({["y"]:(5)},turn)||!unusedDice().length))return false;
  const before=(employees[turn]||[]).length;
  const oldViewer=viewer;viewer=turn;try{hireEmployee(unusedDice()[0]?.id)}finally{viewer=oldViewer}
  if((employees[turn]||[]).length>before){botLog('通常雇用を実行');return true}
@@ -226,6 +226,7 @@ function botTryRepayDebt(){if(depressionDebtLocked(turn))return false;
  return false;
 }
 function botTryExchangeForInstall(){
+ if(hasEquivalentExchange(turn))return false;
  const ps=powers[turn];if(!ps||!(hands[turn]||[]).length)return false;
  const lord=CHARACTER_DATA[charOf(turn)]||{},staff=employeeUniqueAbilitiesEnabled(turn)?(employees[turn]||[]):[];
  const rate=exchangeRateFor();
@@ -267,7 +268,7 @@ function botTryInstall(){
    else if(c.special==='commandroom'){need.y=3;need.r=1;vals=[3,4]}
    else if(c.special==='warehouse')vals=[1,3,5];
    else if(c.special==='church'){need.y=3;need.p=1;vals=[1,4]}
-   if(Object.keys(need).some(k=>ps[k]<need[k]))continue;
+   if(!canPayResourceCost(need))continue;
    let choice='';if(vals){let d=unusedDice().find(x=>vals.includes(x.value));if(d)choice='d:'+d.id;
     else {let ix=breadHands[turn].findIndex(x=>x.value==='any'||vals.includes(x.value));if(ix>=0)choice='b:'+ix;else continue}}
    let before=hands[turn].length;installStandard(i,choice);if(hands[turn].length<before){botLog(c.name+'を設置');return true}continue;
@@ -282,7 +283,7 @@ function botTryInstall(){
     famine:{res:{p:3},faces:[3,3,3]}
    };
    let spec=requirements[c.special];
-   if(spec && Object.entries(spec.res).every(([k,v])=>ps[k]>=v)){
+   if(spec && canPayResourceCost(spec.res)){
     let selected=[],used=new Set(),diceNow=unusedDice();
     for(let face of spec.faces){
      let faces=Array.isArray(face)?face:face===null?null:[face];
@@ -302,8 +303,8 @@ function botTryInstall(){
   if(c.special==='paneteria' && totalHandCount(turn)>=handLimit(turn)){
    let d=unusedDice()[0];if(d){installPaneteria(i,'d:'+d.id);botLog(c.name+'を設置');return true}
   }
-  if(c.special==='laws'&&ps.y>=5){let before=hands[turn].length;installNewNormal(i,[]);if(hands[turn].length<before){botLog(c.name+'を設置');return true}}
-  if(c.special==='scout'&&ps.y>=2&&ps.p>=2&&ps.r>=2&&(employees[turn]||[]).length<effectiveHireLimit()){
+  if(c.special==='laws'&&canPayResourceCost({y:5})){let before=hands[turn].length;installNewNormal(i,[]);if(hands[turn].length<before){botLog(c.name+'を設置');return true}}
+  if(c.special==='scout'&&canPayResourceCost({y:2,p:2,r:2})&&(employees[turn]||[]).length<effectiveHireLimit()){
    let before=hands[turn].length;installNewNormal(i,[]);if(hands[turn].length<before){botLog(c.name+'を設置');return true}
   }
  }
@@ -362,7 +363,7 @@ async function botExecuteTurn(){
      const neededFaces=new Set();
      for(const c of hands[turn]||[]){
       const need=botCardNeeds(c);
-      if(['y','p','r'].some(k=>(powers[turn][k]||0)<(need[k]||0)))continue;
+      if(!canPayResourceCost(need))continue;
       const faces={mine:[1,2],farm:[3,4],barracks:[5,6],commandroom:[3,4],warehouse:[1,3,5],church:[1,4]}[c.special];
       if(faces&&!((breadHands[turn]||[]).some(b=>b.value==='any'||faces.includes(b.value))))faces.forEach(v=>neededFaces.add(v));
      }

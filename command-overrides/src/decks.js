@@ -113,6 +113,8 @@ function packRuntimeApi(owner=turn){
   debtSupply(){return komePlace}, isFinalTurn(){return endgameStarter!==null||gameEnded}, canHire(){return (employees[turn]||[]).length<effectiveHireLimit()},
   hireNamedN(id){if((employees[turn]||[]).length>=effectiveHireLimit())return false;let e=packCastPool('N').find(x=>x.id===id);if(!e)return false;finalizeHire({...e},'《緊急補充人員》：');return true},
   notice(msg){if(msg)triggerNotices.push(String(msg))}, redraw(){renderGame()},
+  canPayResources(p,cost){return canPayResourceCost(cost,p)},
+  payResources(p,cost){return payResourceCost(cost,p)},
   resource(p,key,delta,source='effect'){if(!powers[p]||!['y','p','r'].includes(key))return false;if(delta>0)return gainResource(p,key,delta,source)>0;let next=powers[p][key]+delta;if(next<0)return false;powers[p][key]=next;return true},
   setResources(p,next){if(!powers[p])return false;for(const k of ['y','p','r']){const v=Math.max(0,+next[k]||0);if(v<=powers[p][k])powers[p][k]=v;else gainResource(p,k,v-powers[p][k],'effect')}return true},
   clearResources(p){if(!powers[p])return false;powers[p]={y:0,p:0,r:0};return true},
