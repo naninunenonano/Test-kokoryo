@@ -14,5 +14,5 @@ test('226 scope: only specified balance data, payments, effects, UI and synchron
  const decks=fs.readFileSync(path.join(root,'src/decks.js'),'utf8');for(const card of base.protectedCards)assert.ok(decks.includes(card),card);
 });
 test('226 HTML layout/defaults and script order are unchanged except version',()=>{
- assert.equal(sha(norm(fs.readFileSync(path.join(root,'index.html'),'utf8').replace(/<style id="turn-start-inventory-232">[\s\S]*?<\/style>/,'').replace('スタンダード①・②・③から選択できます。追加パック1・2を選択できます。カード構成は選択したデッキに従います。追加ルール・ランダマイザーは未対応です。','スタンダード①・②から選択できます。追加パック1のキャラクターとカードを使用できます。パック2・追加ルール・ランダマイザーは未対応です。').replace('id="settingHandLimit" type="number" min="1" value="10"','id="settingHandLimit" type="number" min="1" value="6"'))),base.html);
+ assert.equal(sha(norm(fs.readFileSync(path.join(root,'index.html'),'utf8').replace(/<style id="mobile-selection-235">[\s\S]*?<\/style>\n/,'').replace(',viewport-fit=cover','').replace(/<style id="turn-start-inventory-232">[\s\S]*?<\/style>/,'').replace('スタンダード①・②・③から選択できます。追加パック1・2を選択できます。カード構成は選択したデッキに従います。追加ルール・ランダマイザーは未対応です。','スタンダード①・②から選択できます。追加パック1のキャラクターとカードを使用できます。パック2・追加ルール・ランダマイザーは未対応です。').replace('id="settingHandLimit" type="number" min="1" value="10"','id="settingHandLimit" type="number" min="1" value="6"'))),base.html);
 });

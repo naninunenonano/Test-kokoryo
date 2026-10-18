@@ -8,3 +8,24 @@ test('230 Oracle: top-card install hooks and free temporary costs use existing t
 test('230 Oracle: copy/lord sources share the same quota and Bot uses the shared action',async t=>{const h=await oracle(t);h.run("copiedAbility='神託'");assert.equal(h.run("useOracleUpgrade('copy',-1,1)"),true);h.run("CHARACTER_DATA.P1={...CHARACTER_DATA.P1,oracleUpgrade:true}");assert.equal(h.run("useOracleUpgrade('lord',-1,1)"),true);assert.equal(h.run('botTryOracle()'),true);assert.equal(h.run('oracleUpgradesThisTurn[0]'),3);assert.equal(h.run('botTryOracle()'),false);});
 test('230 Oracle UI: three distinct selections, shared remaining count and no obsolete dice/money payment',async t=>{const h=await oracle(t);h.run('renderGame=()=>{};renderHireActions()');const doc=h.dom.window.document;const selects=doc.querySelectorAll('select[aria-label^="神託で捨てる"]');assert.equal(selects.length,3);const button=[...doc.querySelectorAll('button')].find(b=>b.textContent.includes('手札3枚でレベルアップ'));assert.equal(button.disabled,false);selects[1].value=selects[0].value;selects[1].onchange();assert.equal(button.disabled,true);assert.doesNotMatch(h.run("uniqueAbilityText('神託')"),/開拓ラッシュ/);});
 test('230 Oracle: last deck card and discard recycle preserve every physical cost card',async t=>{const h=await oracle(t);h.run('deck=deck.slice(0,1)');const expected=h.read('[...hands[0],...deck].map(c=>c.id).sort()');assert.equal(h.run("useOracleUpgrade('employee',0,1)"),true);assert.deepEqual(h.read('[...hands[0],...deck,...discard,...temporary[0]].map(c=>c.id).sort()'),expected);});
+
+test('235 mobile Oracle controls: every target/cost remains selectable and actual click preserves the 230 effect',async t=>{
+ const h=await oracle(t);h.run("employees[0][0]=applyUniqueAbilityDef({...CAST_TYPES.CUR10});employees[0].push({...CAST_TYPES.CN2});hands[0].forEach((c,i)=>c.name='長い通常カード名'.repeat(8)+i);renderHireActions()");
+ const doc=h.dom.window.document,row=doc.querySelector('.employee-card-wrap .row:has(>select[aria-label])'),selects=row.querySelectorAll('select');assert.equal(selects.length,4);assert.equal(selects[0].options.length,2);for(const s of [...selects].slice(1))assert.equal(s.options.length,15);
+ selects[0].value='2';[1,3,5].forEach((v,i)=>{selects[i+1].value=String(v);selects[i+1].onchange()});row.querySelector('button').click();
+ assert.equal(h.run('employees[0][2].id'),'CR2');assert.deepEqual(h.read('discard.map(c=>c.id)'),['cost1','cost3','cost5']);assert.equal(h.run('temporary[0][0].id'),'top0');assert.equal(h.run('oracleUpgradesThisTurn[0]'),1);
+});
+test('235 shared ability rows: lord/copy Oracle and Tribute retain their controls; mobile CSS is scoped and safe-area aware',async t=>{
+ const h=await oracle(t);h.run("CHARACTER_DATA.P1={...CHARACTER_DATA.P1,oracleUpgrade:true};copiedAbility='神託';renderHireActions()");
+ const doc=h.dom.window.document;assert.equal(doc.querySelectorAll('select[aria-label^="神託で捨てる"]').length,9);
+ h.run("window.__p=document.createElement('div');appendActiveAbilityControls(__p,'copy',-1,{tributeInstall:true});q('#employees').appendChild(__p)");assert.equal(doc.querySelectorAll('#employees select').length,13);
+ const style=doc.querySelector('#mobile-selection-235');assert.ok(style);const rules=[...style.sheet.cssRules];assert.equal(rules.length,1);assert.match(rules[0].conditionText,/max-width: ?700px/);const css=style.textContent;assert.match(css,/overflow-y:auto/);assert.match(css,/position:sticky; bottom:0/);assert.match(css,/safe-area-inset-(top|bottom)/);assert.match(css,/safe-area-inset-left/);assert.match(css,/100dvh/);assert.match(css,/#legendChoiceCards/);assert.match(css,/viewport/);
+ assert.match(doc.querySelector('meta[name="viewport"]').content,/viewport-fit=cover/);
+});
+
+test('235 Noel lord UI and other-lord Level Up card: selections execute existing shared evolution unchanged',async t=>{
+ const h=await oracle(t);h.run("characters[0]='P19';employees[0]=[{...CAST_TYPES.CN1},{...CAST_TYPES.CN2}];renderHireActions()");
+ const row=h.dom.window.document.querySelector('#employees > .actionblock .row'),selects=row.querySelectorAll('select');selects[0].value='1';[4,6,8].forEach((v,i)=>{selects[i+1].value=String(v);selects[i+1].onchange()});assert.equal(row.querySelector('button').disabled,false);row.querySelector('button').click();
+ assert.equal(h.run('employees[0][1].id'),'CR2');assert.deepEqual(h.read('discard.map(c=>c.id)'),['cost4','cost6','cost8']);assert.equal(h.run('temporary[0][0].id'),'top0');
+ h.run("characters[0]='P1';window.prompt=()=> '1';resolveOnInstall({special:'castLevelUp'},0)");assert.equal(h.run('employees[0][0].id'),'CR1');assert.equal(h.run('oracleUpgradesThisTurn[0]'),1);
+});
