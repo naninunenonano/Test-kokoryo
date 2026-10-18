@@ -535,13 +535,13 @@ function usePublicMarket(cardIndex,selection=null){
  let keys=[...g.keys()];
  if(selection?.dropdown){
   const token=turnClockState.token,originalMarket=[...market],originalHand=[...hands[owner]];
-  const valid=()=>turnClockLeaseValid(owner,token)&&isViewingOwnTurn()&&installed[owner]?.includes(c)&&!normalCardActionUsed(publicMarketUsed,c)&&canPayResourceCost({y:2},owner)&&market.length===originalMarket.length&&market.every((x,i)=>x===originalMarket[i])&&hands[owner].length===originalHand.length&&hands[owner].every((x,i)=>x===originalHand[i]);
+  const valid=()=>turnClockLeaseValid(owner,token)&&!turnClockState.resolving&&isViewingOwnTurn()&&installed[owner]?.[cardIndex]===c&&!normalCardActionUsed(publicMarketUsed,c)&&canPayResourceCost({y:2},owner)&&market.length===originalMarket.length&&market.every((x,i)=>x===originalMarket[i])&&hands[owner].length===originalHand.length&&hands[owner].every((x,i)=>x===originalHand[i]);
   const choose=(note,options,label,onChoose)=>{
    const m=q('#legendChoiceModal'),grid=q('#legendChoiceCards');q('#legendChoiceTitle').textContent='交易場';q('#legendChoiceNote').textContent=note;grid.innerHTML='';
    const select=document.createElement('select');select.setAttribute('aria-label',note);select.style.cssText='width:100%;min-width:0;box-sizing:border-box';
    options.forEach((text,i)=>{const option=document.createElement('option');option.value=i;option.textContent=text;select.appendChild(option)});
    const ok=document.createElement('button');ok.type='button';ok.className='primary';ok.textContent=label;ok.disabled=!options.length;
-   ok.onclick=()=>{if(!valid())return;m.classList.add('hidden');if(select.value!=='')onChoose(+select.value)};
+   ok.onclick=()=>{if(!valid()){if(turnClockLeaseValid(owner,token))m.classList.add('hidden');return;}m.classList.add('hidden');if(select.value!=='')onChoose(+select.value)};
    grid.append(select,ok);const cancel=q('#legendChoiceCancel');cancel.style.display='';cancel.onclick=()=>m.classList.add('hidden');m.classList.remove('hidden');
   };
   choose('獲得する公開カードの種類を選択',keys.map(k=>g.get(k)[0].name+' ×'+g.get(k).length),'次へ',mi=>{
