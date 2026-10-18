@@ -1,0 +1,22 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),crypto=require('crypto'),{fixture}=require('./clock.cjs'),{assemble}=require('../tools/build.cjs'),base=require('./fixtures/selection235.json'),{restore}=require('./fixtures/selection236.cjs');
+async function market(t){const h=await fixture(t);h.run("renderGame=()=>{};window.prompt=()=>{throw Error('Dropdown UI must not open a text prompt')};installed[0]=[{id:'trade1',key:'N14',special:'publicmarket',name:'交易場'}];publicMarketUsed=[];powers[0]={y:10,p:0,r:0};hands[0]=[{id:'h1',key:'N11',type:'N',name:'同じカード'},{id:'h2',key:'N11',type:'N',name:'同じカード'}];market=[{id:'a1',key:'A',name:'公開A',type:'N'},{id:'a2',key:'A',name:'公開A',type:'N'},{id:'b1',key:'B',name:'公開B',type:'N'}];deck=Array.from({length:15},(_,i)=>({id:'new'+i,key:'NEW'+i,name:'new',type:'N'}));gameSettings.marketTypes=3;renderNewNormalInstalledActions(q('#installedcards'))");return h}
+const select=h=>h.dom.window.document.querySelector('#legendChoiceCards select'),ok=h=>h.dom.window.document.querySelector('#legendChoiceCards button.primary');
+test('236 trade actual action button opens two dropdowns, labels multiplicity/source/physical hand and commits unchanged costs/effect',async t=>{
+ const h=await market(t),doc=h.dom.window.document;[...doc.querySelectorAll('#installedcards button')].find(b=>b.textContent==='交易場を使用').click();
+ assert.deepEqual([...select(h).options].map(o=>o.textContent),['公開A ×2','公開B ×1']);assert.equal(h.run('powers[0].y'),10);ok(h).click();
+ assert.deepEqual([...select(h).options].map(o=>o.textContent),['手札1：同じカード','手札2：同じカード','今回獲得1：公開A','今回獲得2：公開A']);select(h).value='2';ok(h).click();
+ assert.equal(h.run('powers[0].y'),8);assert.deepEqual(h.read('hands[0].map(c=>c.id)'),['h1','h2','a2']);assert.deepEqual(h.read('discard.map(c=>c.id)'),['a1']);assert.equal(h.run('publicMarketUsed[0].trade1'),true);assert.equal(h.run('groups().size'),3);
+});
+test('236 trade cancellation at either dropdown is atomic; stale turn, hand, market or used-card callbacks cannot commit',async t=>{
+ for(const stage of [1,2]){const h=await market(t);const before=h.read('[powers,hands,market,deck,discard,publicMarketUsed]');h.run('usePublicMarket(0,{dropdown:true})');if(stage===2)ok(h).click();h.dom.window.document.querySelector('#legendChoiceCancel').click();assert.deepEqual(h.read('[powers,hands,market,deck,discard,publicMarketUsed]'),before)}
+ for(const mutation of ['turnClockState.token++',"hands[0].push({id:'other'})","market.pop()","publicMarketUsed[0]={trade1:true}"]){const h=await market(t);h.run('usePublicMarket(0,{dropdown:true})');ok(h).click();h.run(mutation);const before=h.read('[powers,hands,market,deck,discard,publicMarketUsed]');ok(h).click();assert.deepEqual(h.read('[powers,hands,market,deck,discard,publicMarketUsed]'),before)}
+});
+test('236 Oracle same-name physical cards: labels are distinct, selected costs disappear elsewhere, releasing a selection restores it and exactly selected cards are consumed',async t=>{
+ const h=await fixture(t);h.run("renderGame=()=>{};characters[0]='P19';employees[0]=[{...CAST_TYPES.CN1},{...CAST_TYPES.CN1}];hands[0]=Array.from({length:6},(_,i)=>({id:'h'+i,key:'N11',type:'N',name:'同じカード'}));deck=[{id:'top',key:'N11',type:'N',name:'設置'},{id:'next',key:'N11',type:'N',name:'次'}];renderHireActions()");
+ const doc=h.dom.window.document,row=doc.querySelector('#employees > .actionblock .row'),costs=[...row.querySelectorAll('select[aria-label]')],target=row.querySelector('select');
+ assert.notEqual(target.options[0].textContent,target.options[1].textContent);
+ costs.forEach((s,n)=>{assert.equal(s.options.length,4);for(let other=0;other<3;other++)if(other!==n)assert.ok(![...s.options].some(o=>o.value===String(other)))});
+ costs[0].value='5';costs[0].onchange();assert.equal(costs[1].value,'1');assert.equal(costs[2].value,'2');assert.ok([...costs[1].options].some(o=>o.value==='0'));assert.ok(![...costs[1].options].some(o=>o.value==='5'));assert.match(row.querySelector('[role="status"]').textContent,/手札6：同じカード/);
+ target.value='1';row.querySelector('button').click();assert.deepEqual(h.read('discard.map(c=>c.id)'),['h5','h1','h2']);assert.equal(h.run('employees[0][1].id'),'CR1');assert.equal(h.run('temporary[0][0].id'),'top');
+});
+test('236 UI scope: all executable game code outside the three selection functions is byte-identical to TEST235 except version',()=>{assert.equal(crypto.createHash('sha256').update(restore(assemble().code).replace(/0\.3\.\d+/g,'VERSION')).digest('hex'),base.hash)});

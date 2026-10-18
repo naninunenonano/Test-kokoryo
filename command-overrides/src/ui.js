@@ -218,11 +218,17 @@ function appendActiveAbilityControls(parent,sourceType,sourceIndex,entity){
  if(entity.oracleUpgrade){
   let row=document.createElement('div');row.className='row';row.style.marginTop='6px';
   let sel=document.createElement('select');
-  (employees[turn]||[]).forEach((x,i)=>{if(!oracleCanUpgradeTarget(x))return;let nx=oracleUpgradeTarget(x);if(nx){let o=document.createElement('option');o.value=i;o.textContent=castDisplayName(x)+' → '+castDisplayName(nx)+'（'+nx.rarity+'）';sel.appendChild(o)}});
-  const costs=[];for(let n=0;n<3;n++){const cost=document.createElement('select');cost.setAttribute('aria-label','神託で捨てる通常手札'+(n+1));oracleDiscardCandidates().forEach(({c,i})=>{const o=document.createElement('option');o.value=i;o.textContent=c.name;cost.appendChild(o)});if(cost.options.length>n)cost.selectedIndex=n;costs.push(cost);row.append('捨てる手札'+(n+1)+' ',cost);}
+  (employees[turn]||[]).forEach((x,i)=>{if(!oracleCanUpgradeTarget(x))return;let nx=oracleUpgradeTarget(x);if(nx){let o=document.createElement('option');o.value=i;o.textContent='雇用'+(i+1)+'：'+castDisplayName(x)+' → '+castDisplayName(nx)+'（'+nx.rarity+'）';sel.appendChild(o)}});
+  const candidates=oracleDiscardCandidates(),chosen=Array.from({length:3},(_,n)=>candidates[n]?.i??null),costs=[];
+  for(let n=0;n<3;n++){const cost=document.createElement('select');cost.setAttribute('aria-label','神託で捨てる通常手札'+(n+1));costs.push(cost);row.append('捨てる手札'+(n+1)+' ',cost);}
+  const summary=document.createElement('div');summary.className='small';summary.setAttribute('role','status');summary.setAttribute('aria-live','polite');summary.style.overflowWrap='anywhere';row.appendChild(summary);
   let b=document.createElement('button');b.type='button';b.className='secondary';b.textContent='《神託》：手札3枚でレベルアップ＋山札1枚設置（残り'+Math.max(0,3-(+oracleUpgradesThisTurn[turn]||0))+'回）';
-  const refresh=()=>{const selected=costs.map(c=>+c.value);b.disabled=!isViewingOwnTurn()||!oracleCanPay()||!sel.options.length||costs.some(c=>!c.options.length)||new Set(selected).size!==3;};
-  costs.forEach(c=>c.onchange=refresh);sel.onchange=refresh;
+  const refresh=()=>{
+   costs.forEach((cost,n)=>{cost.innerHTML='';candidates.filter(({i})=>!chosen.some((v,j)=>j!==n&&v===i)).forEach(({c,i})=>{const o=document.createElement('option');o.value=i;o.textContent='手札'+(i+1)+'：'+c.name;cost.appendChild(o)});cost.value=chosen[n]===null?'':String(chosen[n]);});
+   const selected=costs.map(c=>c.value===''?null:+c.value);summary.textContent='選択中：'+selected.map(i=>i===null?'未選択':'手札'+(i+1)+'：'+(hands[turn][i]?.name||'')).join(' ／ ');
+   b.disabled=!isViewingOwnTurn()||!oracleCanPay()||!sel.options.length||selected.includes(null)||new Set(selected).size!==3;
+  };
+  costs.forEach((c,n)=>c.onchange=()=>{chosen[n]=c.value===''?null:+c.value;refresh()});sel.onchange=refresh;
   b.onclick=()=>useOracleUpgrade(sourceType,sourceIndex,+sel.value,costs.map(c=>+c.value));row.prepend(sel);row.appendChild(b);refresh();parent.appendChild(row)
  }
  if(entity.tributeInstall){
@@ -461,7 +467,7 @@ function renderNewNormalInstalledActions(ic){
  installed[turn].forEach((c,i)=>{
   if(['famine','swordhunt','laws','landgrab','bandit'].includes(c.special)){let d=document.createElement('div');d.style.margin='5px 0';d.textContent=c.name+'：'+effectText(c).replace(/^設置：[^。]+。/,'');ic.appendChild(d)}
   if(c.special==='graveyard'){let b=document.createElement('button');b.className='secondary';b.style.margin='5px';b.textContent=normalCardActionUsed(graveyardUsed,c)?'オルフェンズ：使用済み':'オルフェンズを使用';b.disabled=normalCardActionUsed(graveyardUsed,c)||!discard.length;b.onclick=()=>useGraveyard(i);ic.appendChild(b)}
-  if(c.special==='publicmarket'){let b=document.createElement('button');b.className='secondary';b.style.margin='5px';b.textContent=normalCardActionUsed(publicMarketUsed,c)?'交易場：使用済み':'交易場を使用';b.disabled=normalCardActionUsed(publicMarketUsed,c)||!canPayResourceCost({["y"]:(2)},turn)||!market.length;b.onclick=()=>usePublicMarket(i);ic.appendChild(b)}
+  if(c.special==='publicmarket'){let b=document.createElement('button');b.className='secondary';b.style.margin='5px';b.textContent=normalCardActionUsed(publicMarketUsed,c)?'交易場：使用済み':'交易場を使用';b.disabled=normalCardActionUsed(publicMarketUsed,c)||!canPayResourceCost({["y"]:(2)},turn)||!market.length;b.onclick=()=>usePublicMarket(i,{dropdown:true});ic.appendChild(b)}
   if(c.special==='scout'){let b=document.createElement('button');b.className='secondary';b.style.margin='5px';b.textContent='スカウトを捨てて雇用';b.disabled=(employees[turn]||[]).length>=effectiveHireLimit();b.onclick=()=>useScout(i);ic.appendChild(b)}
   if(c.fieldAction)renderPackFieldAction(ic,c)
  })

@@ -525,7 +525,7 @@ function useGraveyard(cardIndex){
   q('#legendChoiceCancel').onclick=()=>m.classList.add('hidden');m.classList.remove('hidden');
  },()=>renderGame());
 }
-function usePublicMarket(cardIndex){
+function usePublicMarket(cardIndex,selection=null){
  if(!isViewingOwnTurn())return;
  const owner=turn,c=installed[owner]?.[cardIndex];
  if(!c||c.special!=='publicmarket')return;
@@ -533,13 +533,29 @@ function usePublicMarket(cardIndex){
  if(!canPayResourceCost({["y"]:(2)},turn))return alert('交易場の使用には資金2個が必要です。');
  let g=groups();if(!g.size)return alert('公開カードがありません。');
  let keys=[...g.keys()];
- let mraw=turnClockPrompt('獲得する公開カードの番号を入力してください。\n'+keys.map((k,i)=>(i+1)+': '+g.get(k)[0].name+' ×'+g.get(k).length).join('\n'));
+ if(selection?.dropdown){
+  const token=turnClockState.token,originalMarket=[...market],originalHand=[...hands[owner]];
+  const valid=()=>turnClockLeaseValid(owner,token)&&isViewingOwnTurn()&&installed[owner]?.includes(c)&&!normalCardActionUsed(publicMarketUsed,c)&&canPayResourceCost({y:2},owner)&&market.length===originalMarket.length&&market.every((x,i)=>x===originalMarket[i])&&hands[owner].length===originalHand.length&&hands[owner].every((x,i)=>x===originalHand[i]);
+  const choose=(note,options,label,onChoose)=>{
+   const m=q('#legendChoiceModal'),grid=q('#legendChoiceCards');q('#legendChoiceTitle').textContent='交易場';q('#legendChoiceNote').textContent=note;grid.innerHTML='';
+   const select=document.createElement('select');select.setAttribute('aria-label',note);select.style.cssText='width:100%;min-width:0;box-sizing:border-box';
+   options.forEach((text,i)=>{const option=document.createElement('option');option.value=i;option.textContent=text;select.appendChild(option)});
+   const ok=document.createElement('button');ok.type='button';ok.className='primary';ok.textContent=label;ok.disabled=!options.length;
+   ok.onclick=()=>{if(!valid())return;m.classList.add('hidden');if(select.value!=='')onChoose(+select.value)};
+   grid.append(select,ok);const cancel=q('#legendChoiceCancel');cancel.style.display='';cancel.onclick=()=>m.classList.add('hidden');m.classList.remove('hidden');
+  };
+  choose('獲得する公開カードの種類を選択',keys.map(k=>g.get(k)[0].name+' ×'+g.get(k).length),'次へ',mi=>{
+   const got=g.get(keys[mi])||[],candidates=[...originalHand,...got];
+   choose('獲得後に捨てる手札を1枚選択',candidates.map((x,i)=>(i<originalHand.length?'手札'+(i+1):'今回獲得'+(i-originalHand.length+1))+'：'+x.name),'資金2で実行',hi=>usePublicMarket(cardIndex,{market:mi+1,hand:hi+1}));
+  });return;
+ }
+ let mraw=selection?selection.market:turnClockPrompt('獲得する公開カードの番号を入力してください。\n'+keys.map((k,i)=>(i+1)+': '+g.get(k)[0].name+' ×'+g.get(k).length).join('\n'));
  if(mraw===null)return;
  let mi=Number(mraw)-1;if(!Number.isInteger(mi)||mi<0||mi>=keys.length)return alert('正しい公開カード番号を入力してください。');
  let key=keys[mi],got=cardCommands.choice('market','all',{where:c=>c.key===key});
  // 獲得したカードも捨てる候補に含める。キャンセル時は資金・公開場・手札を変更しない。
  let candidates=[...hands[turn],...got];
- let hraw=turnClockPrompt('獲得後に捨てる手札の番号を入力してください。\n'+candidates.map((c,i)=>(i+1)+': '+c.name).join('\n'));
+ let hraw=selection?selection.hand:turnClockPrompt('獲得後に捨てる手札の番号を入力してください。\n'+candidates.map((c,i)=>(i+1)+': '+c.name).join('\n'));
  if(hraw===null)return;
  let hi=Number(hraw)-1;if(!Number.isInteger(hi)||hi<0||hi>=candidates.length)return alert('正しい手札番号を入力してください。');
  if(turn!==owner||!isViewingOwnTurn()||!installed[owner].includes(c)||normalCardActionUsed(publicMarketUsed,c)||!canPayResourceCost({["y"]:(2)},owner))return;
