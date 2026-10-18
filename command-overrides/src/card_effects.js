@@ -105,11 +105,12 @@ function selectLegendPayment(L,mode,needed,face=null){
   cancel.onclick=()=>finish(null);
   function redraw(){status.textContent=selected.size+'/'+needed+'個選択'+(mode==='distinct'?'（異なる4種類の出目が必要）':mode==='all'?'（1～6の各出目が必要）':'');confirm.disabled=!valid();buttons.forEach((b,i)=>{b.style.outline=selected.has(i)?'3px solid #2369b4':''})}
   options.forEach((o,i)=>{let b=document.createElement('button');b.className='secondary';b.type='button';let d=o.kind==='die'?unusedDice().find(x=>x.id===o.id):null;b.textContent=o.label||(o.kind==='die'?'🎲'+(d?.value??'?')+' (#'+o.id+')':'命令書 '+breadLabel(breadHands[owner][o.i]));b.onclick=()=>{if(selected.has(i))selected.delete(i);else if(selected.size<needed)selected.add(i);redraw()};buttons.push(b);grid.appendChild(b)});
-  confirm.onclick=()=>{if(turn!==owner||!valid())return;finish([...selected].map(i=>options[i]))};
+  confirm.onclick=()=>{if(turn!==owner||!legendAcquisitionAllowed(owner)||!valid())return;finish([...selected].map(i=>options[i]))};
   actions.append(cancel,confirm);panel.appendChild(actions);overlay.appendChild(panel);document.body.appendChild(overlay);redraw();
  });
 }
 async function takeLegend(id){
+ if(!legendAcquisitionAllowed(turn))return alert('《オーバークロック》：自分の最初の2ターンはレジェンドを獲得できません。');
  if((onlineDebugMode||realOnlineMainMode)&&viewer!==turn)return alert('相手ターン中はレジェンドを獲得できません。');
  if(depressionLegendLocked(turn))return alert('《世界恐慌》の所有者は他のレジェンドを獲得できません。');if(legendPaymentPending)return; if(legendTakenThisTurn)return alert('レジェンドカードは1ターンに1枚までです。');let L=legends.find(x=>x.id===id);if(!L||L.taken)return;if(specialEffectId(L)==='goldenAge'||specialEffectId(L)==='greatDepression')return alert('このレジェンドはターン開始時の確認ポップアップから獲得します。');if(!L.unlocked)return alert('まだ解放されていません。');
  if(L.tier==='lower'){
@@ -121,22 +122,22 @@ async function takeLegend(id){
    legendPaymentPending=true;let chosen=await selectLegendPayment({...L,faces},'faces',5);legendPaymentPending=false;
    if(!chosen)return;consumeLegendItems(chosen)
   }
-  else if(L.special==='talentRecruit'){if((employees[turn]||[]).length>=effectiveHireLimit())return alert('《ビギニング・オブ・レジェンド》には空き雇用枠が1つ必要です。');let rs=legendAnyChoices();if(rs.length<3)return alert('任意のサイコロ／命令書が3個必要です。');if(!canPayResourceCost({["y"]:(15)},turn))return alert('資金15が必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'any',3);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);payResourceCost({["y"]:(15)},turn);}
-  else if(L.special==='scorchedEarth'){let rs=legendAllFacesChoices(4);if(!rs)return alert('1～6のうち異なる4種類のサイコロ／命令書が必要です。');if(!canPayResourceCost({["y"]:(4),["r"]:(4),["p"]:(4)},turn))return alert('資金・兵力・食料が4個ずつ必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'distinct',4);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);payResourceCost({["y"]:(4),["r"]:(4),["p"]:(4)},turn);}
-  else if(L.special==='greatRefresh'){let rs=legendAnyChoices();if(rs.length<4)return alert('任意のサイコロ／命令書が4個必要です。');if(!canPayResourceCost({["y"]:(6),["r"]:(6),["p"]:(6)},turn))return alert('資金・兵力・食料が6個ずつ必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'any',4);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);payResourceCost({["y"]:(6),["r"]:(6),["p"]:(6)},turn);}
-  else{let amount=['legendmine','legendfarm','legendbarracks'].includes(L.special)?12:8,ri=L.resource==='資金'?'y':L.resource==='食料'?'p':'r';if(!canPayResourceCost({[ri]:(amount)},turn))return alert(L.resource+amount+'が必要です。');let rs=legendCostChoices(L);if(rs.length<3)return alert('対応するサイコロ／命令書が3個必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'faces',3);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);payResourceCost({[ri]:(amount)},turn);}
+  else if(L.special==='talentRecruit'){if((employees[turn]||[]).length>=effectiveHireLimit())return alert('《ビギニング・オブ・レジェンド》には空き雇用枠が1つ必要です。');let rs=legendAnyChoices();if(rs.length<3)return alert('任意のサイコロ／命令書が3個必要です。');if(!canPayResourceCost({["y"]:(15)},turn))return alert('資金15が必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'any',3);legendPaymentPending=false;if(!chosen||!legendAcquisitionAllowed(turn))return;consumeLegendItems(chosen);payResourceCost({["y"]:(15)},turn);}
+  else if(L.special==='scorchedEarth'){let rs=legendAllFacesChoices(4);if(!rs)return alert('1～6のうち異なる4種類のサイコロ／命令書が必要です。');if(!canPayResourceCost({["y"]:(4),["r"]:(4),["p"]:(4)},turn))return alert('資金・兵力・食料が4個ずつ必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'distinct',4);legendPaymentPending=false;if(!chosen||!legendAcquisitionAllowed(turn))return;consumeLegendItems(chosen);payResourceCost({["y"]:(4),["r"]:(4),["p"]:(4)},turn);}
+  else if(L.special==='greatRefresh'){let rs=legendAnyChoices();if(rs.length<4)return alert('任意のサイコロ／命令書が4個必要です。');if(!canPayResourceCost({["y"]:(6),["r"]:(6),["p"]:(6)},turn))return alert('資金・兵力・食料が6個ずつ必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'any',4);legendPaymentPending=false;if(!chosen||!legendAcquisitionAllowed(turn))return;consumeLegendItems(chosen);payResourceCost({["y"]:(6),["r"]:(6),["p"]:(6)},turn);}
+  else{let amount=['legendmine','legendfarm','legendbarracks'].includes(L.special)?12:8,ri=L.resource==='資金'?'y':L.resource==='食料'?'p':'r';if(!canPayResourceCost({[ri]:(amount)},turn))return alert(L.resource+amount+'が必要です。');let rs=legendCostChoices(L);if(rs.length<3)return alert('対応するサイコロ／命令書が3個必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'faces',3);legendPaymentPending=false;if(!chosen||!legendAcquisitionAllowed(turn))return;consumeLegendItems(chosen);payResourceCost({[ri]:(amount)},turn);}
  }else if(L.special==='changeOfHeart'){
   if(!canPayResourceCost({["y"]:(18)},turn))return alert('資金18が必要です。');let targets=[];for(let p=0;p<playerCount;p++)if(p!==turn)(employees[p]||[]).forEach((e,i)=>targets.push({p,i,e}));if(!targets.length)return alert('奪える雇用キャラクターがいません。');let msg=targets.map((x,i)=>(i+1)+'. P'+(x.p+1)+' '+x.e.rarity+' '+castDisplayName(x.e)).join('\n');let raw=turnClockPrompt('《シークレット・サーティーン》\n奪う雇用キャラクターを選んでください。\n\n'+msg,'1');let n=Math.floor(+raw);if(!n||!targets[n-1])return;let x=targets[n-1];payResourceCost({["y"]:(18)},turn);let e=cardCommands.choice({zone:'employees',owner:x.p},1,{select:[x.i]})[0];cardCommands.move(e,{zone:'employees',owner:x.p},{zone:'employees',owner:turn});triggerNotices.push('《シークレット・サーティーン》：P'+(x.p+1)+'の「'+castDisplayName(e)+'」をP'+(turn+1)+'が獲得しました。');
  }else if(L.special==='resourceWipe'){
   return alert('《'+L.name+'》はターン開始時の特殊取得でのみ獲得できます。');
  }else if(L.special==='abilityCopy'){
-  let rs=legendAllFacesChoices(4);if(!rs)return alert('1～6のうち異なる4種類のサイコロ／命令書が必要です。');if(!canPayResourceCost({["y"]:(4),["r"]:(4),["p"]:(4)},turn))return alert('資金・兵力・食料が4個ずつ必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'distinct',4);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);payResourceCost({["y"]:(4),["r"]:(4),["p"]:(4)},turn);
+  let rs=legendAllFacesChoices(4);if(!rs)return alert('1～6のうち異なる4種類のサイコロ／命令書が必要です。');if(!canPayResourceCost({["y"]:(4),["r"]:(4),["p"]:(4)},turn))return alert('資金・兵力・食料が4個ずつ必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'distinct',4);legendPaymentPending=false;if(!chosen||!legendAcquisitionAllowed(turn))return;consumeLegendItems(chosen);payResourceCost({["y"]:(4),["r"]:(4),["p"]:(4)},turn);
  }else if(L.special==='amanomurakumo'){
-  let face=[2,3,4,5].find(v=>legendSameFaceChoices(v).length>=6);if(!face)return alert('2・3・4・5のいずれか同じ出目を6個そろえる必要があります。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'same',6,face);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);
+  let face=[2,3,4,5].find(v=>legendSameFaceChoices(v).length>=6);if(!face)return alert('2・3・4・5のいずれか同じ出目を6個そろえる必要があります。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'same',6,face);legendPaymentPending=false;if(!chosen||!legendAcquisitionAllowed(turn))return;consumeLegendItems(chosen);
  }else if(L.special==='mayqueen'){
-  if(!canPayResourceCost({["y"]:(12)},turn))return alert('資金12が必要です。');let rs=legendSameFaceChoices(2);if(rs.length<3)return alert('出目2のサイコロ／命令書が3個必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'same',3,2);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);payResourceCost({["y"]:(12)},turn);
+  if(!canPayResourceCost({["y"]:(12)},turn))return alert('資金12が必要です。');let rs=legendSameFaceChoices(2);if(rs.length<3)return alert('出目2のサイコロ／命令書が3個必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'same',3,2);legendPaymentPending=false;if(!chosen||!legendAcquisitionAllowed(turn))return;consumeLegendItems(chosen);payResourceCost({["y"]:(12)},turn);
  }else if(L.special==='eggharp'){
-  if(!canPayResourceCost({["r"]:(12)},turn))return alert('兵力12が必要です。');let rs=legendSameFaceChoices(5);if(rs.length<3)return alert('出目5のサイコロ／命令書が3個必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'same',3,5);legendPaymentPending=false;if(!chosen)return;consumeLegendItems(chosen);payResourceCost({["r"]:(12)},turn);
+  if(!canPayResourceCost({["r"]:(12)},turn))return alert('兵力12が必要です。');let rs=legendSameFaceChoices(5);if(rs.length<3)return alert('出目5のサイコロ／命令書が3個必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'same',3,5);legendPaymentPending=false;if(!chosen||!legendAcquisitionAllowed(turn))return;consumeLegendItems(chosen);payResourceCost({["r"]:(12)},turn);
  }
  L.taken=true;legendTakenThisTurn=true;
  if(L.layoutSet&&L.exclusiveLayoutSet)legends.forEach(x=>{if(x!==L&&x.layoutSet===L.layoutSet&&x.tier===L.tier&&!x.taken){x.taken=true;x.eraBlocked=true}});
@@ -190,7 +191,7 @@ function gainNanban(color){if(pendingNanban<=0||!eraGainAllowed(turn,color,'effe
 function gainTenkuCat(color){if(pendingTenkuCat<=0||!eraGainAllowed(turn,color,'effect'))return;gainResource(turn,color,1,'effect');pendingTenkuCat--;renderGame()}
 function offerFreeResourceWipeLegend(){
  if((onlineDebugMode||realOnlineMainMode)&&viewer!==turn)return false;
- if(legendTakenThisTurn)return false;
+ if(legendTakenThisTurn||!legendAcquisitionAllowed(turn))return false;
  let L=legends.find(x=>x.special==='resourceWipe'&&!x.taken&&x.unlocked);if(!L)return false;
  let lower=legends.find(x=>x.tier==='lower'&&x.col===L.col);
  if(!cardCommands.can(lower,x=>!x||x.taken))return false;
@@ -309,7 +310,7 @@ function runTurnStartSpecialAcquirePhase(timing){
 }
 function ensureDepressionDebtSupply(){for(const L of legends.filter(x=>!x.taken&&!x.eraBlocked&&x.unlocked)){let n=specialConfig(L).onAcquire?.ensureDebtSupplyPerPlayer;if(n){let total=komePlace+commandCounts.reduce((a,v)=>a+(v||0),0),need=playerCount*n;if(total<need)komePlace+=need-total}}}
 function eraLegendCondition(L){
- if(legendTakenThisTurn||depressionLegendLocked(turn))return false;
+ if(!legendAcquisitionAllowed(turn)||legendTakenThisTurn||depressionLegendLocked(turn))return false;
  const c=specialConfig(L).condition||{},total=commandCounts.reduce((a,n)=>a+(n||0),0);
  if(c.moneyPerTotalDebt!=null)return (powers[turn]?.y||0)>=total*c.moneyPerTotalDebt;
  if(c.foodMilitaryBase!=null)return ((powers[turn]?.p||0)+(powers[turn]?.r||0))>=Math.max(0,c.foodMilitaryBase-(commandCounts[turn]||0)*(c.debtDiscount||0));
@@ -322,7 +323,7 @@ function blockOtherEraLegend(chosen){
  let group=chosen.specialGroup||'era';legends.forEach(L=>{if(L!==chosen&&(L.specialGroup||'era')===group&&!L.taken)L.eraBlocked=true});
 }
 function resolveEraAcquire(L){
- if(legendTakenThisTurn||depressionLegendLocked(turn)||!eraLegendCondition(L))return false;
+ if(!legendAcquisitionAllowed(turn)||legendTakenThisTurn||depressionLegendLocked(turn)||!eraLegendCondition(L))return false;
  let cfg=specialConfig(L),a=cfg.onAcquire||{},owner=turn;
  if(specialEffectId(L)==='goldenAge')powers[owner].y=0;
  if(specialEffectId(L)==='greatDepression'){powers[owner].y=0;powers[owner].p=0;powers[owner].r=0;

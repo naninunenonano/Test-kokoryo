@@ -43,7 +43,7 @@ function debugGainDebt(mode){
 let debugCardSerial=0;
 let debugInitialMarketSnapshot=null;
 function debugCreateCard(base){
- if(!base)return;
+ if(!base||isLegendCard(base)&&!legendAcquisitionAllowed(turn))return;
  let c={...base,id:base.key+'-DBG-'+(++debugCardSerial)};
  registerInstallation(turn,c);
  
@@ -92,7 +92,7 @@ function cloneDebugState(v){
 function saveDebugInitialMarketSnapshot(){
  // 初期資源・ゲーム開始時効果の処理直後、公開場を初めて配置する直前の状態を保存する。
  // デバッグ画面を開き直しても参照できるよう、windowにも同じスナップショットを保持する。
- const keys=['playerCount','characters','hands','powers','installed','temporary','elekiterUsed','commandCounts','komePlace','pendingParkPlayers','pendingParkTaken','breadDeck','breadDiscard','breadHands','employees','lordFirstBreadUsed','lordOverclockUsed','pendingOverclockChoices','graveyardUsed','publicMarketUsed','market','discard','deck','turn','dice','legends','legendTakenThisTurn','endgameStarter','endgameRemaining','gameEnded','pendingLordResource','pendingNanban','pendingTenkuCat','pendingSSRBonus','pendingCastResourceChoices','hiredThisTurn','organizationUsed','fusionUsedThisTurn','nightEscapePostAvailable','nightEscapeResetNext','debugVP','copiedAbility','copiedOracleUsed','copiedTributeUsed','triggerNotices','dialogLog','initialPowerChoices','initialPowerPlayer'];
+ const keys=['playerTurnCounts','lastCountedTurnToken','playerCount','characters','hands','powers','installed','temporary','elekiterUsed','commandCounts','komePlace','pendingParkPlayers','pendingParkTaken','breadDeck','breadDiscard','breadHands','employees','lordFirstBreadUsed','lordOverclockUsed','pendingOverclockChoices','graveyardUsed','publicMarketUsed','market','discard','deck','turn','dice','legends','legendTakenThisTurn','endgameStarter','endgameRemaining','gameEnded','pendingLordResource','pendingNanban','pendingTenkuCat','pendingSSRBonus','pendingCastResourceChoices','hiredThisTurn','organizationUsed','fusionUsedThisTurn','nightEscapePostAvailable','nightEscapeResetNext','debugVP','copiedAbility','copiedOracleUsed','copiedTributeUsed','triggerNotices','dialogLog','initialPowerChoices','initialPowerPlayer'];
  const snap={};
  keys.forEach(k=>{try{const value=eval(k);if(typeof value!=='undefined')snap[k]=cloneDebugState(value)}catch(e){}});
  snap.market=[];snap.selectedMarketKey=null;snap.marketUndoHistory=[];snap.commandUndoHistory=[];snap.dialogLog=[];
@@ -107,7 +107,7 @@ function debugResetToInitialMarketPlacement(){
  if(!snap)return alert('まだ最初のカード配置直前の状態が保存されていません。ゲーム開始直後まで進めてから実行してください。');
  const previousMarketKeys=market.map(c=>c.key).join('|');
  const previousLegendKeys=legends.map(L=>L.id).join('|');
- const keys=['playerCount','characters','hands','powers','installed','temporary','elekiterUsed','commandCounts','komePlace','pendingParkPlayers','pendingParkTaken','breadDeck','breadDiscard','breadHands','employees','lordFirstBreadUsed','lordOverclockUsed','pendingOverclockChoices','graveyardUsed','publicMarketUsed','market','discard','deck','turn','dice','legends','legendTakenThisTurn','endgameStarter','endgameRemaining','gameEnded','pendingLordResource','pendingNanban','pendingTenkuCat','pendingSSRBonus','pendingCastResourceChoices','hiredThisTurn','organizationUsed','fusionUsedThisTurn','nightEscapePostAvailable','nightEscapeResetNext','debugVP','copiedAbility','copiedOracleUsed','copiedTributeUsed','triggerNotices','dialogLog','initialPowerChoices','initialPowerPlayer'];
+ const keys=['playerTurnCounts','lastCountedTurnToken','playerCount','characters','hands','powers','installed','temporary','elekiterUsed','commandCounts','komePlace','pendingParkPlayers','pendingParkTaken','breadDeck','breadDiscard','breadHands','employees','lordFirstBreadUsed','lordOverclockUsed','pendingOverclockChoices','graveyardUsed','publicMarketUsed','market','discard','deck','turn','dice','legends','legendTakenThisTurn','endgameStarter','endgameRemaining','gameEnded','pendingLordResource','pendingNanban','pendingTenkuCat','pendingSSRBonus','pendingCastResourceChoices','hiredThisTurn','organizationUsed','fusionUsedThisTurn','nightEscapePostAvailable','nightEscapeResetNext','debugVP','copiedAbility','copiedOracleUsed','copiedTributeUsed','triggerNotices','dialogLog','initialPowerChoices','initialPowerPlayer'];
  keys.forEach(k=>{if(Object.prototype.hasOwnProperty.call(snap,k))eval(k+'=cloneDebugState(snap[k])')});
  market=[];selectedMarketKey=null;marketUndoHistory=[];commandUndoHistory=[];dialogLog=[];resetGameEndState();
  // 保存した山札をそのまま引くと毎回同じ公開場になる。再配置時は改めてシャッフルする。

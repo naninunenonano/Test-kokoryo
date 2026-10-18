@@ -43,7 +43,7 @@ const UNIQUE_ABILITY_DEFS=Object.freeze({
  '等価交換':{stackable:false,text:'ターン開始時に資金5を獲得する。資源コストは種類を問わず合計量で支払い、資源を参照する可変VPは全体で最適化する。資金・食料・兵力の獲得不可を無視する。',props:{exchangeRate:1,equivalentExchange:true}},
  '神算鬼謀':{text:'ターン開始時、命令書を2枚獲得する。この個体での初回発動時は、さらに4枚獲得する。',props:{turnBread:2,firstBreadBonus:4}},
  'おねだり':{text:'通常カードを設置するとき、必要なサイコロのうち好きな1つを使わずに設置できる。',props:{installDiceDiscount:1}},
- 'オーバークロック':{copyable:false,stackable:true,text:'この個体での初回のみ、ターン開始時に好きな資源を合計20個、任意に配分して獲得する。',props:{overclockResources:20}},
+ 'オーバークロック':{copyable:false,stackable:true,text:'この個体での初回のみ、ターン開始時に好きな資源を合計20個、任意に配分して獲得する。この能力を持つ間、自分の最初の2ターンはレジェンドを獲得できない。',props:{overclockResources:20}},
  '神の見えざる手':{text:'ターン開始時、通常カードを2枚引く。通常手札を1枚捨て、好きな資源を2個獲得できる。',props:{invisibleHand:2}},
  'リクリエイション':{copyable:true,stackable:false,text:'自分の設置済み通常カード1枚を、VP差±2以内の通常手札1枚と入れ替えて仮設置する。設置時効果は発動する。レジェンドカードは対象外。',props:{recreationRange:2}},
  '無限の黄金':{copyable:false,stackable:false,text:'領主マイン・雇用ゴルドは10VPを持つ。雇用キャラクターの固有能力は無効化しない。この能力はコピーできない。',props:{copyable:false,uncopyable:true,vpOverride:10}},
@@ -228,6 +228,11 @@ function resolveReactiveRolls(acquired=dice,clearNotices=true){
 // @kokoryo-section S0053
 
 function characterEffectSources(p){let a=[],lord=CHARACTER_DATA[charOf(p)];if(lord)a.push(lord);(employees[p]||[]).forEach(e=>{if(e)a.push(effectiveEmployeeAbility(e,p))});return a}
+function isLegendCard(c){return !!c&&(c.type==='LEGEND'||c.tier==='upper'||c.tier==='lower'||/^L[LU]\d+$/.test(c.key||c.id||''))}
+function legendAcquisitionAllowed(p=turn){
+ const overclock=characterEffectSources(p).some(x=>x.uniqueAbility==='オーバークロック'||x.grantedAbilities?.includes('オーバークロック'))||(p===turn&&copiedAbility==='オーバークロック');
+ return !overclock||(+playerTurnCounts[p]||0)>=3;
+}
 function hasEquivalentExchange(p=turn){return characterEffectSources(p).some(x=>x.uniqueAbility==='等価交換'||x.grantedAbilities?.includes('等価交換'))||(p===turn&&copiedAbility==='等価交換')}
 function stackedNumericEffect(p,key){let total=0,groups=new Map();characterEffectSources(p).forEach(x=>{let v=+x[key]||0;if(!v)return;if(x.effectStackGroup)groups.set(x.effectStackGroup,Math.max(groups.get(x.effectStackGroup)||0,v));else total+=v});groups.forEach(v=>total+=v);return total}
 function groupedCharacterVP(p){let values=[],groups=new Map();characterEffectSources(p).forEach(x=>{let v=+(x.vpOverride??x.vp)||0;if(!v)return;if(x.vpStackGroup)groups.set(x.vpStackGroup,Math.max(groups.get(x.vpStackGroup)||0,v));else values.push(v)});return cardCommands.function({target:values.concat([...groups.values()]),value:v=>v})}

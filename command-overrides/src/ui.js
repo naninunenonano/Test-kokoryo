@@ -112,7 +112,7 @@ function renderLegends(){
    const name=document.createElement('strong');name.textContent=L.name;detail.appendChild(name);
    const status=document.createElement('div');status.className='small';status.textContent=(L.taken?'獲得済み ／ ':'')+L.vp+'VP'+(L.eraBlocked?' ／ 選択不可':tier==='upper'&&!L.unlocked?' ／ 未解放':'');detail.appendChild(status);
    const hint=document.createElement('div');hint.className='small muted';hint.textContent='タッチで効果確認';detail.appendChild(hint);item.appendChild(detail);
-   if(!L.taken){const locked=(tier==='upper'&&!L.unlocked)||!!L.eraBlocked;const button=document.createElement('button');button.className='secondary';button.textContent=L.eraBlocked?'選択不可':locked?'未解放':'獲得';button.disabled=locked||legendTakenThisTurn||((onlineDebugMode||realOnlineMainMode)&&viewer!==turn);button.onclick=()=>takeLegend(L.id);item.appendChild(button)}
+   if(!L.taken){const locked=(tier==='upper'&&!L.unlocked)||!!L.eraBlocked;const button=document.createElement('button');button.className='secondary';button.textContent=L.eraBlocked?'選択不可':locked?'未解放':'獲得';button.disabled=locked||!legendAcquisitionAllowed(turn)||legendTakenThisTurn||((onlineDebugMode||realOnlineMainMode)&&viewer!==turn);button.onclick=()=>takeLegend(L.id);item.appendChild(button)}
    column.appendChild(item);
   }
   box.appendChild(column);
@@ -805,7 +805,7 @@ function openCardImage(img,c=null,context='view',index=null){
   action.textContent='設置';action.disabled=!own;action.classList.remove('hidden');
   action.onclick=()=>{if(!own||index==null)return;modal.classList.add('hidden');selectedHandDetailIndex=index;openSelectedInstall()};
  }else if(context==='legend'){
-  action.textContent='設置';action.disabled=!own||c.taken||c.eraBlocked||(c.tier==='upper'&&!c.unlocked)||legendTakenThisTurn;action.classList.remove('hidden');
+  action.textContent='設置';action.disabled=!own||!legendAcquisitionAllowed(turn)||c.taken||c.eraBlocked||(c.tier==='upper'&&!c.unlocked)||legendTakenThisTurn;action.classList.remove('hidden');
   action.onclick=()=>{if(action.disabled)return;modal.classList.add('hidden');takeLegend(c.id)};
  }else{hint.textContent='閲覧のみ';}
  modal.classList.remove('hidden');
