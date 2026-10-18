@@ -314,7 +314,22 @@ function turnStartResourceButtons(title,note,amount,handler){let row=document.cr
 
 // @kokoryo-section S0082
 
+// Read-only inventory for the existing start-of-turn choice panel.
+function renderTurnStartInventory(){
+ const box=document.createElement('section');box.className='turnstart-inventory';box.setAttribute('aria-label','ターン開始時の所持状況');
+ const title=document.createElement('strong');title.textContent='現在の所持状況';box.appendChild(title);
+ const resources=document.createElement('div');resources.className='turnstart-inventory-resources';
+ for(const key of ['y','p','r']){const el=document.createElement('span');el.className='power';el.dataset.resource=key;el.textContent=cname(key)+' '+(powers[turn]?.[key]||0);resources.appendChild(el)}box.appendChild(resources);
+ for(const [kind,label,items] of [['dice','未使用サイコロ',unusedDice()],['orders','所持命令書',breadHands[turn]||[]]]){
+  const heading=document.createElement('div');heading.className='small';heading.textContent=label;box.appendChild(heading);
+  const counts=document.createElement('div');counts.className='turnstart-inventory-counts';counts.dataset.inventoryKind=kind;
+  const faces=[1,2,3,4,5,6];if(items.some(x=>x.value==='any'))faces.push('any');
+  for(const face of faces){const el=document.createElement('span');el.dataset.face=face;el.dataset.count=items.filter(x=>x.value===face).length;el.textContent=(face==='any'?'ANY':face)+'：'+el.dataset.count;counts.appendChild(el)}box.appendChild(counts)
+ }
+ return box
+}
 function renderTurnStart(){let panel=q('#turnstartpanel'),box=q('#turnstarteffects');box.innerHTML='';
+ if(isViewingOwnTurn()&&(pendingLordResource>0||pendingNanban>0||pendingTenkuCat>0||pendingSSRBonus>0||pendingCastResourceChoices.length||pendingOverclockChoices.length))box.appendChild(renderTurnStartInventory());
  // 資源・追加ダイスの選択がすべて済むまではポスト特殊獲得を判定しない。
  if(turnStartPostPending&&pendingLordResource<=0&&pendingNanban<=0&&pendingTenkuCat<=0&&pendingSSRBonus<=0&&!pendingCastResourceChoices.length&&!pendingOverclockChoices.length){
   turnStartPostPending=false;
