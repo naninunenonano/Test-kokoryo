@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 18682)
+Total output lines: 655
+
 // Editing source only. Build with npm run build; do not load this file directly.
 // Section order and the shared private scope are preserved by src/order.json.
 
@@ -283,46 +286,7 @@ function syncEconomyLegendUnlock(){
  if(ownedLowerIds.size){for(const L of lower){if(ownedLowerIds.has(L.id)){L.taken=true;L.eraBlocked=false}else{L.taken=true;L.eraBlocked=true}}}
 
  if(!lower.some(L=>L.taken&&!L.eraBlocked)&&!installed.some(cards=>(cards||[]).some(c=>c.key==='LL8'||c.key==='LL9')))return;
- for(const L of upper)if(!L.taken&&!L.eraBlocked)L.unlocked=true;
-}
-// 診断専用。対戦処理は変更せず、ターン開始時の実行履歴だけ保持する。
-let economyAcquireTrace=[];
-function traceEconomyAcquire(stage,details={}){
- try{
-  economyAcquireTrace.push({stage,turnPlayer:turn+1,viewerPlayer:viewer+1,
-   onlineDebug:!!onlineDebugMode,realOnline:!!realOnlineMainMode,
-   money:powers[turn]?.y||0,food:powers[turn]?.p||0,military:powers[turn]?.r||0,
-   ownDebt:commandCounts[turn]||0,totalDebt:commandCounts.reduce((a,n)=>a+(n||0),0),
-   legendTakenThisTurn:!!legendTakenThisTurn,...details});
-  if(economyAcquireTrace.length>80)economyAcquireTrace.shift();
- }catch(e){}
-}
-function runTurnStartSpecialAcquirePhase(timing){
- traceEconomyAcquire('phase_enter',{timing});
- if((onlineDebugMode||realOnlineMainMode)&&viewer!==turn){traceEconomyAcquire('phase_skipped_viewer',{timing});return false;}
- // ① pre: ターン開始時効果より前に条件判定する特殊獲得。③ post: 開始時効果処理後に条件判定する特殊獲得。
- let acquired=false;
- if(timing==='pre'){syncEconomyLegendUnlock();runInstalledPackHooks('turnStartAcquirePre',turn);if(offerFreeResourceWipeLegend())return true;offerEraLegendAtTurnStart('pre')}
- if(timing==='post'){syncEconomyLegendUnlock();runInstalledPackHooks('turnStartAcquirePost',turn);offerEraLegendAtTurnStart('post')}
- traceEconomyAcquire('phase_exit',{timing});
- return acquired
-}
-function ensureDepressionDebtSupply(){for(const L of legends.filter(x=>!x.taken&&!x.eraBlocked&&x.unlocked)){let n=specialConfig(L).onAcquire?.ensureDebtSupplyPerPlayer;if(n){let total=komePlace+commandCounts.reduce((a,v)=>a+(v||0),0),need=playerCount*n;if(total<need)komePlace+=need-total}}}
-function eraLegendCondition(L){
- if(legendTakenThisTurn||depressionLegendLocked(turn))return false;
- const c=specialConfig(L).condition||{},total=commandCounts.reduce((a,n)=>a+(n||0),0);
- if(c.moneyPerTotalDebt!=null)return (powers[turn]?.y||0)>=total*c.moneyPerTotalDebt;
- if(c.foodMilitaryBase!=null)return ((powers[turn]?.p||0)+(powers[turn]?.r||0))>=Math.max(0,c.foodMilitaryBase-(commandCounts[turn]||0)*(c.debtDiscount||0));
- if(c.debtTotalAtLeast!=null&&total<c.debtTotalAtLeast)return false;
- if(c.allDebtZero&&!commandCounts.every(n=>(n||0)===0))return false;
- return Object.keys(c).length>0;
-}
-function blockOtherEraLegend(chosen){
- if(chosen.layoutSet&&chosen.exclusiveLayoutSet){legends.forEach(L=>{if(L!==chosen&&L.layoutSet===chosen.layoutSet&&L.tier===chosen.tier&&!L.taken){L.eraBlocked=true;L.taken=true}});return}
- let group=chosen.specialGroup||'era';legends.forEach(L=>{if(L!==chosen&&(L.specialGroup||'era')===group&&!L.taken)L.eraBlocked=true});
-}
-function resolveEraAcquire(L){
- if(legendTakenThisTurn||depressionLegendLocked(turn)||!eraLegendCondition(L))return false;
+ for(const L of upper)if(!L.taken&&!L.eraBlocked)L.un…682 tokens truncated…sTurn||depressionLegendLocked(turn)||!eraLegendCondition(L))return false;
  let cfg=specialConfig(L),a=cfg.onAcquire||{},owner=turn;
  if(specialEffectId(L)==='goldenAge')powers[owner].y=0;
  if(specialEffectId(L)==='greatDepression'){powers[owner].y=0;powers[owner].p=0;powers[owner].r=0;
@@ -355,8 +319,52 @@ function offerEraLegendAtTurnStart(timing){
 
 // @kokoryo-section S0064
 
+// Resource VP uses one shared virtual budget. No powers are changed.
+function resourceVPFormula(c){
+ return specialConfig(c).vpFormula||(['naroppaGuild','inadamashii'].includes(c.special)?{resources:['y','p','r'],divisor:3,round:'floor'}:null);
+}
+const equivalentVPCache=new Map();
+function equivalentResourceVP(p){
+ const cards=allFieldCards(p).filter(c=>resourceVPFormula(c));
+ const total=['y','p','r'].reduce((n,k)=>n+Math.max(0,Math.floor(powers[p]?.[k]||0)),0);
+ const key=JSON.stringify(cards.map(c=>resourceVPFormula(c)));
+ const old=equivalentVPCache.get(p);
+ if(old&&old.total===total&&old.key===key&&old.cards.length===cards.length&&cards.every((c,i)=>c===old.cards[i]))return old.values;
+ // Existing formulas have disjoint scoring/shortfall colors and unit penalties.
+ // First satisfy unit shortfalls, then the rounded linear scoring term.
+ // A sliding maximum and residue recurrence give O(cards * total resources).
+ let dp=new Float64Array(total+1);const traces=[];
+ for(const c of cards){
+  const f=resourceVPFormula(c),d=Math.max(1,Math.floor(+f.divisor||1));
+  const penalty=(f.penalties||[]).reduce((n,x)=>n+Math.max(0,+x.target||0),0);
+  const base=(+f.flat||0)-penalty;
+  const first=f.round==='floor'?d:f.round==='round'?Math.ceil(d/2):1;
+  const head=new Float64Array(total+1),origin=new Int32Array(total+1),queue=new Int32Array(total+1);let lo=0,hi=0;
+  for(let n=0;n<=total;n++){
+   while(lo<hi&&queue[lo]<n-penalty)lo++;
+   while(lo<hi&&dp[queue[hi-1]]-queue[hi-1]<=dp[n]-n)hi--;
+   queue[hi++]=n;origin[n]=queue[lo];head[n]=dp[queue[lo]]+n-queue[lo]+base;
+  }
+  const next=head.slice(),parents=origin.slice(),residueValue=new Float64Array(d).fill(-Infinity),residueIndex=new Int32Array(d);
+  for(let n=0;n<=total;n++){
+   const j=n-first;if(j<0)continue;const r=j%d,q=Math.floor(j/d),v=head[j]-q;
+   if(v>residueValue[r]){residueValue[r]=v;residueIndex[r]=j;}
+   const candidate=residueValue[r]+q+1;
+   if(candidate>next[n]){next[n]=candidate;parents[n]=origin[residueIndex[r]];}
+  }
+  traces.push(parents);dp=next;
+ }
+ const values=new Map();let budget=total;
+ for(let i=cards.length-1;i>=0;i--){const previous=traces[i][budget],n=budget-previous,f=resourceVPFormula(cards[i]);
+  const penalty=(f.penalties||[]).reduce((s,x)=>s+Math.max(0,+x.target||0),0),used=Math.min(n,penalty),score=Math.max(0,n-penalty)/Math.max(1,+f.divisor||1);
+  const rounded=f.round==='floor'?Math.floor(score):f.round==='round'?Math.round(score):Math.ceil(score);
+  values.set(cards[i],used-penalty+rounded+(+f.flat||0));budget=previous;
+ }
+ equivalentVPCache.set(p,{total,key,cards,values});return values;
+}
 function dynamicSpecialVP(c,p){let f=specialConfig(c).vpFormula;if(!f)return null;let sum=(f.resources||[]).reduce((n,k)=>n+(powers[p]?.[k]||0),0),d=Math.max(1,+f.divisor||1),v=f.round==='floor'?Math.floor(sum/d):f.round==='round'?Math.round(sum/d):Math.ceil(sum/d);for(const x of f.penalties||[])v-=Math.max(0,(+x.target||0)-(powers[p]?.[x.resource]||0))*(+x.multiplier||1);return v+(+f.flat||0)}
 function cardVP(c,p){
+ if(hasEquivalentExchange(p)&&resourceVPFormula(c)){const v=equivalentResourceVP(p).get(c);if(v!==undefined)return v+(c.special==='greatDepression'?Math.ceil((commandCounts[p]||0)/10):0);}
  if(c.special==='greatDepression')return dynamicSpecialVP(c,p)+Math.ceil((commandCounts[p]||0)/10);
  if(c.special==='bigCompany')return (employees[p]||[]).length;
  if(c.special==='naroppaFestival'){let keys=new Set(['S1','S2','S3','S4','S5','S6','S7','S8','S9','S10']);return allFieldCards(p).filter(x=>keys.has(x.key)).reduce((n,x)=>n+fixedVP(x),0)*2;}
