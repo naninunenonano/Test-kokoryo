@@ -67,9 +67,11 @@ def patch_html(source, pr, commit, source_split=False):
     parts = source_version.split('.')
     version = source_version if source_split else '.'.join(parts[:-1] + [str(int(parts[-1]) + 2)])
     preview_commit = os.environ.get('GITHUB_SHA', 'local')
+    clock_match = re.search(r'const TURN_CLOCK_INITIAL=(\d+),TURN_CLOCK_INCREMENT=(\d+);', source)
+    initial_ms, increment_ms = map(int, clock_match.groups()) if clock_match else (180000, 30000)
     build = {'environment': 'offline-test', 'version': version, 'sourceVersion': source_version,
              'pr': pr, 'commit': commit, 'previewCommit': preview_commit, 'onlineEnabled': False,
-             'features': ['turn-chess-clock'], 'clock': {'initialSeconds': 180, 'maxSeconds': 180, 'incrementSeconds': 30, 'timeoutDieConversion': 'normal'}}
+             'features': ['turn-chess-clock'], 'clock': {'initialSeconds': initial_ms // 1000, 'maxSeconds': initial_ms // 1000, 'incrementSeconds': increment_ms // 1000, 'timeoutDieConversion': 'normal'}}
     if source_split:
         build['features'].append('source-split')
         if 'once:commandOnce' in source:
@@ -206,10 +208,10 @@ def build(source_dir, output, pr, commit):
 def apply_command_overrides(directory, overrides, commit):
     if commit != '1ca6ccfcf7c5f9cddea8c508f472b0af04a9167a':
         raise ValueError('Cumulative overrides require the pinned Ver.0.3.221 baseline')
-    allowed = {'tests/bot231.cjs', 'tests/hire231.cjs', 'tests/scope231.cjs', 'tests/fixtures/scope230.json', 'docs/VER231_REPORT.md', 'docs/VER227_REPORT.md', 'tests/overclock230.cjs', 'tests/regression.cjs', 'docs/VER230_REPORT.md', 'src/characters.js', 'packs/pack1.js', 'src/bootstrap.js', 'src/bot.js', 'tests/fixtures/scope_225.json', 'index.html', 'docs/dependencies.json', 'docs/DEPENDENCIES.md', 'package-lock.json', 'package.json', 'tools/package_test.py', 'tests/scope230.cjs', 'src/online.js', 'docs/COMMANDS.md', 'tests/fixtures/normal_222.json', 'tests/start227.cjs', 'src/debug.js', 'src/card_effects.js', 'tests/normal_commands.cjs', 'packs/rules_pack1.js', 'tests/integration224.cjs', 'tests/fixtures/scope229.json', 'tests/setup225.cjs', 'src/game.js', 'tests/equivalent_vp229.cjs', 'tests/equivalent_gain229.cjs', 'docs/VER226_REPORT.md', 'docs/VER224_REPORT.md', 'tests/fixtures/scope228.json', 'tests/fixtures/scope_223.json', 'docs/VER229_REPORT.md', 'tests/equivalent229.cjs', 'tests/fixtures/standard_221.json', 'docs/VER225_REPORT.md', 'tests/split.cjs', 'tests/commands.cjs', 'tests/startup.cjs', 'packs/pack2.js', 'README.md', 'src/order.json', 'tests/balance226.cjs', 'tools/build.cjs', 'tests/clock.cjs', 'src/ui.js', 'docs/VER228_REPORT.md', 'tests/scope225.cjs', 'tests/fixtures/legends_223.json', 'tests/fixtures/scope_224.json', 'src/decks.js', 'tests/oracle230.cjs', 'tests/scope229.cjs', 'tests/online.cjs'}
+    allowed = {'tests/ui232.cjs', 'tests/usability232.cjs', 'tests/scope232.cjs', 'tests/fixtures/scope231.json', 'docs/VER232_REPORT.md', 'tests/bot231.cjs', 'tests/hire231.cjs', 'tests/scope231.cjs', 'tests/fixtures/scope230.json', 'docs/VER231_REPORT.md', 'docs/VER227_REPORT.md', 'tests/overclock230.cjs', 'tests/regression.cjs', 'docs/VER230_REPORT.md', 'src/characters.js', 'packs/pack1.js', 'src/bootstrap.js', 'src/bot.js', 'tests/fixtures/scope_225.json', 'index.html', 'docs/dependencies.json', 'docs/DEPENDENCIES.md', 'package-lock.json', 'package.json', 'tools/package_test.py', 'tests/scope230.cjs', 'src/online.js', 'docs/COMMANDS.md', 'tests/fixtures/normal_222.json', 'tests/start227.cjs', 'src/debug.js', 'src/card_effects.js', 'tests/normal_commands.cjs', 'packs/rules_pack1.js', 'tests/integration224.cjs', 'tests/fixtures/scope229.json', 'tests/setup225.cjs', 'src/game.js', 'tests/equivalent_vp229.cjs', 'tests/equivalent_gain229.cjs', 'docs/VER226_REPORT.md', 'docs/VER224_REPORT.md', 'tests/fixtures/scope228.json', 'tests/fixtures/scope_223.json', 'docs/VER229_REPORT.md', 'tests/equivalent229.cjs', 'tests/fixtures/standard_221.json', 'docs/VER225_REPORT.md', 'tests/split.cjs', 'tests/commands.cjs', 'tests/startup.cjs', 'packs/pack2.js', 'README.md', 'src/order.json', 'tests/balance226.cjs', 'tools/build.cjs', 'tests/clock.cjs', 'src/ui.js', 'docs/VER228_REPORT.md', 'tests/scope225.cjs', 'tests/fixtures/legends_223.json', 'tests/fixtures/scope_224.json', 'src/decks.js', 'tests/oracle230.cjs', 'tests/scope229.cjs', 'tests/online.cjs'}
     files = {str(p.relative_to(overrides)): p for p in overrides.rglob('*') if p.is_file() and not set(p.relative_to(overrides).parts) & {'node_modules','js','images','__pycache__'}}
     if set(files) != allowed:
-        raise ValueError('Unexpected or missing Ver230 cumulative override files')
+        raise ValueError('Unexpected or missing TEST cumulative override files')
     for relative, source in files.items():
         if source.is_symlink():
             raise ValueError('Override symlinks are forbidden')

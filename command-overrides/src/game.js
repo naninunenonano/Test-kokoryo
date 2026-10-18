@@ -604,7 +604,7 @@ function updateDebugCommandVisibility(){
 function turnClockConvertNormalDie(dieId){const result=cardCommands.change('convert',3,{kind:'die',dieId,undo:true,record:true});if(result.ok)renderGame()}
 // Shared offline / Bot / online chess clock. Online completion is host-authoritative.
 var turnClockState={remaining:[],active:null,token:0,lastCompleted:-1,ending:false,expiring:false,resolving:false,timeoutCommit:null,mono:0,wall:0};
-const TURN_CLOCK_INITIAL=180000,TURN_CLOCK_INCREMENT=30000;
+const TURN_CLOCK_INITIAL=300000,TURN_CLOCK_INCREMENT=60000;
 const TURN_CLOCK_CANCEL=Object.freeze({cancelledBotTurn:true});
 function turnClockVisible(){return !!q('#game')&&!q('#game').classList.contains('hidden')}
 function turnClockReset(){

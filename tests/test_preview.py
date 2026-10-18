@@ -77,7 +77,7 @@ class PreviewTests(unittest.TestCase):
 
     def test_clock_feature_identity_and_fail_closed_hooks(self):
         self.assertIn('turn-chess-clock', self.metadata['features'])
-        self.assertEqual(self.metadata['clock'], {'initialSeconds': 180, 'maxSeconds': 180, 'incrementSeconds': 30, 'timeoutDieConversion': 'normal'})
+        self.assertEqual(self.metadata['clock'], {'initialSeconds': 300, 'maxSeconds': 300, 'incrementSeconds': 60, 'timeoutDieConversion': 'normal'})
         self.assertIn('sourceVersion', self.metadata)
         self.assertIn('previewCommit', self.metadata)
         self.assertIn('function testClockOriginalCompleteEnd(){', self.html)

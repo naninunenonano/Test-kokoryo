@@ -45,23 +45,23 @@ test('online: guest actions synchronize; device wall-clock offset cannot choose 
  r.guest.run('powers[turn].y=7;turnClockPublishAction(false)');await r.drain();r.same('powers[1].y',7);
  r.host.advance(50000);await r.drain();
  r.guest.run('completeEnd()');assert.equal(r.guest.read('turn'),1,'no speculative turn advance');
- await r.drain();r.same('turn',2);r.same('turnClockState.remaining[1]',160000);
+ await r.drain();r.same('turn',2);r.same('turnClockState.remaining[1]',300000);
  r.same('turnClockState.active',2);
 });
 test('online: only HOST times out; unused dice use the shared normal conversion',async t=>{
  const r=await room(t);
  r.guest.run('dice=[1,3,6].map((value,i)=>({id:i+1,value,used:false}));turnClockPublishAction(false)');await r.drain();
  r.guest.advance(999999);assert.equal(r.guest.read('turn'),1,'guest cannot commit an expiry');
- r.host.advance(180001);await r.drain();r.same('turn',2);r.same('powers[1]',{y:3,p:3,r:3});r.same('turnClockState.remaining[1]',30000);
+ r.host.advance(300001);await r.drain();r.same('turn',2);r.same('powers[1]',{y:3,p:3,r:3});r.same('turnClockState.remaining[1]',60000);
 });
 test('online: duplicate end request and late prior-lease state advance exactly once',async t=>{
  const r=await room(t);r.guest.run('completeEnd()');const request=r.queue.shift();
  r.deliver(request,0);r.deliver(request,0);await r.drain();
- r.deliver(request,0);await r.drain();r.same('turn',2);r.same('turnClockState.remaining[1]',180000);
+ r.deliver(request,0);await r.drain();r.same('turn',2);r.same('turnClockState.remaining[1]',300000);
 });
 test('online: timeout wins an end/deadline race and rejects a late resource mutation',async t=>{
  const r=await room(t);r.guest.run('powers[1].y=999;completeEnd()');
- r.host.jump(180001);await r.drain();r.same('turn',2);r.same('powers[1].y',0);r.same('turnClockState.remaining[1]',30000);
+ r.host.jump(300001);await r.drain();r.same('turn',2);r.same('powers[1].y',0);r.same('turnClockState.remaining[1]',60000);
 });
 test('online: newer speculative owner actions survive an earlier HOST echo',async t=>{
  const r=await room(t);r.guest.run('powers[1].y=1;turnClockPublishAction(false)');
@@ -87,24 +87,24 @@ test('online: disconnected next owner is started and safely timed out by HOST',a
  const request=r.queue.shift();r.deliver(request,0);
  // Drop every outgoing message: next owner never receives its start lease.
  r.queue.length=0;assert.equal(r.host.read('turnClockStartPending'),true);
- r.host.advance(180001);assert.equal(r.host.read('turn'),3);assert.equal(r.host.read('turnClockState.remaining[2]'),30000);
+ r.host.advance(300001);assert.equal(r.host.read('turn'),3);assert.equal(r.host.read('turnClockState.remaining[2]'),60000);
  await r.drain();r.same('turn',3);
 });
 test('online: paid Genesis continuation is restored on HOST at timeout',async t=>{
  const r=await room(t);r.guest.run("hands[1]=Array.from({length:4},(_,i)=>({id:'free'+i,key:'free'+i,type:'N',name:'test',vp:0}));resolveEggHarp(1);turnClockPublishAction(false)");await r.drain();
- r.host.advance(180001);await r.drain();r.same('turn',2);r.same('installed[1].length',4);
+ r.host.advance(300001);await r.drain();r.same('turn',2);r.same('installed[1].length',4);
 });
 test('online: HOST handoff uses a new epoch; previous HOST messages are fenced out',async t=>{
  const r=await room(t);r.host.advance(40000);await r.drain();const stale=r.host.read('realMainSnapshot()');
  for(const h of r.clients)h.run("realLobbyHostId='p1';turnClockHostChanged()");await r.drain();
- r.same('turnClockState.remaining[1]',140000);r.guest.run('completeEnd()');await r.drain();r.same('turn',2);r.same('turnClockState.remaining[1]',170000);
+ r.same('turnClockState.remaining[1]',260000);r.guest.run('completeEnd()');await r.drain();r.same('turn',2);r.same('turnClockState.remaining[1]',300000);
  for(const h of r.clients)h.run(`turnClockReceiveState({host:'p0',state:${JSON.stringify(stale)}})`);r.same('turn',2);
 });
 test('online: reconnect restores clock, usage flags and monotonically increasing proposal sequence',async t=>{
  const r=await room(t);r.guest.run("graveyardUsed[1]={'card-a':true};hiredThisTurn=true;turnClockPublishAction(false)");await r.drain();
  r.host.advance(30000);await r.drain();const state=r.host.read('realMainSnapshot()');
  r.guest.run(`turnClockResetNet();applyRealMainSnapshot(${JSON.stringify(state)});powers[1].y=8;turnClockPublishAction(false)`);await r.drain();
- r.same('powers[1].y',8);r.same('graveyardUsed[1]',{'card-a':true});r.same('hiredThisTurn',true);r.same('turnClockState.remaining[1]',150000);
+ r.same('powers[1].y',8);r.same('graveyardUsed[1]',{'card-a':true});r.same('hiredThisTurn',true);r.same('turnClockState.remaining[1]',270000);
 });
 test('online: non-turn Park pick is committed only by HOST and cannot be replayed',async t=>{
  const r=await room(t);r.guest.run("pendingParkPlayers=[3];market=[{id:'park',key:'S5',name:'mine',type:'S',special:'mine'}];turnClockPublishAction(false)");await r.drain();
@@ -113,7 +113,7 @@ test('online: non-turn Park pick is committed only by HOST and cannot be replaye
 });
 test('online: HOST player can end normally without a speculative second end',async t=>{
  const r=await room(t,{owner:0});r.host.advance(50000);r.host.run('completeEnd()');await r.drain();
- r.same('turn',1);r.same('turnClockState.remaining[0]',160000);
+ r.same('turn',1);r.same('turnClockState.remaining[0]',300000);
 });
 for(const owner of [0,1])test(`online: instant game finish by P${owner} synchronizes and stops every clock`,async t=>{
  const r=await room(t,{owner});r.guest.run('finishGame();turnClockPublishAction(false)');await r.drain();
@@ -122,20 +122,20 @@ for(const owner of [0,1])test(`online: instant game finish by P${owner} synchron
 });
 test('online: forced end cancels the guest unpaid async payment promise',async t=>{
  const r=await room(t);const payment=r.guest.run("selectLegendPayment({name:'test'},'any',1)");
- r.host.advance(180001);await r.drain();assert.equal(await payment,null);r.same('turn',2);
+ r.host.advance(300001);await r.drain();assert.equal(await payment,null);r.same('turn',2);
 });
 test('online: pending copy continuation restores on HOST before timeout start effects',async t=>{
  const r=await room(t);r.guest.run("installed[1]=[{id:'copy',type:'LEGEND',special:'abilityCopy',name:'copy'}];resolveAbilityCopyLegend(()=>continueBeginTurn());turnClockPublishAction(false)");await r.drain();
  assert.equal(r.guest.read("q('#legendChoiceModal').classList.contains('hidden')"),false);
- r.host.advance(180001);await r.drain();r.same('turn',2);r.same('turnClockState.remaining[1]',30000);
+ r.host.advance(300001);await r.drain();r.same('turn',2);r.same('turnClockState.remaining[1]',60000);
  assert.ok(r.host.read('powers[1].y+powers[1].p+powers[1].r')>=4,'mandatory start dice/resources were not lost');
 });
 test('online: HOST reload charges elapsed checkpoint time and retains accepted sequence',async t=>{
  const r=await room(t);r.guest.run('powers[1].y=4;turnClockPublishAction(false)');await r.drain();
  const saved=r.host.read('realMainSnapshot()');r.host.jump(45000);
  r.host.run(`turnClockResetNet();applyRealMainSnapshot(${JSON.stringify(saved)})`);
- assert.equal(r.host.read('turnClockState.remaining[1]'),135000);
- r.host.tick();await r.drain();r.guest.run('completeEnd()');await r.drain();r.same('turn',2);r.same('turnClockState.remaining[1]',165000);
+ assert.equal(r.host.read('turnClockState.remaining[1]'),255000);
+ r.host.tick();await r.drain();r.guest.run('completeEnd()');await r.drain();r.same('turn',2);r.same('turnClockState.remaining[1]',300000);
 });
 test('online: legacy snapshots are rejected instead of silently disabling clocks',async t=>{
  const r=await room(t);const legacy=r.host.read('realMainSnapshot()');delete legacy.turnClock;legacy.turn=3;
@@ -143,7 +143,7 @@ test('online: legacy snapshots are rejected instead of silently disabling clocks
 });
 test('online: dropped end acknowledgement is recovered by idempotent retry',async t=>{
  const r=await room(t);r.guest.run('completeEnd()');r.deliver(r.queue.shift(),0);r.queue.length=0;
- assert.equal(r.guest.read('turn'),1);r.guest.advance(1001);await r.drain();r.same('turn',2);r.same('turnClockState.remaining[1]',180000);
+ assert.equal(r.guest.read('turn'),1);r.guest.advance(1001);await r.drain();r.same('turn',2);r.same('turnClockState.remaining[1]',300000);
 });
 test('online: stale owner proposal cannot undo an accepted other-player Park pick',async t=>{
  const r=await room(t);r.guest.run("pendingParkPlayers=[3];market=[{id:'park',key:'S5',name:'mine',type:'S',special:'mine'}];turnClockPublishAction(false)");await r.drain();

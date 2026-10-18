@@ -1,3 +1,7 @@
+# TEST Ver.0.3.232
+
+開始時の所持状況表示、持ち時間300秒・終了時回復60秒。変更・検証は docs/VER232_REPORT.md、ZIP全ファイルの変更有無は FILE_CHANGES.tsv を参照。本番未反映。
+
 # TEST Ver.0.3.231
 
 変更・検証は docs/VER231_REPORT.md、ZIP全ファイルの変更有無は FILE_CHANGES.tsv を参照。本番未反映。
