@@ -1,0 +1,9 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),crypto=require('node:crypto'),{fixture}=require('./clock.cjs'),{assemble}=require('../tools/build.cjs');
+test('234 command stock: 50 distinct physical cards, faces 1–6 eight each, ANY two; drawing, exhaustion and recycling unchanged',async t=>{
+ const h=await fixture(t);h.run("renderGame=()=>{};breadDeck=makeBreadDeck();breadDiscard=[];breadHands=Array.from({length:4},()=>[])");
+ assert.equal(h.run('breadDeck.length'),50);assert.equal(h.run('new Set(breadDeck.map(c=>c.id)).size'),50);
+ for(const face of [1,2,3,4,5,6,'any'])assert.equal(h.run('breadDeck.filter(c=>c.value==='+JSON.stringify(face)+').length'),face==='any'?2:8);
+ h.run('for(let i=0;i<50;i++)drawBread(i%4)');assert.equal(h.run('breadHands.flat().length'),50);assert.equal(h.run('breadDeck.length'),0);assert.equal(h.run('drawBread(0)'),null);
+ h.run('breadDiscard.push(breadHands[0].shift());recycleBreadIfEmpty();drawBread(1)');assert.equal(h.run('breadHands.flat().length'),50);assert.equal(h.run('new Set(breadHands.flat().map(c=>c.id)).size'),50);
+});
+test('234 scope: game code identical to TEST233 except initial command-deck composition and version',()=>{const code=assemble().code.replace("function makeBreadDeck(){let a=[];for(let v=1;v<=6;v++)for(let i=0;i<8;i++)a.push({kind:'bread',value:v,name:'命令書 '+v,id:'B'+v+'-'+(i+1)});for(let i=0;i<2;i++)a.push({kind:'bread',value:'any',name:'命令書 ANY',id:'BANY-'+(i+1)});return sh(a)}","function makeBreadDeck(){let a=[];for(let v=1;v<=6;v++)for(let i=0;i<4;i++)a.push({kind:'bread',value:v,name:'命令書 '+v,id:'B'+v+'-'+(i+1)});a.push({kind:'bread',value:'any',name:'命令書 ANY',id:'BANY-1'});return sh(a)}").replace(/0\.3\.\d+/g,'VERSION');assert.equal(crypto.createHash('sha256').update(code).digest('hex'),'3bc3bcfb9e987c98ebf1a1059b002960ada749ca118d8f4636d9b0360afc7fd1')});
