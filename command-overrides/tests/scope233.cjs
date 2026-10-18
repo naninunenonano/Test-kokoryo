@@ -1,0 +1,3 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('fs'),path=require('path'),crypto=require('crypto'),{assemble}=require('../tools/build.cjs');
+const sha=s=>crypto.createHash('sha256').update(s.replace(/0\.3\.\d+/g,'VERSION')).digest('hex');
+test('233 notification-only scope: all game code and original HTML identical to published TEST232 except version',()=>{assert.equal(sha(assemble().code),'3bc3bcfb9e987c98ebf1a1059b002960ada749ca118d8f4636d9b0360afc7fd1');assert.equal(sha(fs.readFileSync(path.join(__dirname,'../index.html'),'utf8')),'a29e84df284059861330987f65e399bef9ff7b14165d3c25dd5cddf070899ae7')});
