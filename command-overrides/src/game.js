@@ -216,7 +216,10 @@ function commandTrigger(event,context,{event:expected=event,targets,when=()=>tru
  }
  return results
 }
-function commandHire(mode,quantity,{accept=e=>finalizeHire(e),canHire=()=>cardCommands.can(null,'hire-space'),selected=null,pool=null}={}){
+function commandHire(mode,quantity,options={},fusionOptions={}){
+ if(mode==='レベルアップ'||mode==='levelup')return commandEvolve('レベルアップ',quantity,options);
+ if(mode==='融合'||mode==='fusion')return commandEvolve('融合',options,{...fusionOptions,kind:quantity});
+ const {accept=e=>finalizeHire(e),canHire=()=>cardCommands.can(null,'hire-space'),selected=null,pool=null}=options;
  if(!['gacha','select'].includes(mode))throw new RangeError('Unknown hiring mode');const n=commandQuantity(quantity),hired=[];
  const candidates=mode==='select'?(pool||['N','R','SR','SSR','UR'].flatMap(r=>implementedCastPool(r))):null;
  for(let i=0;i<n;i++){if(!canHire())break;let e=mode==='gacha'?gachaCast():selected?.[i];if(!e||mode==='select'&&!candidates.some(c=>c.id===e.id))break;if(mode==='select')e={...e};accept(e);hired.push(e)}return hired
@@ -329,7 +332,7 @@ function normalEffectProgram(card,owner=turn){
 }
 function commandEnd(){return completeEnd()}
 function commandTheEnd(){return finishGame()}
-function commandRun(name,...args){const key=String(name).trim().replace(/\s+/g,' ');if(!Object.hasOwn(cardCommands,key)||key==='run')throw new RangeError('Unknown command '+key);return cardCommands[key](...args)}
+function commandRun(name,...args){const text=String(name).trim().replace(/\s+/g,' '),match=text.match(/^雇用 (レベルアップ|融合)(?: (通常|モノマネ|特殊))? ([1-9]\d*)$/);if(match){if((match[1]==='融合')!==!!match[2])throw new RangeError('Invalid hiring command');return match[2]?commandHire('融合',match[2],Number(match[3]),args[0]||{}):commandHire('レベルアップ',Number(match[3]),args[0]||{})}const key=String(name).trim().replace(/\s+/g,' ');if(!Object.hasOwn(cardCommands,key)||key==='run')throw new RangeError('Unknown command '+key);return cardCommands[key](...args)}
 function conversionBonus(owner=turn){return stackedNumericEffect(owner,'dieResourceBonus')+(owner===turn&&copiedAbility==='神の恩恵'?(abilityProfile(copiedAbility).dieResourceBonus||0):0)}
 function exchangeRateFor(owner=turn){const lord=CHARACTER_DATA[charOf(owner)]||{},staff=employeeUniqueAbilitiesEnabled(owner)?employees[owner]||[]:[];return lord.exchangeRate===1||staff.some(e=>e.exchangeRate===1||e.uniqueAbility==='等価交換')||(owner===turn&&copiedAbility==='等価交換')?1:3}
 function commandApi(owner=turn){
@@ -342,7 +345,7 @@ function commandApi(owner=turn){
   change:(target,n,opts={})=>typeof n==='object'&&!Array.isArray(n)?commandChange(target,{owner,...n}):commandChange(target,n,{owner,...opts}),
   dice:(...args)=>{active();return commandDice(...args)},koyou:(...args)=>{active();return commandHire(...args)},hire:(...args)=>{active();return commandHire(...args)},
   end:()=>{active();return commandEnd()},'the end':()=>{active();return commandTheEnd()},
-  run:(name,...args)=>{const key=String(name).trim().replace(/\s+/g,' ');if(!Object.hasOwn(api,key)||key==='run')throw new RangeError('Unknown command');return api[key](...args)}
+  run:(name,...args)=>{if(/^雇用\s/.test(String(name))){active();return commandRun(name,...args)}const key=String(name).trim().replace(/\s+/g,' ');if(!Object.hasOwn(api,key)||key==='run')throw new RangeError('Unknown command');return api[key](...args)}
  });return api
 }
 const cardCommands=Object.freeze({pool:commandPool,draw:commandDraw,dice:commandDice,limit:commandLimit,choice:commandChoice,move:commandMove,start:commandStart,change:commandChange,can:commandCan,count:commandCount,plus:commandPlus,trigger:commandTrigger,koyou:commandHire,hire:commandHire,toba:commandToba,once:commandOnce,repeat:commandRepeat,boost:commandBoost,function:commandFunction,cast:commandCast,copy:commandCopy,remove:commandRemove,discount:commandDiscount,end:commandEnd,'the end':commandTheEnd,run:commandRun});
