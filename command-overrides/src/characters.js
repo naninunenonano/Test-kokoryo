@@ -105,7 +105,9 @@ Object.values(KOKORYO_PACKS).forEach(pack=>{
 });
 Object.keys(CHARACTER_DATA).forEach(id=>CHARACTER_DATA[id]=applyUniqueAbilityDef(CHARACTER_DATA[id]));
 function isPackEnabled(id){return !id||!!gameSettings?.enabledPacks?.includes(id)}
-function availableCharacterFamilies(){return CHARACTER_FAMILIES.filter(f=>isPackEnabled(f.packId)).map(f=>({...f,versions:(f.versions||[]).filter(v=>isPackEnabled(v.packId))})).filter(f=>(f.versions||[]).length)}
+const INTEGRATED_CHARACTER_PACK_IDS=Object.freeze(['pack1','pack2']);
+function isCharacterPackEnabled(id){return INTEGRATED_CHARACTER_PACK_IDS.includes(id)||isPackEnabled(id)}
+function availableCharacterFamilies(){return CHARACTER_FAMILIES.filter(f=>isCharacterPackEnabled(f.packId)).map(f=>({...f,versions:(f.versions||[]).filter(v=>isCharacterPackEnabled(v.packId))})).filter(f=>(f.versions||[]).length)}
 window.KOKORYO_CHARACTER_DATA=CHARACTER_DATA;
 window.KOKORYO_CHARACTER_FAMILIES=CHARACTER_FAMILIES;
 // 追加パックは CHARACTER_FAMILIES の対象キャラの versions に別バージョンを追加できる。
@@ -158,11 +160,15 @@ const CAST_GACHA_RATES=[['N',60],['R',20],['SR',11],['SSR',6],['UR',3]];
 // URは固有キャスト。同じURキャストはゲーム中に1人しか雇用できず、獲得済みURは以後の抽選候補から除外する。
 const STANDARD_CAST_IDS=['CN1','CN2','CN3','CR1','CR2','CR3','CSR1','CSSR1','CUR1','CUR2','CUR3','CUR4','CUR5','CUR6'];
 const SYNTHESIS_CAST_IDS=['CSR2','CSR3','CSR4','CSSR2','CSSR3','CSSR4'];
-const IMPLEMENTED_CAST_IDS=[...new Set([...STANDARD_CAST_IDS,...SYNTHESIS_CAST_IDS])];
-let ACTIVE_CAST_IDS=[...STANDARD_CAST_IDS];
+// TEST239: core registration owns integrated IDs; original pack definitions remain intact.
+const CORE_CAST_IDS=Object.freeze([...new Set([...STANDARD_CAST_IDS,...SYNTHESIS_CAST_IDS,...Object.keys(CLR_TYPES),...Object.values(KOKORYO_PACKS).filter(pack=>INTEGRATED_CHARACTER_PACK_IDS.includes(pack.id)).flatMap(pack=>Object.keys(pack.casts||{}))])]);
+const IMPLEMENTED_CAST_IDS=[...CORE_CAST_IDS];
+let ACTIVE_CAST_IDS=CORE_CAST_IDS.filter(id=>!CAST_TYPES[id]?.synthesisOnly&&CAST_TYPES[id]?.rarity!=='CLR');
+function enabledAdditionalCastIds(){return Object.values(KOKORYO_PACKS).filter(pack=>!INTEGRATED_CHARACTER_PACK_IDS.includes(pack.id)&&isPackEnabled(pack.id)).flatMap(pack=>pack.castIds||Object.keys(pack.casts||{}))}
+function registeredCastIds(){return [...new Set([...IMPLEMENTED_CAST_IDS,...enabledAdditionalCastIds()])]}
 function isUniqueRareAlreadyHired(id){let target=CAST_TYPES[id];if(target?.doppelUniqueException)return false;let group=target&&target.uniquePersonGroup;return employees.some(list=>(list||[]).some(e=>e&&e.rarity==='UR'&&(e.id===id||(group&&e.uniquePersonGroup===group)||(target&&e.name===target.name))))}
 function availableCastPool(ids,rarity){return ids.map(id=>CAST_TYPES[id]).filter(x=>x&&x.rarity===rarity&&(rarity!=='UR'||!isUniqueRareAlreadyHired(x.id)))}
-function implementedCastPool(rarity){let ids=[...ACTIVE_CAST_IDS];Object.values(KOKORYO_PACKS).forEach(pack=>{if(isPackEnabled(pack.id))ids.push(...(pack.castIds||Object.keys(pack.casts||{})))});return availableCastPool([...new Set(ids)].filter(id=>!CAST_TYPES[id]?.synthesisOnly),rarity)}
+function implementedCastPool(rarity){return availableCastPool([...new Set([...ACTIVE_CAST_IDS,...enabledAdditionalCastIds()])].filter(id=>!CAST_TYPES[id]?.synthesisOnly),rarity)}
 function allImplementedCastPool(rarity){return availableCastPool(IMPLEMENTED_CAST_IDS,rarity)}
 function addCastPack(ids=[]){ids.forEach(id=>{if(CAST_TYPES[id]&&!ACTIVE_CAST_IDS.includes(id))ACTIVE_CAST_IDS.push(id)})}
 function rollCastRarity(){
@@ -541,8 +547,7 @@ function gainLordResource(color){if(pendingLordResource<=0||!eraGainAllowed(turn
 
 function organizationUpgradeRarity(r){return ({N:'R',R:'SR',SR:'SSR',SSR:'UR'})[r]||null}
 function organizationPool(rarity){
- let packIds=[];Object.values(KOKORYO_PACKS).forEach(pack=>{if(isPackEnabled(pack.id))packIds.push(...(pack.castIds||Object.keys(pack.casts||{})))});
- let ids=[...new Set([...IMPLEMENTED_CAST_IDS,...packIds])];
+ let ids=registeredCastIds();
  return ids.map(id=>CAST_TYPES[id]).filter(e=>e&&e.rarity===rarity&&!e.synthesisOnly&&(rarity!=='UR'||!isUniqueRareAlreadyHired(e.id)));
 }
 // @kokoryo-end-section S0092
@@ -550,7 +555,7 @@ function organizationPool(rarity){
 // @kokoryo-section S0095
 
 function upgradeRarity(r){return ({N:'R',R:'SR',SR:'SSR',SSR:'UR'})[r]||null}
-function packCastPool(rarity){let packIds=[];Object.values(KOKORYO_PACKS).forEach(pack=>{if(isPackEnabled(pack.id))packIds.push(...(pack.castIds||Object.keys(pack.casts||{})))});let ids=[...new Set([...IMPLEMENTED_CAST_IDS,...packIds])];return ids.map(id=>CAST_TYPES[id]).filter(e=>e&&e.rarity===rarity&&!e.synthesisOnly&&(rarity!=='UR'||!isUniqueRareAlreadyHired(e.id)))}
+function packCastPool(rarity){let ids=registeredCastIds();return ids.map(id=>CAST_TYPES[id]).filter(e=>e&&e.rarity===rarity&&!e.synthesisOnly&&(rarity!=='UR'||!isUniqueRareAlreadyHired(e.id)))}
 function oneStepUpgradeCast(target,{allowUR=true}={}){
  if(!target)return null;
  let nr=upgradeRarity(target.rarity);if(!nr||(!allowUR&&nr==='UR'))return null;
