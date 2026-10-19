@@ -570,7 +570,7 @@ function turnClockOriginalCompleteEnd(){playLogChanges('turn_end');playLogEvent(
 // @kokoryo-section S0114
 
 function resetGameEndState(){
- replicaOwners=[];repeatBooksPending=[];pendingNormalInstallChoice=false;specialLegendAcquireOwner=null;
+ pendingTrade241=null;tradeRevision241=0;q('#tradeModal241')?.remove();replicaOwners=[];repeatBooksPending=[];pendingNormalInstallChoice=false;specialLegendAcquireOwner=null;
  playerTurnCounts=Array(playerCount).fill(0);lastCountedTurnToken=-1;oracleUpgradesThisTurn=Array(playerCount).fill(0);
  turnClockReset();
  endgameStarter=null;endgameRemaining=0;gameEnded=false;
@@ -660,6 +660,7 @@ function turnClockConfirm(message){
  return result;
 }
 function turnClockResolvePending(owner,token){
+ if(pendingTrade241)finishTrade241('トレード：持ち時間終了のため交換せず終了しました。');
  for(const overlay of document.querySelectorAll('[data-turn-clock-payment]'))overlay.__turnClockCancel?.();
  legendPaymentPending=false;
  for(let guard=0;guard<10000;guard++){
@@ -765,6 +766,7 @@ function turnClockExpire(token){
  }
 }
 function completeEnd(){
+ if(pendingTrade241)return;
  if(realOnlineMainMode&&!turnClockNet?.completing){turnClockRequestEnd();return}
  const s=turnClockState;
  if(!s)return turnClockOriginalCompleteEnd();

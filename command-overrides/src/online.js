@@ -363,13 +363,13 @@ async function confirmRealOnlineResources(){
 
 // Ver.3.11: 実オンライン・メインゲーム同期。
 function realMainSnapshot(){
- return {replicaOwners,playerTurnCounts,lastCountedTurnToken,oracleUpgradesThisTurn,turnClock:turnClockSnapshot(),turnClockStartPending,turnClockChoice,turnStartPostPending,depressionStartSuppressed,lordOracleUsed,lordTributeUsed,stdAbilityUsed,nextHireMinRarity,nextHireExtra,realMainRoster:realMainRoster.map((p,i)=>({client_id:p.client_id,name:p.name,charId:characters[i]||p.charId||'P1'})),gameSettings:{...gameSettings,enabledPacks:[...(gameSettings.enabledPacks||[])],enabledRulePacks:[...(gameSettings.enabledRulePacks||[])],activeRuleCards:[...(gameSettings.activeRuleCards||[])]},playerCount,characters,hands,powers,installed,temporary,elekiterUsed,commandCounts,komePlace,pendingParkPlayers,pendingParkTaken,installEffectStack,parkChoiceRevision,breadDeck,breadDiscard,breadHands,employees,lordFirstBreadUsed,lordOverclockUsed,pendingOverclockChoices,graveyardUsed,publicMarketUsed,market,discard,deck,turn,dice,legends,legendTakenThisTurn,endgameStarter,endgameRemaining,gameEnded,pendingLordResource,pendingNanban,pendingTenkuCat,pendingSSRBonus,pendingCastResourceChoices,hiredThisTurn,organizationUsed,fusionUsedThisTurn,nightEscapePostAvailable,nightEscapeResetNext,debugVP,copiedAbility,copiedOracleUsed,copiedTributeUsed,triggerNotices,dialogLog};
+ return {pendingTrade241,tradeRevision241,replicaOwners,playerTurnCounts,lastCountedTurnToken,oracleUpgradesThisTurn,turnClock:turnClockSnapshot(),turnClockStartPending,turnClockChoice,turnStartPostPending,depressionStartSuppressed,lordOracleUsed,lordTributeUsed,stdAbilityUsed,nextHireMinRarity,nextHireExtra,realMainRoster:realMainRoster.map((p,i)=>({client_id:p.client_id,name:p.name,charId:characters[i]||p.charId||'P1'})),gameSettings:{...gameSettings,enabledPacks:[...(gameSettings.enabledPacks||[])],enabledRulePacks:[...(gameSettings.enabledRulePacks||[])],activeRuleCards:[...(gameSettings.activeRuleCards||[])]},playerCount,characters,hands,powers,installed,temporary,elekiterUsed,commandCounts,komePlace,pendingParkPlayers,pendingParkTaken,installEffectStack,parkChoiceRevision,breadDeck,breadDiscard,breadHands,employees,lordFirstBreadUsed,lordOverclockUsed,pendingOverclockChoices,graveyardUsed,publicMarketUsed,market,discard,deck,turn,dice,legends,legendTakenThisTurn,endgameStarter,endgameRemaining,gameEnded,pendingLordResource,pendingNanban,pendingTenkuCat,pendingSSRBonus,pendingCastResourceChoices,hiredThisTurn,organizationUsed,fusionUsedThisTurn,nightEscapePostAvailable,nightEscapeResetNext,debugVP,copiedAbility,copiedOracleUsed,copiedTributeUsed,triggerNotices,dialogLog};
 }
 function applyRealMainSnapshot(st){
  if(!st||!turnClockAcceptSnapshot(st))return;realMainApplying=true;
  if(Array.isArray(st.realMainRoster)&&st.realMainRoster.length)realMainRoster=st.realMainRoster.map((p,i)=>({client_id:String(p.client_id||''),name:String(p.name||''),charId:String(st.characters?.[i]||p.charId||'P1')}));
  if(st.gameSettings){Object.assign(gameSettings,st.gameSettings);gameSettings.enabledPacks=[...(st.gameSettings.enabledPacks||[])];gameSettings.enabledRulePacks=[...(st.gameSettings.enabledRulePacks||[])];gameSettings.activeRuleCards=[...(st.gameSettings.activeRuleCards||[])];syncMarketTargetUI();}
- for(const k of ['replicaOwners','playerTurnCounts','lastCountedTurnToken','oracleUpgradesThisTurn','turnClockStartPending','turnClockChoice','turnStartPostPending','depressionStartSuppressed','lordOracleUsed','lordTributeUsed','stdAbilityUsed','nextHireMinRarity','nextHireExtra','playerCount','characters','hands','powers','installed','temporary','elekiterUsed','commandCounts','komePlace','pendingParkPlayers','pendingParkTaken','installEffectStack','parkChoiceRevision','breadDeck','breadDiscard','breadHands','employees','lordFirstBreadUsed','lordOverclockUsed','pendingOverclockChoices','graveyardUsed','publicMarketUsed','market','discard','deck','turn','dice','legends','legendTakenThisTurn','endgameStarter','endgameRemaining','gameEnded','pendingLordResource','pendingNanban','pendingTenkuCat','pendingSSRBonus','pendingCastResourceChoices','hiredThisTurn','organizationUsed','fusionUsedThisTurn','nightEscapePostAvailable','nightEscapeResetNext','debugVP','copiedAbility','copiedOracleUsed','copiedTributeUsed','triggerNotices','dialogLog'])if(Object.prototype.hasOwnProperty.call(st,k))eval(k+'=st[k]');
+ for(const k of ['pendingTrade241','tradeRevision241','replicaOwners','playerTurnCounts','lastCountedTurnToken','oracleUpgradesThisTurn','turnClockStartPending','turnClockChoice','turnStartPostPending','depressionStartSuppressed','lordOracleUsed','lordTributeUsed','stdAbilityUsed','nextHireMinRarity','nextHireExtra','playerCount','characters','hands','powers','installed','temporary','elekiterUsed','commandCounts','komePlace','pendingParkPlayers','pendingParkTaken','installEffectStack','parkChoiceRevision','breadDeck','breadDiscard','breadHands','employees','lordFirstBreadUsed','lordOverclockUsed','pendingOverclockChoices','graveyardUsed','publicMarketUsed','market','discard','deck','turn','dice','legends','legendTakenThisTurn','endgameStarter','endgameRemaining','gameEnded','pendingLordResource','pendingNanban','pendingTenkuCat','pendingSSRBonus','pendingCastResourceChoices','hiredThisTurn','organizationUsed','fusionUsedThisTurn','nightEscapePostAvailable','nightEscapeResetNext','debugVP','copiedAbility','copiedOracleUsed','copiedTributeUsed','triggerNotices','dialogLog'])if(Object.prototype.hasOwnProperty.call(st,k))eval(k+'=st[k]');
  if(realMainRoster.length===playerCount&&realMainRoster.every(p=>p.charId&&p.charId!=='P1'))characters=realMainRoster.map(p=>p.charId);
  realOnlineMainMode=true;realLobbyPhase='main';viewer=Math.max(0,realMyPlayerIndex());
  q('#onlineResourceScreen')?.classList.add('hidden');q('#onlineDraftScreen')?.classList.add('hidden');q('#onlineCharacterScreen')?.classList.add('hidden');q('#onlineRealLobby')?.classList.add('hidden');q('#mainApp')?.classList.remove('entry-locked');q('#setup')?.classList.add('hidden');q('#draft')?.classList.add('hidden');q('#gamestartsetup')?.classList.add('hidden');q('#game')?.classList.remove('hidden');q('#start').style.display='none';
@@ -422,6 +422,7 @@ let realMainBroadcastTimer=null;
 function scheduleRealMainBroadcast(e){
  if(!realOnlineMainMode||realMainApplying||viewer!==turn)return;
  const t=e?.target instanceof Element?e.target:null;
+ if(t?.closest('#tradeModal241'))return;
  if(!t||!t.closest('#game, .imgmodal, #limit'))return;
  const actionOwner=turn;
  clearTimeout(realMainBroadcastTimer);
@@ -540,6 +541,7 @@ async function enterRealOnlineLobby(name,pass,resume=null){
   realLobbyChannel.on('broadcast',{event:'clock_pulse'},({payload})=>turnClockReceivePulse(payload));
   realLobbyChannel.on('broadcast',{event:'main_game_finished'},({payload})=>turnClockReceiveState(payload));
   realLobbyChannel.on('broadcast',{event:'park_pick'},({payload})=>turnClockReceivePark(payload));
+  realLobbyChannel.on('broadcast',{event:'trade_choice_241'},({payload})=>receiveTradeChoice241(payload));
   realLobbyChannel.on('broadcast',{event:'state_sync_request'},()=>{setTimeout(()=>sendRealStateSync(),Math.min(500,Math.max(0,realMyPlayerIndex())*80))});
   realLobbyChannel.on('broadcast',{event:'state_sync_response'},({payload})=>applyRealStateSync(payload));
   q('#entryScreen')?.classList.add('hidden');q('#onlineRealLobby')?.classList.remove('hidden');
@@ -701,6 +703,7 @@ function turnClockReceiveAction(payload){
   if(payload.end)turnClockResendState();return;
  }
  if(payload.state?.turn!==turn||payload.client!==realMainRoster[turn]?.client_id)return;
+ if(pendingTrade241){turnClockResendState();return}
  if((payload.revision||0)<(n.barrier||0)){turnClockResendState();return}
  turnClockAccount();
  if(s.remaining[turn]<=0){turnClockExpire(s.token);return}

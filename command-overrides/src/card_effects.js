@@ -158,7 +158,7 @@ function chooseLegendCard(title,note,opts,onChoose,onCancel){
  if(!canChoose())return;
  q('#legendChoiceCancel').style.display='';q('#legendChoiceCancel').textContent='キャンセル';
  let m=q('#legendChoiceModal'),grid=q('#legendChoiceCards');q('#legendChoiceTitle').textContent=title;q('#legendChoiceNote').textContent=note||'';grid.innerHTML='';
- opts.forEach(x=>{let w=document.createElement('div');w.className='card selectable-card';w.style.justifyContent='flex-start';let c=x.c;if(c&&resolvedContentImage(c)){let img=document.createElement('img');img.src=resolvedContentImage(c);img.alt=c.name;img.className='cardimg';img.onerror=()=>{let ph=document.createElement('div');ph.className='muted';ph.textContent='イラスト未設定';img.replaceWith(ph)};w.appendChild(img)}else{let ph=document.createElement('div');ph.className='muted';ph.style.cssText='aspect-ratio:456/701;border:1px dashed #bbb;border-radius:6px;display:flex;align-items:center;justify-content:center;background:#fff;margin-bottom:7px;text-align:center';ph.textContent='イラスト未設定';w.appendChild(ph)}let nm=document.createElement('strong');nm.textContent=x.label||c?.name||'カード';w.appendChild(nm);if(c){let meta=document.createElement('div');meta.className='small';meta.style.marginTop='5px';meta.textContent='VP：'+(c.vp||0);w.appendChild(meta);let ef=document.createElement('div');ef.className='small';ef.style.marginTop='6px';ef.textContent=effectText(c);w.appendChild(ef)}w.onclick=()=>{if(choiceSettled||!canChoose()||turn!==choiceOwner)return;choiceSettled=true;m.classList.add('hidden');turnClockChoice=null;onChoose(x)};grid.appendChild(w)});
+ opts.forEach(x=>{let w=document.createElement('div');w.className='card selectable-card';w.style.justifyContent='flex-start';let c=x.c;if(c)w.appendChild(cardArtwork(c));let nm=document.createElement('strong');nm.textContent=x.label||c?.name||'カード';w.appendChild(nm);if(c){let meta=document.createElement('div');meta.className='small';meta.style.marginTop='5px';meta.textContent='VP：'+(c.vp||0);w.appendChild(meta);let ef=document.createElement('div');ef.className='small';ef.style.marginTop='6px';ef.textContent=effectText(c);w.appendChild(ef)}w.onclick=()=>{if(choiceSettled||!canChoose()||turn!==choiceOwner)return;choiceSettled=true;m.classList.add('hidden');turnClockChoice=null;onChoose(x)};grid.appendChild(w)});
  q('#legendChoiceCancel').onclick=()=>{if(choiceSettled||!canChoose()||turn!==choiceOwner)return;choiceSettled=true;m.classList.add('hidden');turnClockChoice=null;if(onCancel)onCancel()};m.classList.remove('hidden');
 }
 function resolveEggHarp(owner,n=0){
@@ -615,7 +615,7 @@ function resolveOnInstall(c,owner){
  else if(c.special==='castLevelUp'){cardCommands.koyou('レベルアップ',1,{targetFilter:(e,next)=>next.rarity!=='UR',render:false})}
  else if(c.special==='amicableRetirement')resolveAmicableRetirement(owner);
  else if(c.special==='honeyTrap'){let targets=[];for(let p=0;p<playerCount;p++)if(p!==owner)(employees[p]||[]).forEach((e,i)=>targets.push({p,i,e}));if(targets.length){let n=Math.floor(+(turnClockPrompt('《ハニートラップ》：解雇する相手の雇用キャラクター番号\n'+targets.map((x,i)=>(i+1)+'. P'+(x.p+1)+' '+castDisplayName(x.e)).join('\n'),'1')||0));if(n&&targets[n-1])employees[targets[n-1].p].splice(targets[n-1].i,1)}}
- else if(c.special==='employeeTrade'){let p=+turnClockPrompt('《トレード》：交換相手のP番号','2')-1;if(p>=0&&p<playerCount&&p!==owner&&(employees[owner]||[]).length&&(employees[p]||[]).length){let a=Math.floor(+(turnClockPrompt('自分の雇用キャラクター番号\n'+employees[owner].map((e,i)=>(i+1)+'. '+castDisplayName(e)).join('\n'),'1')||0))-1;let b=Math.floor(+(turnClockPrompt('相手の雇用キャラクター番号\n'+employees[p].map((e,i)=>(i+1)+'. '+castDisplayName(e)).join('\n'),'1')||0))-1;if(employees[owner][a]&&employees[p][b]){let t=employees[owner][a];employees[owner][a]=employees[p][b];employees[p][b]=t}}}
+ else if(c.special==='employeeTrade')resolveTrade241(owner);
  else if(c.special==='surpriseSpecialGacha')resolveSurpriseGacha(owner);
  else if(c.special==='specialProcurement'){for(let p=0;p<playerCount;p++){let n=p===owner?15:5;let k=turnClockPrompt('《特需》：P'+(p+1)+'が獲得する資源\n資金/食料/兵力の個数を「資金,食料,兵力」で入力（合計'+n+'）',''+n+',0,0');if(k){let a=k.split(',').map(Number);if(a.length===3&&a.reduce((x,y)=>x+y,0)===n){powers[p].y+=a[0];powers[p].p+=a[1];powers[p].r+=a[2]}}}}
  else if(c.special==='cursedclock'){gainResource(owner,'y',3,'effect');gainResource(owner,'r',3,'effect');gainResource(owner,'p',3,'effect');alert('呪怨の懐中時計の設置時効果：資金・兵力・食料を3個ずつ獲得しました。');}
@@ -633,7 +633,7 @@ function drainInstallEffects(){
  if(installEffectRunning)return;installEffectRunning=true;
  try{while(installEffectStack.length&&!gameEnded){
   const frame=installEffectStack[installEffectStack.length-1];
-  if(pendingParkPlayers.length||pendingNormalInstallChoice)break;
+  if(pendingParkPlayers.length||pendingNormalInstallChoice||pendingTrade241)break;
   if(!frame.remaining){installEffectStack.pop();continue}
   frame.remaining--;
   if(frame.kind==='petitBonus'){
@@ -800,7 +800,7 @@ function resolveSurpriseGacha(owner){
  const dialog=selectionDialog240('サプライズスペシャルガチャ','雇用するキャラクターを選択してください。',()=>{});
  const label=document.createElement('label');label.textContent='キャラクター';label.htmlFor='surpriseGachaSelect';
  const select=document.createElement('select');select.id='surpriseGachaSelect';select.appendChild(new Option('選択してください',''));
- const rarity={N:'CN',R:'CR',SR:'CSR',SSR:'CSSR'};
+ const rarity={N:'N',R:'R',SR:'SR',SSR:'SSR'};
  for(const e of pool){const reason=surpriseGachaBlocked(e,owner);select.appendChild(new Option(rarity[e.rarity]+'｜'+castDisplayName(e)+(reason?'（'+reason+'）':''),e.id))}
  const message=document.createElement('div');message.id='surpriseGachaReason';message.setAttribute('role','status');
  const ok=document.createElement('button');ok.id='surpriseGachaHire';ok.className='primary';ok.textContent='雇用する';ok.disabled=true;
@@ -821,6 +821,76 @@ function selectRitualCards(title,candidates,count,done){
  const vp=document.createElement('span');vp.textContent='VP：'+cardVP(c,turn);const mark=document.createElement('span');mark.className='ritual-selection-mark';meta.append(name,vp,mark);row.append(image,meta);
  row.onclick=()=>{if(!dialog.valid())return;if(chosen.has(c))chosen.delete(c);else if(chosen.size<count)chosen.add(c);update()};rows.push([c,row,mark]);list.appendChild(row)});
  ok.onclick=()=>{if(dialog.valid()&&chosen.size===count)dialog.finish([...chosen])};dialog.grid.append(status,ok,list);update();
+}
+
+// TEST241: a trade records two independent employee-instance choices.
+let pendingTrade241=null,tradeRevision241=0;
+function tradePlayerName241(p){return 'P'+(p+1)+(realOnlineMainMode&&realPlayerName(p)?' '+realPlayerName(p):'')}
+function tradeEmployeeKey241(e,p){
+ if(!e._tradeId241){const used=new Set(employees.flat().map(x=>x._tradeId241));let n=1;while(used.has('employee:'+n))n++;e._tradeId241='employee:'+n}return e._tradeId241;
+}
+function tradeTargets241(owner){return Array.from({length:playerCount},(_,p)=>p).filter(p=>p!==owner&&(employees[p]||[]).length)}
+function tradeChooser241(){return !pendingTrade241?null:pendingTrade241.target===null?pendingTrade241.owner:pendingTrade241.target}
+function resolveTrade241(owner){
+ if(pendingTrade241||!(employees[owner]||[]).length||!tradeTargets241(owner).length)return;
+ employees.forEach((list,p)=>list.forEach(e=>tradeEmployeeKey241(e,p)));
+ pendingTrade241={id:++tradeRevision241,owner,token:turnClockState.token,target:null,own:null};
+ advanceTradeBots241();renderTrade241();
+}
+function finishTrade241(message=''){
+ pendingTrade241=null;q('#tradeModal241')?.classList.add('hidden');if(message)triggerNotices.push(message);drainInstallEffects();renderGame();
+}
+function applyTradeChoice241({id,player,kind,target,key}){
+ const t=pendingTrade241;if(!t||t.id!==id||!turnClockLeaseValid(t.owner,t.token))return false;
+ if(kind==='cancel'){if(player!==t.owner&&player!==t.target)return false;finishTrade241('トレード：交換をキャンセルしました。');return true}
+ if(player!==tradeChooser241())return false;
+ const chosen=(employees[player]||[]).find(e=>e._tradeId241===key);if(!chosen)return false;
+ if(t.target===null){if(!tradeTargets241(t.owner).includes(target))return false;t.target=target;t.own=key;return true}
+ const own=(employees[t.owner]||[]).find(e=>e._tradeId241===t.own);
+ if(!own){finishTrade241('トレード：交換対象が変わったため、交換せず終了しました。');return true}
+ const a=employees[t.owner].indexOf(own),b=employees[t.target].indexOf(chosen);employees[t.owner][a]=chosen;employees[t.target][b]=own;
+ finishTrade241('トレード：'+tradePlayerName241(t.owner)+'の「'+castDisplayName(own)+'」と'+tradePlayerName241(t.target)+'の「'+castDisplayName(chosen)+'」を交換しました。');return true;
+}
+function advanceTradeBots241(){
+ if(realOnlineMainMode&&!isRealLobbyHost())return;
+ for(let n=0;n<2&&pendingTrade241;n++){const t=pendingTrade241,p=tradeChooser241();if(!botIsPlayer(p))break;
+  const e=employees[p]?.[0];if(!e){finishTrade241();break}applyTradeChoice241({id:t.id,player:p,kind:'pick',target:tradeTargets241(p)[0],key:e._tradeId241});
+ }
+}
+function requestTradeChoice241(kind,target,key){
+ const t=pendingTrade241;if(!t)return;
+ const player=realOnlineMainMode?realMyPlayerIndex():tradeChooser241();
+ if(realOnlineMainMode){const n=turnClockNet;if(!n?.ready)return;const payload={client:realLobbyClientId,match:n.match,epoch:n.epoch,token:turnClockState.token,id:t.id,player,kind,target,key};if(isRealLobbyHost())receiveTradeChoice241(payload);else turnClockSend('trade_choice_241',payload)}
+ else if(applyTradeChoice241({id:t.id,player,kind,target,key})){advanceTradeBots241();renderGame()}
+}
+function receiveTradeChoice241(payload){
+ const n=turnClockNet,t=pendingTrade241;
+ if(!isRealLobbyHost()||!realOnlineMainMode||!n?.ready||n.completing||!t||!payload)return;
+ if(payload.match!==n.match||payload.epoch!==n.epoch||payload.token!==turnClockState.token||payload.client!==realMainRoster[payload.player]?.client_id)return;
+ turnClockAccount();if(turnClockState.remaining[turn]<=0){turnClockExpire(turnClockState.token);return}
+ if(applyTradeChoice241(payload)){advanceTradeBots241();renderGame();turnClockCommit();n.barrier=n.revision}
+}
+function renderTrade241(){
+ let modal=q('#tradeModal241');if(!pendingTrade241){modal?.classList.add('hidden');return}
+ if(!modal){modal=document.createElement('div');modal.id='tradeModal241';modal.className='imgmodal';modal.style.zIndex='10040';document.body.appendChild(modal)}
+ modal.classList.remove('hidden');const t=pendingTrade241,p=tradeChooser241();
+ // Preserve unconfirmed input while an unrelated render/pulse occurs.
+ const signature=[t.id,t.target,t.own,p,realOnlineMainMode?realMyPlayerIndex():viewer,employees.map(list=>list.map(e=>e._tradeId241).join(',')).join(';')].join('|');if(modal.dataset.signature===signature)return;modal.dataset.signature=signature;
+ modal.replaceChildren();const box=document.createElement('div');box.className='game-confirm-box';modal.appendChild(box);
+ const title=document.createElement('strong');title.textContent='トレード：'+tradePlayerName241(p)+'本人が、自分から渡す雇用キャラクターを選択';box.appendChild(title);
+ const allowed=!realOnlineMainMode||realMyPlayerIndex()===p;
+ if(!allowed){const wait=document.createElement('p');wait.textContent=tradePlayerName241(p)+'の選択を待っています。相手の交換対象は指定できません。';box.appendChild(wait)}
+ const makeSelect=(labelText,id)=>{const label=document.createElement('label');label.textContent=labelText;const select=document.createElement('select');select.id=id;select.appendChild(new Option('選択してください',''));select.disabled=!allowed;label.appendChild(select);box.appendChild(label);return select};
+ let targetSelect=null;if(t.target===null){targetSelect=makeSelect('交換相手のプレイヤー','tradeTarget241');for(const player of tradeTargets241(t.owner))targetSelect.appendChild(new Option(tradePlayerName241(player),String(player)))}
+ const ownSelect=makeSelect(tradePlayerName241(p)+'が渡すキャラクター','tradeEmployee241');
+ for(const e of employees[p]||[])ownSelect.appendChild(new Option(displayCastRarity241(e.rarity)+'｜'+castDisplayName(e),e._tradeId241));
+ const roster=document.createElement('div');roster.id='tradeRoster241';box.appendChild(roster);
+ const showRoster=()=>{roster.replaceChildren();const players=t.target===null?(targetSelect.value===''?tradeTargets241(t.owner):[+targetSelect.value]):[t.owner];for(const player of players){const row=document.createElement('div');row.textContent=tradePlayerName241(player)+'：'+(employees[player]||[]).map(e=>displayCastRarity241(e.rarity)+'｜'+castDisplayName(e)).join(' ／ ');roster.appendChild(row)}};
+ const note=document.createElement('p');note.textContent=t.target===null?'相手は、自分が渡すキャラクターを相手自身で選びます。':'あなたから渡すキャラクターを選んでください。双方の指定後に交換します。';box.appendChild(note);
+ const ok=document.createElement('button');ok.id='tradeConfirm241';ok.className='primary';ok.textContent='自分の選択を確定';ok.disabled=true;
+ const update=()=>{ok.disabled=!allowed||!ownSelect.value||!!targetSelect&&targetSelect.value==='';showRoster()};ownSelect.onchange=update;if(targetSelect)targetSelect.onchange=update;
+ ok.onclick=()=>{if(ok.disabled)return;requestTradeChoice241('pick',targetSelect?+targetSelect.value:undefined,ownSelect.value)};
+ const cancel=document.createElement('button');cancel.className='secondary';cancel.textContent='交換をキャンセル';cancel.disabled=realOnlineMainMode&&![t.owner,t.target].includes(realMyPlayerIndex());cancel.onclick=()=>requestTradeChoice241('cancel');box.append(ok,cancel);showRoster();
 }
 
 // @kokoryo-end-section S0099
