@@ -578,7 +578,7 @@ function showHireCardList(){
  if(!modal||!root)return;
  root.replaceChildren();
  const order=[['N','N'],['R','R'],['SR','SR'],['SSR','SSR'],['UR','UR'],['CLR','CLR']];
- const all=Object.values(CAST_TYPES).filter(e=>isPackEnabled(e.packId));
+ const all=registeredCastIds().map(id=>CAST_TYPES[id]).filter(Boolean);
  order.forEach(([rarity,label])=>{
   const group=all.filter(e=>e.rarity===rarity).sort((a,b)=>String(a.id||'').localeCompare(String(b.id||''),'ja',{numeric:true}));
   if(!group.length)return;
