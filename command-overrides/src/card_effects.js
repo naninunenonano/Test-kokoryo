@@ -616,7 +616,7 @@ function resolveOnInstall(c,owner){
  else if(c.special==='amicableRetirement')resolveAmicableRetirement(owner);
  else if(c.special==='honeyTrap'){let targets=[];for(let p=0;p<playerCount;p++)if(p!==owner)(employees[p]||[]).forEach((e,i)=>targets.push({p,i,e}));if(targets.length){let n=Math.floor(+(turnClockPrompt('《ハニートラップ》：解雇する相手の雇用キャラクター番号\n'+targets.map((x,i)=>(i+1)+'. P'+(x.p+1)+' '+castDisplayName(x.e)).join('\n'),'1')||0));if(n&&targets[n-1])employees[targets[n-1].p].splice(targets[n-1].i,1)}}
  else if(c.special==='employeeTrade'){let p=+turnClockPrompt('《トレード》：交換相手のP番号','2')-1;if(p>=0&&p<playerCount&&p!==owner&&(employees[owner]||[]).length&&(employees[p]||[]).length){let a=Math.floor(+(turnClockPrompt('自分の雇用キャラクター番号\n'+employees[owner].map((e,i)=>(i+1)+'. '+castDisplayName(e)).join('\n'),'1')||0))-1;let b=Math.floor(+(turnClockPrompt('相手の雇用キャラクター番号\n'+employees[p].map((e,i)=>(i+1)+'. '+castDisplayName(e)).join('\n'),'1')||0))-1;if(employees[owner][a]&&employees[p][b]){let t=employees[owner][a];employees[owner][a]=employees[p][b];employees[p][b]=t}}}
- else if(c.special==='surpriseSpecialGacha'){let pool=['N','R','SR','SSR'].flatMap(r=>packCastPool(r));if(pool.length){let msg=pool.map((e,i)=>(i+1)+'. '+e.rarity+' '+castDisplayName(e)).join('\n');let n=Math.floor(+(turnClockPrompt('《サプライズスペシャルガチャ》\n雇用するキャラクター\n'+msg,'1')||0));if(n&&pool[n-1]){finalizeHire({...pool[n-1]},'サプライズスペシャルガチャ：');notifyStaffingAgency(owner)}}}
+ else if(c.special==='surpriseSpecialGacha')resolveSurpriseGacha(owner);
  else if(c.special==='specialProcurement'){for(let p=0;p<playerCount;p++){let n=p===owner?15:5;let k=turnClockPrompt('《特需》：P'+(p+1)+'が獲得する資源\n資金/食料/兵力の個数を「資金,食料,兵力」で入力（合計'+n+'）',''+n+',0,0');if(k){let a=k.split(',').map(Number);if(a.length===3&&a.reduce((x,y)=>x+y,0)===n){powers[p].y+=a[0];powers[p].p+=a[1];powers[p].r+=a[2]}}}}
  else if(c.special==='cursedclock'){gainResource(owner,'y',3,'effect');gainResource(owner,'r',3,'effect');gainResource(owner,'p',3,'effect');alert('呪怨の懐中時計の設置時効果：資金・兵力・食料を3個ずつ獲得しました。');}
  else if(c.special==='paneteria'){installEffectStack.push({kind:'park',owner,remaining:2,active:false});drainInstallEffects()}
@@ -716,7 +716,8 @@ function sacrificeNormalCards(c,owner,count){
  const candidates=(installed[owner]||[]).filter(x=>x!==c&&normalCard(x));
  if(candidates.length<count)return;
  if(c.special==='ritualArsNova'&&!ritualLegendCandidates().length)return;
- selectNormalCards(c.name,candidates,count,chosen=>{
+ const select=c.special==='ritualArsNova'?selectRitualCards:selectNormalCards;
+ select(c.name,candidates,count,chosen=>{
   const commit=()=>{
    const zone=installed[owner].includes(c)?'installed':temporary[owner].includes(c)?'temporary':null;
    if(turn!==owner||!zone||chosen.length!==count||new Set(chosen).size!==count||!chosen.every(x=>x!==c&&normalCard(x)&&installed[owner].includes(x)))return false;
@@ -777,6 +778,51 @@ function installReplica(handIndex,choices){
  [...choices].sort((a,b)=>(b.startsWith('b:')?+b.slice(2):-1)-(a.startsWith('b:')?+a.slice(2):-1)).forEach(choice=>consumeCostChoice(choice,face));
  registerInstallation(turn,hands[turn].splice(handIndex,1)[0]);renderGame();return true;
 }
+// TEST240: scoped choices keep existing card data and common hire/acquisition paths.
+function surpriseGachaCandidates(){return registeredCastIds().map(id=>CAST_TYPES[id]).filter(e=>e&&['N','R','SR','SSR'].includes(e.rarity))}
+function surpriseGachaBlocked(e,owner){
+ if(!e||!surpriseGachaCandidates().some(x=>x.id===e.id))return 'このキャラクターは現在の候補に含まれません。';
+ if(!cardCommands.can(null,'hire-space',{owner}))return '雇用枠が上限です。';
+ return '';
+}
+function selectionDialog240(title,note,done,cancel=()=>{}){
+ const owner=turn,token=turnClockState?.token;let settled=false;
+ const valid=()=>!settled&&turnClockLeaseValid(owner,token)&&(!(onlineDebugMode||realOnlineMainMode)||viewer===owner);
+ const finish=(fn,value)=>{if(!valid())return;settled=true;pendingNormalInstallChoice=false;q('#legendChoiceModal').classList.add('hidden');q('#legendChoiceCards').classList.remove('selection240');turnClockChoice=null;fn(value);drainInstallEffects();renderGame()};
+ chooseLegendCard(title,note,[],()=>{},()=>finish(cancel));
+ pendingNormalInstallChoice=true;const grid=q('#legendChoiceCards');grid.classList.add('selection240');
+ return {grid,valid,finish:value=>finish(done,value)};
+}
+function resolveSurpriseGacha(owner){
+ const pool=surpriseGachaCandidates();if(!pool.length)return;
+ const hire=id=>{const e=surpriseGachaCandidates().find(e=>e.id===id);if(surpriseGachaBlocked(e,owner))return false;return cardCommands.koyou('select',1,{pool:surpriseGachaCandidates(),selected:[e]}).length===1};
+ if(botIsPlayer(owner)){const e=pool.find(e=>!surpriseGachaBlocked(e,owner));if(e)hire(e.id);return}
+ const dialog=selectionDialog240('サプライズスペシャルガチャ','雇用するキャラクターを選択してください。',()=>{});
+ const label=document.createElement('label');label.textContent='キャラクター';label.htmlFor='surpriseGachaSelect';
+ const select=document.createElement('select');select.id='surpriseGachaSelect';select.appendChild(new Option('選択してください',''));
+ const rarity={N:'CN',R:'CR',SR:'CSR',SSR:'CSSR'};
+ for(const e of pool){const reason=surpriseGachaBlocked(e,owner);select.appendChild(new Option(rarity[e.rarity]+'｜'+castDisplayName(e)+(reason?'（'+reason+'）':''),e.id))}
+ const message=document.createElement('div');message.id='surpriseGachaReason';message.setAttribute('role','status');
+ const ok=document.createElement('button');ok.id='surpriseGachaHire';ok.className='primary';ok.textContent='雇用する';ok.disabled=true;
+ select.onchange=()=>{const e=surpriseGachaCandidates().find(e=>e.id===select.value);message.textContent=select.value?surpriseGachaBlocked(e,owner):'';ok.disabled=!select.value||!!message.textContent};
+ ok.onclick=()=>{if(!dialog.valid()||!select.value)return;const reason=surpriseGachaBlocked(surpriseGachaCandidates().find(e=>e.id===select.value),owner);if(reason){message.textContent=reason;ok.disabled=true;return}if(hire(select.value))dialog.finish();else{select.onchange();message.textContent='雇用できませんでした。選び直してください。'}};
+ dialog.grid.append(label,select,message,ok);
+}
+function selectRitualCards(title,candidates,count,done){
+ if(botIsPlayer(turn)){done(candidates.slice(0,count));return}
+ const chosen=new Set();const dialog=selectionDialog240(title,'捨て札にする設置済み通常カードを選択してください。',done);
+ const status=document.createElement('div');status.id='ritualSelectionCount';status.setAttribute('role','status');
+ const ok=document.createElement('button');ok.id='ritualSelectionConfirm';ok.className='primary';ok.textContent='選択した5枚で確定';ok.disabled=true;
+ const list=document.createElement('div');list.className='ritual-selection-list';const rows=[];
+ const update=()=>{status.textContent=chosen.size+'/'+count+'枚';ok.disabled=chosen.size!==count;for(const [c,row,mark] of rows){const yes=chosen.has(c);row.setAttribute('aria-pressed',String(yes));row.classList.toggle('selected',yes);mark.textContent=yes?'✓ 選択中':'未選択';row.disabled=!!turnClockState?.resolving&&yes}};
+ candidates.forEach((c,i)=>{const row=document.createElement('button');row.type='button';row.className='ritual-selection-row';row.dataset.instance=String(i);
+ const image=document.createElement('img');image.src=resolvedContentImage(c)||'';image.alt=c.name;image.onerror=()=>{image.style.visibility='hidden'};
+ const meta=document.createElement('span');meta.className='ritual-selection-meta';const name=document.createElement('strong');name.textContent=c.name;
+ const vp=document.createElement('span');vp.textContent='VP：'+cardVP(c,turn);const mark=document.createElement('span');mark.className='ritual-selection-mark';meta.append(name,vp,mark);row.append(image,meta);
+ row.onclick=()=>{if(!dialog.valid())return;if(chosen.has(c))chosen.delete(c);else if(chosen.size<count)chosen.add(c);update()};rows.push([c,row,mark]);list.appendChild(row)});
+ ok.onclick=()=>{if(dialog.valid()&&chosen.size===count)dialog.finish([...chosen])};dialog.grid.append(status,ok,list);update();
+}
+
 // @kokoryo-end-section S0099
 
 // @kokoryo-section S0101
