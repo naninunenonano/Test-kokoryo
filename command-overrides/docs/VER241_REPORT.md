@@ -19,4 +19,4 @@ Real smartphone rendering/touch and live multi-device online play: unconfirmed. 
 
 ZIP contains all existing pack/rule JS and images, sources and FILE_CHANGES.tsv. ZIP entry times use current Asia/Tokyo time.
 
-Validation totals: game regression suite 417 (31 dedicated UI/Trade/Doppel/scope checks), Python build/isolation 23, generated clock 34, offline/Bot startup 2; total 476. Generated JavaScript syntax: 13 scripts.
+Validation totals: game regression suite 419 (33 dedicated UI/Trade/Doppel/scope checks), Python build/isolation 23, generated clock 34, offline/Bot startup 2; total 478. Generated JavaScript syntax: 13 scripts.

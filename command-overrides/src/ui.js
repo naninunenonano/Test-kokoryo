@@ -73,8 +73,8 @@ function costSelect(required=null,allowDiscount=true){return makeChoicePicker(al
 
 // TEST241: one artwork frame for loaded, missing and future illustrations.
 function cardArtwork(c){
- const frame=document.createElement('div');frame.className='card-artwork';
- const missing=()=>{frame.replaceChildren();const ph=document.createElement('div');ph.className='cardimg cardimg-missing';ph.textContent='NO IMAGE';frame.appendChild(ph)};
+ const frame=document.createElement('div');frame.className='card-artwork';frame.__cardData241=c;
+ const missing=()=>{frame.replaceChildren();const ph=document.createElement('div');ph.className='cardimg cardimg-missing zoomable';ph.textContent='NO IMAGE';ph.alt=c?.name||'カード';frame.appendChild(ph)};
  const src=resolvedContentImage(c);if(!src){missing();return frame}
  const image=document.createElement('img');image.className='cardimg zoomable';image.src=src;image.alt=c?.name||'カード';image.onerror=missing;frame.appendChild(image);return frame;
 }
@@ -832,11 +832,12 @@ function setupCompactUI(){
 // @kokoryo-section S0120
 
 function openCardImage(img,c=null,context='view',index=null){
+ c=c||img?.closest?.('.card-artwork')?.__cardData241||null;
  const src=img?.src||'',title=c?.name||img?.alt||'カード詳細';
  const modal=q('#imgmodal');
  if(!modal.classList.contains('hidden')&&modal.dataset.cardKey===(c?.key||title)&&modal.dataset.context===context){modal.classList.add('hidden');return}
  modal.dataset.cardKey=c?.key||title;modal.dataset.context=context;
- const oldArt=q('#expandedCardArtwork');if(oldArt)oldArt.remove();q('#modalimg').classList.add('hidden');if(c){const art=cardArtwork({...c,...(src?{image:src}:{})});art.id='expandedCardArtwork';q('#modalimg').after(art)}else{q('#modalimg').src=src;q('#modalimg').alt=title;q('#modalimg').classList.toggle('hidden',!src)}
+ const oldArt=q('#expandedCardArtwork');if(oldArt)oldArt.remove();q('#modalimg').classList.add('hidden');if(c){const art=cardArtwork({...c,...(src?{image:src}:{})});art.id='expandedCardArtwork';art.querySelectorAll('.zoomable').forEach(e=>e.classList.remove('zoomable'));q('#modalimg').after(art)}else{q('#modalimg').src=src;q('#modalimg').alt=title;q('#modalimg').classList.toggle('hidden',!src)}
  q('#expandedCardTitle').textContent=title;
  const info=q('#expandedCardInfo');info.replaceChildren();
  if(c)info.appendChild(cardInfoSections(c));
