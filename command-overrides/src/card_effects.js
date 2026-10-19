@@ -404,7 +404,7 @@ function cardVP(c,p){
  if(hasEquivalentExchange(p)&&resourceVPFormula(c)){const v=equivalentResourceVP(p).get(c);if(v!==undefined)return v+(c.special==='greatDepression'?Math.ceil((commandCounts[p]||0)/10):0);}
  if(c.special==='greatDepression')return dynamicSpecialVP(c,p)+Math.ceil((commandCounts[p]||0)/10);
  if(c.special==='bigCompany')return (employees[p]||[]).length;
- if(c.special==='naroppaFestival'){let keys=new Set(['S1','S2','S3','S4','S5','S6','S7','S8','S9','S10']);return allFieldCards(p).filter(x=>keys.has(x.key)).reduce((n,x)=>n+fixedVP(x),0)*2;}
+ if(c.special==='naroppaFestival'){let keys=new Set(specialConfig(c).standardKeys||['S1','S2','S3','S4','S5','S6','S7','S8']);return allFieldCards(p).filter(x=>keys.has(x.key)).reduce((n,x)=>n+fixedVP(x),0)*2;}
  if(c.special==='naroppaGuild')return Math.floor(((powers[p]?.y||0)+(powers[p]?.p||0)+(powers[p]?.r||0))/3);
  let dyn=dynamicSpecialVP(c,p);if(dyn!==null)return dyn;
  if(c.special==='treasureship'){
@@ -425,7 +425,7 @@ function cardVP(c,p){
 function installNightEscape(){
  if(!nightEscapePostAvailable||!isViewingOwnTurn())return;
  if(pendingLordResource>0||pendingNanban>0||pendingTenkuCat>0||pendingSSRBonus>0||pendingCastResourceChoices.length||pendingOverclockChoices.length)return;
- let i=hands[turn].findIndex(c=>c.key==='N22');if(i<0||(commandCounts[turn]||0)<5)return;
+ let i=hands[turn].findIndex(c=>c.key==='N42');if(i<0||(commandCounts[turn]||0)<5)return;
  nightEscapePostAvailable=false;
  let card=hands[turn].splice(i,1)[0];
  let n=depressionDebtLocked(turn)?0:(commandCounts[turn]||0);if(n){commandCounts[turn]=0;komePlace+=n;}
@@ -442,7 +442,7 @@ function installNightEscape(){
 // @kokoryo-section S0083
 
 function consumeOneOf(choice,values){if(String(choice).startsWith('free:request:')&&lordInstallDiceDiscount()>Number(String(choice).split(':')[2]))return true;for(let v of values){let [k,n]=String(choice).split(':');if(k==='d'){let d=unusedDice().find(x=>x.id===+n&&x.value===v);if(d){d.used=true;return true}}else if(k==='b'){let i=+n,b=breadHands[turn][i];if(b&&(b.value==='any'||b.value===v)){breadDiscard.push(breadHands[turn].splice(i,1)[0]);recycleBreadIfEmpty();return true}}}return false}
-function installStandard(handIndex,choice){if(balancedInstallCost(hands[turn][handIndex]))return installBalancedCard(handIndex,[choice]);let c=hands[turn][handIndex],p=powers[turn];if(!c||c.type!=='S')return;let need={y:0,r:0,p:0},vals=null;
+function installStandard(handIndex,choice){const source=hands[turn][handIndex];if(source?.installSpec)return installPackCard(handIndex,Array.isArray(choice)?choice:choice?[choice]:[]);if(source?.special==='paneteria')return installPaneteria(handIndex,choice);if(source?.special==='scout')return installNewNormal(handIndex,[]);if(balancedInstallCost(hands[turn][handIndex]))return installBalancedCard(handIndex,[choice]);let c=hands[turn][handIndex],p=powers[turn];if(!c||c.type!=='S')return;let need={y:0,r:0,p:0},vals=null;
  if(c.special==='plan')need.r=2;else if(c.special==='adjust')need.r=4;else if(c.special==='restrict'||c.special==='permit')need.r=3;
  else if(c.special==='warehouse')vals=[1,3,5];
  if(!canPayResourceCost({["y"]:(need.y),["r"]:(need.r),["p"]:(need.p)},turn))return alert('資源が足りません。必要：'+c.costText);if(vals&&!consumeOneOf(choice,vals))return alert('必要な出目を満たすサイコロまたは命令書を選んでください。');
