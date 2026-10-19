@@ -1,10 +1,10 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),{fixture}=require('./clock.cjs');
-test('231 Bot setup pack2 on/off, standard3 and independent pack1; catalogs follow selection',async t=>{
+test('231 Bot setup pack2 on/off, standard3 and independent pack1; card catalogs follow selection while integrated characters stay available',async t=>{
  const h=await fixture(t);h.run('enterBotMatch()');assert.equal(h.run("q('#onlineDebugPack2').disabled"),false);
  h.run("q('#onlineDebugPack2').checked=true;syncOnlineDebugRulesFromUI();populateOnlineDebugDeckPreset();updateBotLobbyRestrictions()");assert.deepEqual(h.read('gameSettings.enabledPacks'),['pack2']);assert.equal(h.run("availableCharacterFamilies().some(f=>f.id==='noel')"),true);assert.equal(h.run("implementedCastPool('N').some(e=>e.id==='CN6')"),true);
  assert.equal(h.run("[...q('#onlineDebugDeckPreset').options].find(o=>o.value==='standard3').disabled"),false);
  h.run("gameSettings.deckId='standard3'");assert.ok(h.run("normalCardsForDeck('standard3').some(c=>c.packId==='pack2')"));
- h.run("q('#onlineDebugPack2').checked=false;q('#onlineDebugPack1').checked=true;syncOnlineDebugRulesFromUI()");assert.deepEqual(h.read('gameSettings.enabledPacks'),['pack1']);assert.equal(h.run("implementedCastPool('N').some(e=>e.id==='CN6')"),false);assert.equal(h.run("availableCharacterFamilies().some(f=>f.id==='noel')"),false);
+ h.run("q('#onlineDebugPack2').checked=false;q('#onlineDebugPack1').checked=true;syncOnlineDebugRulesFromUI()");assert.deepEqual(h.read('gameSettings.enabledPacks'),['pack1']);assert.equal(h.run("implementedCastPool('N').some(e=>e.id==='CN6')"),true);assert.equal(h.run("availableCharacterFamilies().some(f=>f.id==='noel')"),true);
  h.run("q('#onlineDebugPack1').checked=false;syncOnlineDebugRulesFromUI()");assert.deepEqual(h.read('gameSettings.enabledPacks'),[]);
 });
 test('231 Bot pack2 install and level-up use common payments and command, no human prompt',async t=>{
