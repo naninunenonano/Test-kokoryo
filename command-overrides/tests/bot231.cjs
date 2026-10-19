@@ -8,8 +8,8 @@ test('231 Bot setup pack2 on/off, standard3 and independent pack1; catalogs foll
  h.run("q('#onlineDebugPack1').checked=false;syncOnlineDebugRulesFromUI()");assert.deepEqual(h.read('gameSettings.enabledPacks'),[]);
 });
 test('231 Bot pack2 install and level-up use common payments and command, no human prompt',async t=>{
- const h=await fixture(t);h.run(`renderGame=()=>{};botMatchMode=true;turn=1;viewer=0;gameSettings.enabledPacks=['pack2'];turnClockState.active=1;employees[1]=[{...CAST_TYPES.CN1}];hands[1]=[{...NORMAL_BASE.find(c=>c.key==='N27'),id:'level'}];powers[1]={y:0,p:5,r:0};dice=[3,4,5].map((value,i)=>({id:i+1,value,used:false}));window.prompt=()=>{throw Error('Bot requested human input')};`);
- assert.equal(h.run('botTryInstall()'),true);assert.equal(h.run('employees[1][0].id'),'CR1');assert.equal(h.run('temporary[1][0].key'),'N27');assert.equal(h.run('powers[1].p'),0);assert.equal(h.run('unusedDice().length'),0);
+ const h=await fixture(t);h.run(`renderGame=()=>{};botMatchMode=true;turn=1;viewer=0;gameSettings.enabledPacks=['pack2'];turnClockState.active=1;employees[1]=[{...CAST_TYPES.CN1}];hands[1]=[{...STD_BASE.find(c=>c.key==='S14'),id:'level'}];powers[1]={y:0,p:5,r:0};dice=[3,4,5].map((value,i)=>({id:i+1,value,used:false}));window.prompt=()=>{throw Error('Bot requested human input')};`);
+ assert.equal(h.run('botTryInstall()'),true);assert.equal(h.run('employees[1][0].id'),'CR1');assert.equal(h.run('temporary[1][0].key'),'S14');assert.equal(h.run('powers[1].p'),0);assert.equal(h.run('unusedDice().length'),1);
 });
 test('231 Bot normal/mimic/CLR fusion, doppel copy and selected abilities never open input',async t=>{
  const h=await fixture(t);h.run("renderGame=()=>{};botMatchMode=true;turn=1;viewer=0;turnClockState.active=1;window.prompt=()=>{throw Error('Bot requested human input')};");
