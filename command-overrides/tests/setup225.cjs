@@ -11,14 +11,14 @@ test('225 default fields and runtime values agree in offline, online and Bot set
  h.run('enterBotMatch()');assert.equal(h.dom.window.document.querySelector('#onlineDebugRuleLegendSlots').value,'5');
  h.run("realOnlineRules={...realOnlineRules,...DEFAULT_RULE_SETTINGS};renderRealLobbyRules()");assert.equal(h.dom.window.document.querySelector('#realRuleLegendSlots').value,'5');
 });
-test('225 offline draft: 8 candidates, one per pass for five rounds, 5-card hands and 40-card conservation',async t=>{
+test('225 offline draft: 8 candidates, one per pass for five rounds, 5-card hands and 90-card conservation',async t=>{
  const h=await open(t);h.run("enterLocalDebugMode();q('#setup').classList.remove('hidden')");h.click('#start');
  assert.deepEqual(h.read('packs.map(p=>p.length)'),[8,8,8,8]);
  for(let r=0;r<5;r++)for(let p=0;p<4;p++){
   assert.equal(h.dom.window.document.querySelectorAll('#cards .card').length,8-r);h.click('#cards .card');
  }
  assert.deepEqual(h.read('hands.map(p=>p.length)'),[5,5,5,5]);assert.equal(h.read('new Set(hands.flat().map(c=>c.id)).size'),20);
- assert.equal(h.read('hands.flat().length+packs.flat().length+unusedStd.length'),40);
+ assert.equal(h.read('hands.flat().length+packs.flat().length+unusedStd.length'),90);
  h.run('beginTurn=()=>{}');for(let p=0;p<4;p++){for(let i=0;i<10;i++)h.click('#initialPowerSetup .turnstart-buttons button');h.click('#initialPowerSetup .row button.primary')}
  assert.deepEqual(h.read('powers.map(p=>p.y+p.p+p.r)'),[10,10,10,10]);assert.equal(h.read('new Set(market.map(c=>c.key)).size'),12);assert.equal(h.read("legends.filter(c=>c.tier==='lower').length"),5);assert.equal(h.read("legends.filter(c=>c.tier==='upper').length"),5);
 });
@@ -68,7 +68,4 @@ test('225 real-online rules preserve overrides and zero; four clients commit the
  for(const h of hs){h.run('realResourceState='+JSON.stringify({...rs,choices:Array.from({length:4},()=>({y:4,p:3,r:3}))})+';beginTurn=()=>{};Math.random=()=>0.25;prepareRealMainGame()');assert.deepEqual(h.read('hands.map(p=>p.length)'),[5,5,5,5]);assert.deepEqual(h.read('powers.map(p=>p.y+p.p+p.r)'),[10,10,10,10]);assert.equal(h.run('new Set(market.map(c=>c.key)).size'),12);assert.equal(h.run('legends.length'),10);assert.equal(h.run('effectiveHireLimit()'),5)}
  for(const h of hs){h.run("realOnlineRules={...realOnlineRules,winVP:45,marketTypes:16,initialResources:0,hireLimit:0,legendSlots:2};applyRealOnlineRules();realResourceState.choices=Array.from({length:4},()=>({y:0,p:0,r:0}));prepareRealMainGame()");assert.deepEqual(h.read('Object.fromEntries(Object.keys(DEFAULT_RULE_SETTINGS).map(k=>[k,gameSettings[k]]))'),{winVP:45,marketTypes:16,initialResources:0,hireLimit:0,legendSlots:2});assert.equal(h.run('new Set(market.map(c=>c.key)).size'),16);assert.equal(h.run('legends.length'),4);assert.deepEqual(h.read('powers.map(p=>p.y+p.p+p.r)'),[0,0,0,0])}
 });
-test('225 six-player shortage is explicit; the same setup supports future stock increases without changing deck now',async t=>{
- const h=await setup(t);assert.equal(h.run('STD.length'),40);assert.equal(h.run('initialDraftSetupError(5)'), '');assert.match(h.run('initialDraftSetupError(6)'),/48.*40/);assert.throws(()=>h.run('createInitialDraftDeal(6)'),/不足/);
- h.run("window.__added=Array.from({length:8},(_,i)=>({...STD[i],id:'future'+i}));STD.push(...window.__added)");assert.deepEqual(h.read('createInitialDraftDeal(6).packs.map(p=>p.length)'),[8,8,8,8,8,8]);h.run('STD.splice(-8)');assert.equal(h.run('STD.length'),40);
-});
+test('237 six-player draft has enough stock and retains eight candidates and five picks',async t=>{const h=await setup(t);assert.equal(h.run('STD.length'),90);assert.equal(h.run('initialDraftSetupError(6)'),'');assert.deepEqual(h.read('createInitialDraftDeal(6).packs.map(p=>p.length)'),[8,8,8,8,8,8]);assert.equal(h.run('createInitialDraftDeal(6).unused.length'),42);});

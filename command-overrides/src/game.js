@@ -3,7 +3,7 @@
 
 // @kokoryo-section S0001
 
-const q=s=>document.querySelector(s), mk=(pre,label,n)=>Array.from({length:n},(_,i)=>({key:pre+(i+1),name:label+(i+1),type:pre})), copies=a=>a.flatMap(c=>Array.from({length:4},(_,i)=>({...c,id:c.key+'-'+(i+1)})));
+const q=s=>document.querySelector(s), mk=(pre,label,n)=>Array.from({length:n},(_,i)=>({key:pre+(i+1),name:label+(i+1),type:pre})), copies=a=>a.flatMap(c=>Array.from({length:6},(_,i)=>({...c,id:c.key+'-'+(i+1)})));
 // @kokoryo-end-section S0001
 
 // @kokoryo-section S0018

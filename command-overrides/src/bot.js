@@ -284,7 +284,7 @@ function botTryInstall(){
    const index=base?installed[turn].findIndex(x=>x.special===base):-1;
    if(index>=0&&installBalancedCard(i,[],index)||choices&&installBalancedCard(i,choices)){botLog(c.name+'を設置');return true}continue
   }
-  if(c.type==='S'){
+  if(c.type==='S'&&['plan','adjust','restrict','permit','mine','farm','barracks','commandroom','warehouse','church'].includes(c.special)){
    let need={y:0,r:0,p:0},vals=null;
    if(c.special==='plan')need.r=2;else if(c.special==='adjust')need.r=4;
    else if(['restrict','permit'].includes(c.special))need.r=3;

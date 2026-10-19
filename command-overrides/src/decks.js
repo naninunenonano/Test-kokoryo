@@ -4,7 +4,7 @@
 // @kokoryo-section S0002
 
 // コンテンツ内部IDの予約範囲。未実装IDの空データは作らず、追加パックから必要なIDだけ登録する。
-const CONTENT_ID_LIMITS=Object.freeze({S:10,N:200,LL:30,LU:30,P:100,CN:30,CR:30,CSR:30,CSSR:30,CUR:30,CLR:30,RC:100});
+const CONTENT_ID_LIMITS=Object.freeze({S:15,N:200,LL:30,LU:30,P:100,CN:30,CR:30,CSR:30,CSSR:30,CUR:30,CLR:30,RC:100});
 function isReservedContentId(id){
  const m=String(id||'').match(/^(CSSR|CSR|CUR|CN|CR|LL|LU|RC|S|N|P)(\d+)$/);
  return !!(m&&+m[2]>=1&&+m[2]<=CONTENT_ID_LIMITS[m[1]]);
@@ -25,45 +25,45 @@ function contentBaseId(x){if(!x)return '';let raw=typeof x==='string'?x:(x.key||
 
 // @kokoryo-section S0014
 
+// TEST237: stable effect identifiers and image identities survive the S/N renumbering.
+const STANDARD_CARD_MIGRATIONS=Object.freeze({S1:'S1',S2:'S2',S5:'S3',S6:'S4',S7:'S5',S8:'S6',S9:'S7',S10:'S8',N1:'S9',N2:'S10',N3:'S11',N15:'S12',N26:'S13',N27:'S14',N29:'S15'});
 const STD_BASE=[
 {key:'S1',name:'作戦計画書',type:'S',special:'plan',vp:0,costText:'兵力2'},
 {key:'S2',name:'人員調整書',type:'S',special:'adjust',vp:0,costText:'兵力4'},
-{key:'S3',name:'制限令',type:'S',special:'restrict',vp:0,costText:'兵力3'},
-{key:'S4',name:'特別許可書',type:'S',special:'permit',vp:0,costText:'兵力3'},
-{key:'S5',name:'鉱山',type:'S',special:'mine',vp:1,costText:'🎲1/2＋資金4'},
-{key:'S6',name:'農場',type:'S',special:'farm',vp:1,costText:'🎲3/4＋食料4'},
-{key:'S7',name:'兵舎',type:'S',special:'barracks',vp:1,costText:'🎲5/6＋兵力4'},
-{key:'S8',name:'司令室',type:'S',special:'commandroom',vp:2,costText:'🎲3/4＋資金4＋兵力2'},
-{key:'S9',name:'倉庫',type:'S',special:'warehouse',vp:1,costText:'🎲1/3/5'},
-{key:'S10',name:'教会',type:'S',special:'church',vp:2,costText:'🎲1/4＋資金4＋食料2'}
+{key:'S3',name:'鉱山',type:'S',special:'mine',vp:1,costText:'🎲1/2＋資金4',image:'images/cards/S5.png'},
+{key:'S4',name:'農場',type:'S',special:'farm',vp:1,costText:'🎲3/4＋食料4',image:'images/cards/S6.png'},
+{key:'S5',name:'兵舎',type:'S',special:'barracks',vp:1,costText:'🎲5/6＋兵力4',image:'images/cards/S7.png'},
+{key:'S6',name:'司令室',type:'S',special:'commandroom',vp:2,costText:'🎲3/4＋資金4＋兵力2',image:'images/cards/S8.png'},
+{key:'S7',name:'倉庫',type:'S',special:'warehouse',vp:1,costText:'🎲1/3/5',image:'images/cards/S9.png'},
+{key:'S8',name:'教会',type:'S',special:'church',vp:2,costText:'🎲1/4＋資金4＋食料2',image:'images/cards/S10.png'},
+{key:'S9',name:'ナーロッパランド',type:'S',special:'paneteria',vp:1,costText:'🎲ANY',image:'images/cards/N1.png'},
+{key:'S10',name:'領主会議',type:'S',special:'lordmeeting',vp:2,costText:'🎲1/6＋資金6',image:'images/cards/N2.png'},
+{key:'S11',name:'開拓ラッシュ',type:'S',special:'blackcasino',vp:0,costText:'🎲2＋🎲5＋食料5',image:'images/cards/N3.png'},
+{key:'S12',name:'スカウト',type:'S',special:'scout',vp:2,costText:'資金2＋食料2＋兵力2',image:'images/cards/N15.png'}
 ];
-const NORMAL_BASE=mk('N','通常 ',15).map(c=>({...c,implemented:false})); NORMAL_BASE[0]={key:'N1',name:'ナーロッパランド',type:'N',special:'paneteria',vp:1}; NORMAL_BASE[1]={key:'N2',name:'領主会議',type:'N',special:'lordmeeting',vp:2,costText:'🎲1/6＋資金6'}; NORMAL_BASE[2]={key:'N3',name:'開拓ラッシュ',type:'N',special:'blackcasino',vp:1,costText:'🎲2＋🎲5＋食料5'};
-NORMAL_BASE[3]={key:'N4',name:'大鉱山',type:'N',special:'greatermine',vp:3,costText:'🎲1＋🎲2＋資金7'};
-NORMAL_BASE[4]={key:'N5',name:'大農園',type:'N',special:'greaterfarm',vp:3,costText:'🎲3＋🎲4＋食料7'};
-NORMAL_BASE[5]={key:'N6',name:'要塞',type:'N',special:'greaterbarracks',vp:3,costText:'🎲5＋🎲6＋兵力7'};
-NORMAL_BASE[6]={key:'N7',name:'大司令部',type:'N',special:'greatercommand',vp:3,costText:'🎲3＋🎲4＋資金4＋兵力3'};
-NORMAL_BASE[7]={key:'N8',name:'飢饉',type:'N',special:'famine',vp:4,costText:'🎲3×3＋食料6'};
-NORMAL_BASE[8]={key:'N9',name:'徴兵令',type:'N',special:'swordhunt',vp:3,costText:'🎲6＋兵力7'};
-NORMAL_BASE[9]={key:'N10',name:'ナロパカルタ',type:'N',special:'laws',vp:2,costText:'資金8'};
-NORMAL_BASE[10]={key:'N11',name:'オルフェンズ',type:'N',special:'graveyard',vp:1,costText:'🎲4/5＋食料1＋兵力2'};
-NORMAL_BASE[11]={key:'N12',name:'納税',type:'N',special:'landgrab',vp:3,costText:'🎲2＋🎲5＋資金3＋食料3＋兵力3'};
-NORMAL_BASE[12]={key:'N13',name:'義賊',type:'N',special:'bandit',vp:4,costText:'🎲ANY×3＋資金7＋食料5'};
-NORMAL_BASE[13]={key:'N14',name:'交易場',type:'N',special:'publicmarket',vp:1,costText:'🎲ANY＋資金1＋食料1＋兵力1'};
-NORMAL_BASE[14]={key:'N15',name:'スカウト',type:'N',special:'scout',vp:2,costText:'資金2＋食料2＋兵力2'};
-NORMAL_BASE.slice(0,15).forEach(c=>c.implemented=true);
-// Nカードのターン開始時フェイズ。効果のないカードには開始時フラグを付けない。
+for(const [oldKey,key] of [['N26','S13'],['N27','S14'],['N29','S15']]){
+ const card=KOKORYO_PACKS.pack2?.normalCards?.find(c=>c.key===oldKey);
+ if(!card)throw new Error('Missing standard card source '+oldKey);
+ STD_BASE.push({...card,key,type:'S',image:'images/cards/'+oldKey+'.png',...(key==='S14'?{costText:'🎲3＋🎲4＋食料5',installSpec:{faces:[[3],[4]],resources:{p:5}}}:{})});
+}
+const NORMAL_BASE=Array.from({length:20},(_,i)=>({key:'N'+(i+1),name:'仮カードN'+(i+1),type:'N',vp:1,implemented:true,image:false,costText:'🎲ANY×1',effectText:'効果なし。',installSpec:{any:1}}));
 const N_NORMAL_START_SPECIALS=new Set(['mine','farm','barracks','commandroom','church','greatermine','greaterfarm','greaterbarracks','greatercommand','bandit','nanban','tenkucat']);
-NORMAL_BASE.forEach(c=>{if(N_NORMAL_START_SPECIALS.has(c.special))c.turnStartTiming='normal'});
-Object.values(KOKORYO_PACKS).forEach(pack=>(pack.normalCards||[]).forEach(c=>{let n=Number(String(c.key||'').replace(/^N/,''));if(n>=1){NORMAL_BASE[n-1]={...c,implemented:true,packId:pack.id,turnStartTiming:c.turnStartTiming||((typeof c.hooks?.turnStart==='function')?'normal':undefined)}}}));
+STD_BASE.forEach(c=>{if(N_NORMAL_START_SPECIALS.has(c.special))c.turnStartTiming='normal'});
+// Pack1 starts at N36 so its old N16–N20 cannot overwrite placeholders. Adopted pack2 cards exist once, as S cards.
+Object.values(KOKORYO_PACKS).forEach(pack=>(pack.normalCards||[]).forEach(c=>{
+ if(STANDARD_CARD_MIGRATIONS[c.key])return;
+ const oldNumber=Number(String(c.key||'').replace(/^N/,'')),n=pack.id==='pack1'?oldNumber+20:oldNumber;
+ if(n>20)NORMAL_BASE.push({...c,key:'N'+n,image:c.image||'images/cards/'+c.key+'.png',implemented:true,packId:pack.id,turnStartTiming:c.turnStartTiming||((typeof c.hooks?.turnStart==='function')?'normal':undefined)});
+}));
 const STD=copies(STD_BASE), NORMAL=copies(NORMAL_BASE.filter(c=>c.implemented));
 // 固定デッキ定義。表示名とは別に内部IDで管理し、今後のデッキ追加・編集機能の土台にする。
 const DECK_PRESETS={
- standard1:{id:'standard1',name:'スタンダード1',fixed:true,normalKeys:Array.from({length:15},(_,i)=>'N'+(i+1)),lowerLegendKeys:['LL1','LL2','LL3','LL4','LL5','LL6'],upperLegendKeys:['LU1','LU2','LU3','LU4','LU5','LU6']},
- standard2:{id:'standard2',name:'スタンダード2',fixed:true,normalKeys:['N2','N8','N9','N10','N15','N16','N17','N18','N19','N20','N21','N22','N23','N24','N25'],lowerLegendKeys:['LL4','LL5','LL6','LL7','LL8','LL9'],upperLegendKeys:['LU2','LU3','LU6','LU7','LU8','LU9']},
- standard3:{id:'standard3',name:'スタンダード3',fixed:true,normalKeys:['N4','N5','N6','N7','N15','N26','N27','N28','N29','N30','N31','N32','N33','N34','N35'],lowerLegendKeys:['LL4','LL5','LL6','LL10','LL11','LL12'],upperLegendKeys:['LU4','LU5','LU6','LU10','LU11','LU12']}
+ standard1:{id:'standard1',name:'スタンダード1',fixed:true,normalKeys:Array.from({length:20},(_,i)=>'N'+(i+1)),lowerLegendKeys:['LL1','LL2','LL3','LL4','LL5','LL6'],upperLegendKeys:['LU1','LU2','LU3','LU4','LU5','LU6']},
+ standard2:{id:'standard2',name:'スタンダード2',fixed:true,normalKeys:['N2','N8','N9','N10','N36','N37','N38','N39','N40','N41','N42','N43','N44','N45'],lowerLegendKeys:['LL4','LL5','LL6','LL7','LL8','LL9'],upperLegendKeys:['LU2','LU3','LU6','LU7','LU8','LU9']},
+ standard3:{id:'standard3',name:'スタンダード3',fixed:true,normalKeys:['N4','N5','N6','N7','N28','N30','N31','N32','N33','N34','N35'],lowerLegendKeys:['LL4','LL5','LL6','LL10','LL11','LL12'],upperLegendKeys:['LU4','LU5','LU6','LU10','LU11','LU12']}
 };
-let customDeck={normalKeys:Array.from({length:15},(_,i)=>'N'+(i+1)),lowerLegendKeys:['LL1','LL2','LL3','LL4','LL5','LL6'],upperLegendKeys:['LU1','LU2','LU3','LU4','LU5','LU6']};
-const CUSTOM_DECK_SAVE_KEY='kokoryo_custom_decks_v1';
+let customDeck={normalKeys:Array.from({length:20},(_,i)=>'N'+(i+1)),lowerLegendKeys:['LL1','LL2','LL3','LL4','LL5','LL6'],upperLegendKeys:['LU1','LU2','LU3','LU4','LU5','LU6']};
+const CUSTOM_DECK_SAVE_KEY='kokoryo_custom_decks_v2';
 function getSavedDecks(){try{let x=JSON.parse(localStorage.getItem(CUSTOM_DECK_SAVE_KEY)||'{}');return x&&typeof x==='object'&&!Array.isArray(x)?x:{}}catch(e){return {}}}
 function putSavedDecks(x){try{localStorage.setItem(CUSTOM_DECK_SAVE_KEY,JSON.stringify(x));return true}catch(e){alert('デッキを保存できませんでした。ブラウザの保存領域を確認してください。');return false}}
 function cloneCustomDeck(d=customDeck){return {normalKeys:[...(d.normalKeys||[])],lowerLegendKeys:[...(d.lowerLegendKeys||[])],upperLegendKeys:[...(d.upperLegendKeys||[])]}}

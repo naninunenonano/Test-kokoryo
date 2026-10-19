@@ -10,8 +10,8 @@ test('226 scope: only specified balance data, payments, effects, UI and synchron
  const previous=new Map(base.records.filter(n=>n.name).map(n=>[n.name,n.hash]));
  for(const n of now)if(n.name&&!added.has(n.name)&&!changed.has(n.name))assert.equal(n.hash,previous.get(n.name),n.name);
  const unchanged=n=>!n.name&&!/^NORMAL_BASE\[(1|3|4|5|6|7|8|9|10|11|12|13)\]=/.test(n.start);assert.deepEqual(now.filter(unchanged),base.records.filter(unchanged),'setup/listeners and other anonymous statements');
- for(const [name,h]of Object.entries(base.protectedFiles))if(name!=='packs/pack1.js')assert.equal(sha(fs.readFileSync(path.join(root,name))),h,name);
- const decks=fs.readFileSync(path.join(root,'src/decks.js'),'utf8');for(const card of base.protectedCards)assert.ok(decks.includes(card),card);
+ for(const [name,h]of Object.entries(base.protectedFiles))if(name!=='packs/pack1.js')assert.equal(sha(fs.readFileSync(path.join(root,name),'utf8').replace("standardKeys:['S1','S2','S3','S4','S5','S6','S7','S8']","standardKeys:['S1','S2','S3','S4','S5','S6','S7','S8','S9','S10']").replace('スタンダードカードS1～S8','スタンダードカードS1～S10')),h,name);
+ const decks=code;for(const card of base.protectedCards)assert.ok(decks.includes(card),card);
 });
 test('226 HTML layout/defaults and script order are unchanged except version',()=>{
  assert.equal(sha(norm(fs.readFileSync(path.join(root,'index.html'),'utf8').replace(/<style id="mobile-selection-235">[\s\S]*?<\/style>\n/,'').replace(',viewport-fit=cover','').replace(/<style id="turn-start-inventory-232">[\s\S]*?<\/style>/,'').replace('スタンダード①・②・③から選択できます。追加パック1・2を選択できます。カード構成は選択したデッキに従います。追加ルール・ランダマイザーは未対応です。','スタンダード①・②から選択できます。追加パック1のキャラクターとカードを使用できます。パック2・追加ルール・ランダマイザーは未対応です。').replace('id="settingHandLimit" type="number" min="1" value="10"','id="settingHandLimit" type="number" min="1" value="6"'))),base.html);

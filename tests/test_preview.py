@@ -66,7 +66,9 @@ class PreviewTests(unittest.TestCase):
         self.assertNotIn('cdn.jsdelivr.net', self.html)
 
     def test_production_storage_keys_are_not_read_or_written(self):
-        for key in ['kokoryo_custom_decks_v1', 'kokoryo_online_resume_v36', 'kokoryo_online_client_v36']:
+        deck_key = 'kokoryo_custom_decks_v2' if int(self.metadata['version'].split('.')[-1]) >= 237 else 'kokoryo_custom_decks_v1'
+        self.assertNotIn("'kokoryo_custom_decks_v1'", self.html)
+        for key in [deck_key, 'kokoryo_online_resume_v36', 'kokoryo_online_client_v36']:
             self.assertNotIn("'" + key + "'", self.html)
             self.assertIn("'" + key.replace('kokoryo_', 'kokoryo_test_', 1) + "'", self.html)
         self.assertNotIn('localStorage.clear(', self.html)
