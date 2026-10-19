@@ -222,7 +222,7 @@ function commandHire(mode,quantity,options={},fusionOptions={}){
  const {accept=e=>finalizeHire(e),canHire=()=>cardCommands.can(null,'hire-space'),selected=null,pool=null}=options;
  if(!['gacha','select'].includes(mode))throw new RangeError('Unknown hiring mode');const n=commandQuantity(quantity),hired=[];
  const candidates=mode==='select'?(pool||['N','R','SR','SSR','UR'].flatMap(r=>implementedCastPool(r))):null;
- for(let i=0;i<n;i++){if(!canHire())break;let e=mode==='gacha'?gachaCast():selected?.[i];if(!e||mode==='select'&&!candidates.some(c=>c.id===e.id))break;if(mode==='select')e={...e};accept(e);hired.push(e)}return hired
+ for(let i=0;i<n;i++){if(!canHire())break;let e=mode==='gacha'?gachaCast():selected?.[i];if(!e||mode==='select'&&!candidates.some(c=>c.id===e.id))break;if(mode==='select')e={...e};accept(e);notifyStaffingAgency(turn);hired.push(e)}return hired
 }
 function commandToba({owner=turn,card=null,from=null,created=false}={}){
  if(isLegendCard(card||deck[0])&&!legendAcquisitionAllowed(owner))return null;
@@ -334,7 +334,7 @@ function commandEnd(){return completeEnd()}
 function commandTheEnd(){return finishGame()}
 function commandRun(name,...args){const text=String(name).trim().replace(/\s+/g,' '),match=text.match(/^雇用 (レベルアップ|融合)(?: (通常|モノマネ|特殊))? ([1-9]\d*)$/);if(match){if((match[1]==='融合')!==!!match[2])throw new RangeError('Invalid hiring command');return match[2]?commandHire('融合',match[2],Number(match[3]),args[0]||{}):commandHire('レベルアップ',Number(match[3]),args[0]||{})}const key=String(name).trim().replace(/\s+/g,' ');if(!Object.hasOwn(cardCommands,key)||key==='run')throw new RangeError('Unknown command '+key);return cardCommands[key](...args)}
 function conversionBonus(owner=turn){return stackedNumericEffect(owner,'dieResourceBonus')+(owner===turn&&copiedAbility==='神の恩恵'?(abilityProfile(copiedAbility).dieResourceBonus||0):0)}
-function exchangeRateFor(owner=turn){const lord=CHARACTER_DATA[charOf(owner)]||{},staff=employeeUniqueAbilitiesEnabled(owner)?employees[owner]||[]:[];return lord.exchangeRate===1||staff.some(e=>e.exchangeRate===1||e.uniqueAbility==='等価交換')||(owner===turn&&copiedAbility==='等価交換')?1:3}
+function exchangeRateFor(owner=turn){const lord=CHARACTER_DATA[charOf(owner)]||{},staff=employees[owner]||[];return lord.exchangeRate===1||staff.some(e=>e.exchangeRate===1||e.uniqueAbility==='等価交換')||(owner===turn&&copiedAbility==='等価交換')?1:3}
 function commandApi(owner=turn){
  const active=()=>{if(owner!==turn)throw new Error('Dice and active-turn commands require the active player')};
  const api=Object.freeze({...cardCommands,
@@ -450,13 +450,14 @@ function playerScaledGain(){return playerCount===2?5:playerCount===3?4:playerCou
 // @kokoryo-section S0052
 
 // 全設置経路（通常・無から設置・無料設置・効果設置）で共通の設置時効果を実行する。
-function registerInstallation(owner,c){if(isLegendCard(c)&&!legendAcquisitionAllowed(owner))return false;temporary[owner].push(c);triggerLandGrab(owner);resolveOnInstall(c,owner)}
+function registerInstallation(owner,c){if(isLegendCard(c)&&!legendAcquisitionAllowed(owner)&&specialLegendAcquireOwner!==owner)return false;temporary[owner].push(c);triggerLandGrab(owner);resolveOnInstall(c,owner)}
 // @kokoryo-end-section S0052
 
 // @kokoryo-section S0054
 
 let turnStartPostPending=false, depressionStartSuppressed=false;
 function beginTurn(){
+ replicaOwners=replicaOwners.filter(p=>p!==turn);repeatBooksPending=[];
  turnClockBeginTurn();
  if(realOnlineMainMode&&turnClockNet?.completing){turnClockStartPending=true;turnClockChoice=null;turnStartPostPending=false;return}
  turnClockStartPending=false;
@@ -481,7 +482,7 @@ function continueBeginTurn(){
  const depressionResourceBaseline=suppressDepressionStart?{...powers[turn]}:null;
  depressionStartSuppressed=suppressDepressionStart;
  if(depressionDebtLocked(turn)&&!suppressDepressionStart){gainResource(turn,'p',5,'depressionBonus');gainResource(turn,'r',5,'depressionBonus');}
- let lord=CHARACTER_DATA[charOf(turn)]||{},staff=employees[turn]||[],randomBonus=staff.reduce((n,x)=>n+(x.noCommonDie?0:((x.rarity==='SSR'||x.rarity==='UR')?0:1))+(employeeUniqueAbilitiesEnabled(turn)?(x.extraRandomDice||0):0),0)+stackedNumericEffect(turn,'extraDice')+(abilityProfile(copiedAbility)?.extraDice||0);
+ let lord=activeLordAbility(turn),staff=characterActivationEnabled(turn)?employees[turn]||[]:[],randomBonus=staff.reduce((n,x)=>n+(x.noCommonDie?0:((x.rarity==='SSR'||x.rarity==='UR')?0:1))+(employeeUniqueAbilitiesEnabled(turn)?(x.extraRandomDice||0):0),0)+(characterActivationEnabled(turn)?stackedNumericEffect(turn,'extraDice'):0)+(abilityProfile(copiedAbility)?.extraDice||0);
  pendingSSRBonus=staff.reduce((n,x)=>n+(x.noCommonDie?0:((x.rarity==='SSR'||x.rarity==='UR')?1:0))+(employeeUniqueAbilitiesEnabled(turn)?(x.extraChosenDice||0):0),0);
  pendingCastResourceChoices=[];
  // パック1金融系雇用：所有者のターン開始時に個体ごと発動。負債禁止はacquireDebtが判定。
@@ -497,7 +498,7 @@ function continueBeginTurn(){
  resolveReactiveRolls();
  pendingLordResource=3+(lord.extraLordResource||0)+(abilityProfile(copiedAbility)?.extraLordResource||0);
  runRuleHook('turnStart',{player:turn});resolveTurnStartEffects();runInstalledPackHooks('turnStart',turn);
- let deadLord=CHARACTER_DATA[charOf(turn)];if(deadLord?.deadMansTrigger){cardCommands.draw('deck',deadLord.deadMansDraw||2);cardCommands.draw('command',deadLord.deadMansBread||2)}
+ let deadLord=activeLordAbility(turn);if(deadLord?.deadMansTrigger){cardCommands.draw('deck',deadLord.deadMansDraw||2);cardCommands.draw('command',deadLord.deadMansBread||2)}
  let hasGuild=installed[turn].some(c=>c.special==='naroppaGuild'); if(hasGuild){}
  if(suppressDepressionStart){
   // 獲得ターンだけ、通常・追加・選択式の全ダイスと開始時資源獲得を抑止する。
@@ -508,6 +509,7 @@ function continueBeginTurn(){
  }
  depressionStartSuppressed=false;
  if(hasEquivalentExchange(turn))cardCommands.pool('y',5);
+ repeatBooksPending=installed[turn].filter(c=>c.special==='repeatBook');
  turnStartPostPending=true;nightEscapePostAvailable=false;renderGame()
 }
 // @kokoryo-end-section S0054
@@ -544,7 +546,7 @@ function isViewingOwnTurn(){return !(onlineDebugMode||realOnlineMainMode)||viewe
 
 // @kokoryo-section S0110
 
-function handLimit(p){return cardCommands.limit('hand',2,{count:installed[p].filter(c=>c.special==='warehouse').length+temporary[p].filter(c=>c.special==='warehouse').length})}function finishTurn(){if(pendingParkPlayers.length)return alert('ナーロッパランドの公開カード選択を全員分終えてください。');if(handLimitNeedsDiscard(turn)){showHandLimit();return}completeEnd()}
+function handLimit(p){return cardCommands.limit('hand',2,{count:installed[p].filter(c=>c.special==='warehouse').length+temporary[p].filter(c=>c.special==='warehouse').length})}function finishTurn(){if(pendingNormalInstallChoice)return; if(pendingParkPlayers.length)return alert('ナーロッパランドの公開カード選択を全員分終えてください。');if(handLimitNeedsDiscard(turn)){showHandLimit();return}completeEnd()}
 // @kokoryo-end-section S0110
 
 // @kokoryo-section S0112
@@ -568,6 +570,7 @@ function turnClockOriginalCompleteEnd(){playLogChanges('turn_end');playLogEvent(
 // @kokoryo-section S0114
 
 function resetGameEndState(){
+ replicaOwners=[];repeatBooksPending=[];pendingNormalInstallChoice=false;specialLegendAcquireOwner=null;
  playerTurnCounts=Array(playerCount).fill(0);lastCountedTurnToken=-1;oracleUpgradesThisTurn=Array(playerCount).fill(0);
  turnClockReset();
  endgameStarter=null;endgameRemaining=0;gameEnded=false;

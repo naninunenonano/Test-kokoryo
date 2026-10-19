@@ -139,6 +139,9 @@ async function takeLegend(id){
  }else if(L.special==='eggharp'){
   if(!canPayResourceCost({["r"]:(12)},turn))return alert('兵力12が必要です。');let rs=legendSameFaceChoices(5);if(rs.length<3)return alert('出目5のサイコロ／命令書が3個必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'same',3,5);legendPaymentPending=false;if(!chosen||!legendAcquisitionAllowed(turn))return;consumeLegendItems(chosen);payResourceCost({["r"]:(12)},turn);
  }
+ finishLegendAcquisition(L);
+}
+function finishLegendAcquisition(L){
  L.taken=true;legendTakenThisTurn=true;
  if(L.layoutSet&&L.exclusiveLayoutSet)legends.forEach(x=>{if(x!==L&&x.layoutSet===L.layoutSet&&x.tier===L.tier&&!x.taken){x.taken=true;x.eraBlocked=true}});
  if(L.tier==='lower'){if(L.layoutSet==='economyPair'){legends.filter(x=>x.tier==='upper'&&x.layoutSet==='economyPair'&&!x.taken&&!x.eraBlocked).forEach(x=>x.unlocked=true)}else{let U=legends.find(x=>x.tier==='upper'&&x.col===L.col);if(U&&!U.taken)U.unlocked=true}}
@@ -153,7 +156,7 @@ async function takeLegend(id){
 function chooseLegendCard(title,note,opts,onChoose,onCancel){
  let choiceSettled=false;const choiceOwner=turn,choiceClockToken=turnClockState?.token;const canChoose=()=>turnClockLeaseValid(choiceOwner,choiceClockToken)&&(!(onlineDebugMode||realOnlineMainMode)||viewer===choiceOwner);
  if(!canChoose())return;
- q('#legendChoiceCancel').style.display='';
+ q('#legendChoiceCancel').style.display='';q('#legendChoiceCancel').textContent='キャンセル';
  let m=q('#legendChoiceModal'),grid=q('#legendChoiceCards');q('#legendChoiceTitle').textContent=title;q('#legendChoiceNote').textContent=note||'';grid.innerHTML='';
  opts.forEach(x=>{let w=document.createElement('div');w.className='card selectable-card';w.style.justifyContent='flex-start';let c=x.c;if(c&&resolvedContentImage(c)){let img=document.createElement('img');img.src=resolvedContentImage(c);img.alt=c.name;img.className='cardimg';img.onerror=()=>{let ph=document.createElement('div');ph.className='muted';ph.textContent='イラスト未設定';img.replaceWith(ph)};w.appendChild(img)}else{let ph=document.createElement('div');ph.className='muted';ph.style.cssText='aspect-ratio:456/701;border:1px dashed #bbb;border-radius:6px;display:flex;align-items:center;justify-content:center;background:#fff;margin-bottom:7px;text-align:center';ph.textContent='イラスト未設定';w.appendChild(ph)}let nm=document.createElement('strong');nm.textContent=x.label||c?.name||'カード';w.appendChild(nm);if(c){let meta=document.createElement('div');meta.className='small';meta.style.marginTop='5px';meta.textContent='VP：'+(c.vp||0);w.appendChild(meta);let ef=document.createElement('div');ef.className='small';ef.style.marginTop='6px';ef.textContent=effectText(c);w.appendChild(ef)}w.onclick=()=>{if(choiceSettled||!canChoose()||turn!==choiceOwner)return;choiceSettled=true;m.classList.add('hidden');turnClockChoice=null;onChoose(x)};grid.appendChild(w)});
  q('#legendChoiceCancel').onclick=()=>{if(choiceSettled||!canChoose()||turn!==choiceOwner)return;choiceSettled=true;m.classList.add('hidden');turnClockChoice=null;if(onCancel)onCancel()};m.classList.remove('hidden');
@@ -210,7 +213,7 @@ function normalTurnStartCandidate(c){
  if(c.turnStartTiming==='pre'||c.turnStartTiming==='post'||c.turnStartPhase==='pre'||c.turnStartPhase==='post')return false;
  if(c.hooks?.turnStartPre||c.hooks?.turnStartPost)return false;
  return c.turnStartTiming==='normal'||c.turnStartPhase==='normal'||typeof c.hooks?.turnStart==='function'||
- ['mine','farm','barracks','commandroom','church','greatermine','greaterfarm','greaterbarracks','greatercommand','bandit','nanban','tenkucat','skyscraper'].includes(c.special);
+ ['mine','farm','barracks','commandroom','church','greatermine','greaterfarm','greaterbarracks','greatercommand','bandit','nanban','tenkucat','skyscraper','repeatBook'].includes(c.special);
 }
 function repeatTurnStartEffect(c,times){
  let y0=powers[turn].y,p0=powers[turn].p,r0=powers[turn].r,drawnCards=[],drawnBread=[];
@@ -220,7 +223,8 @@ function repeatTurnStartEffect(c,times){
   else if(c.special==='skyscraper')cardCommands.pool('y',5);
   else if(c.special==='nanban')pendingNanban++;
   else if(c.special==='tenkucat')pendingTenkuCat++;
-  else if(typeof c.hooks?.turnStart==='function')runPackCardHook(c,'turnStart',{owner:turn});
+  else if(c.special==='repeatBook')resolveRepeatBook(c);
+  else if(typeof c.hooks?.turnStart==='function')runPackCardHook({...c},'turnStart',{owner:turn});
  }
  let parts=[];if(powers[turn].y-y0)parts.push('資金+'+(powers[turn].y-y0));if(powers[turn].p-p0)parts.push('食料+'+(powers[turn].p-p0));if(powers[turn].r-r0)parts.push('兵力+'+(powers[turn].r-r0));if(drawnBread.length)parts.push('命令書「'+drawnBread.join('」「')+'」を獲得');if(drawnCards.length)parts.push('「'+drawnCards.join('」「')+'」をドロー');if(!parts.length)parts.push('追加効果の結果なし');return parts.join('、');
 }
@@ -234,13 +238,15 @@ function resolveMayQueen(qn=0,repeat=0){
  turnClockChoice={kind:'yggdrasil',qn,repeat};
  chooseLegendCard('ユグドラシル','通常のターン開始時効果を選んで発動（'+(repeat+1)+'/3）',opts,o=>{
   if((onlineDebugMode||realOnlineMainMode)&&viewer!==turn)return;
-  if(!cardCommands.once(3,'turn',{usage:stdAbilityUsed,cardId:'cast:'+commandInstanceId(queenCards[qn]),consume:true}))return;let result=repeatTurnStartEffect(o.c,1);
+  if(!cardCommands.once(3,'turn',{usage:stdAbilityUsed,cardId:'cast:'+commandInstanceId(queenCards[qn]),consume:true}))return;
+  if(o.c.special==='repeatBook'){resolveRepeatBook(o.c,()=>{renderGame();resolveMayQueen(qn,repeat+1)});return}
+  let result=repeatTurnStartEffect(o.c,1);
   triggerNotices.push('ユグドラシル：'+o.c.name+' → '+result);
   renderGame();resolveMayQueen(qn,repeat+1);
  },()=>{cardCommands.once(3,'turn',{usage:stdAbilityUsed,cardId:'cast:'+commandInstanceId(queenCards[qn]),consume:true});resolveMayQueen(qn,repeat)});
 }
 function resolveTurnStartEffects(){
- let lord=CHARACTER_DATA[charOf(turn)]||{},lordBreadCount=(lord.turnBread||0);
+ let lord=activeLordAbility(turn),lordBreadCount=(lord.turnBread||0);
  if(lordBreadCount&&lord.firstBreadBonus&&cardCommands.once(1,'game',{usage:lordFirstBreadUsed,cardId:turn})){lordBreadCount+=lord.firstBreadBonus;cardCommands.once(1,'game',{usage:lordFirstBreadUsed,cardId:turn,consume:true})}
  let lordBreadDraws=cardCommands.draw('command',lordBreadCount).cards.map(breadLabel);
  if(lordBreadDraws.length)triggerNotices.push(lord.uniqueAbility+'：命令書「'+lordBreadDraws.join('」「')+'」を獲得しました。');
@@ -322,8 +328,8 @@ function blockOtherEraLegend(chosen){
  if(chosen.layoutSet&&chosen.exclusiveLayoutSet){legends.forEach(L=>{if(L!==chosen&&L.layoutSet===chosen.layoutSet&&L.tier===chosen.tier&&!L.taken){L.eraBlocked=true;L.taken=true}});return}
  let group=chosen.specialGroup||'era';legends.forEach(L=>{if(L!==chosen&&(L.specialGroup||'era')===group&&!L.taken)L.eraBlocked=true});
 }
-function resolveEraAcquire(L){
- if(!legendAcquisitionAllowed(turn)||legendTakenThisTurn||depressionLegendLocked(turn)||!eraLegendCondition(L))return false;
+function resolveEraAcquire(L,free=false){
+ if(!free&&(!legendAcquisitionAllowed(turn)||legendTakenThisTurn||depressionLegendLocked(turn)||!eraLegendCondition(L)))return false;
  let cfg=specialConfig(L),a=cfg.onAcquire||{},owner=turn;
  if(specialEffectId(L)==='goldenAge')powers[owner].y=0;
  if(specialEffectId(L)==='greatDepression'){powers[owner].y=0;powers[owner].p=0;powers[owner].r=0;
@@ -575,6 +581,7 @@ function useScout(cardIndex){if(!isViewingOwnTurn())return alert('相手ター�
 
 function installPackCard(handIndex,choices=[]){
  let c=hands[turn][handIndex],spec=c?.installSpec;if(!c||!spec)return;
+ if(c.special==='clarentReplica')return installReplica(handIndex,choices);
  if(typeof spec.resolve==='function'){let result=spec.resolve({handIndex,choices,card:c,owner:turn,api:packRuntimeApi(turn)});if(result===false)return;if(result==='handled'){renderGame();return}}
  let faces=spec.faces||[],anyNeed=typeof spec.any==='function'?Math.max(0,+spec.any({card:c,owner:turn,api:packRuntimeApi(turn)})||0):Math.max(0,+spec.any||0),needs=[...faces,...Array.from({length:anyNeed},()=>null)];
  let res=spec.resources||{},p=powers[turn];if(!canPayResourceCost({["y"]:(res.y||0),["p"]:(res.p||0),["r"]:(res.r||0)},turn))return alert('設置に必要な資源が足りません。');
@@ -599,15 +606,17 @@ function installCursedClock(handIndex,a){let p=powers[turn];if(!canPayResourceCo
 function installTreasureShip(handIndex,color){let p=powers[turn];if(!['y','r','p'].includes(color)||!canPayResourceCost({[color]:(30)},turn))return alert('選んだ1色のパワーが30個必要です。');payResourceCost({[color]:(30)},turn);let c=hands[turn].splice(handIndex,1)[0];registerInstallation(turn,c);renderGame()}
 function installInadamashii(handIndex){if(installed[turn].length<8)return alert('正式に設置済みのマーケットカードが8枚必要です。');let names=installed[turn].map((c,i)=>(i+1)+': '+c.name).join('\n');let raw=turnClockPrompt('捨てる設置済みカード8枚の番号をカンマ区切りで入力してください。\n'+names);if(raw===null)return;let idx=[...new Set(raw.split(',').map(x=>Number(x.trim())-1))];if(idx.length!==8||idx.some(i=>!Number.isInteger(i)||i<0||i>=installed[turn].length))return alert('異なる8枚の番号を正しく入力してください。');idx.sort((a,b)=>b-a).forEach(i=>discard.push(installed[turn].splice(i,1)[0]));let c=hands[turn].splice(handIndex,1)[0];registerInstallation(turn,c);renderGame()}
 function resolveOnInstall(c,owner){
+ if(c.special==='clarentReplica')replicaOwners.includes(owner)||replicaOwners.push(owner);
+ if(c.special==='petitArsNova'||c.special==='ritualArsNova')sacrificeNormalCards(c,owner,c.special==='petitArsNova'?1:5);
+ if(c.special==='rewriteBook')resolveRewriteBook(owner);
  if(c.special==='lordmeeting')resolveLordMeetingInstall(owner);
  runPackCardHook(c,'onInstall',{owner});
- if(c.special==='massRecruitment'){for(let p=0;p<playerCount;p++){let e=gachaCast();if(e){let old=turn;turn=p;finalizeHire(e,'一斉採用：');turn=old;hiredThisTurn=false;}}let n=playerCount===2?1:playerCount===3?2:3;for(let i=0;i<n;i++)drawBread(owner);}
+ if(c.special==='massRecruitment'){for(let p=0;p<playerCount;p++){let e=gachaCast();if(e){let old=turn;turn=p;finalizeHire(e,'一斉採用：');notifyStaffingAgency(p);turn=old;hiredThisTurn=false;}}let n=playerCount===2?1:playerCount===3?2:3;for(let i=0;i<n;i++)drawBread(owner);}
  else if(c.special==='castLevelUp'){cardCommands.koyou('レベルアップ',1,{targetFilter:(e,next)=>next.rarity!=='UR',render:false})}
- else if(c.special==='guaranteedUR'){let old=hands[owner];let e=packCastPool('UR')[Math.floor(Math.random()*packCastPool('UR').length)];if(e){let before=turn;turn=owner;finalizeHire({...e},'確定ガチャ：');turn=before;hiredThisTurn=false;}}
- else if(c.special==='amicableRetirement'){let staff=employees[owner]||[];if(staff.length){let msg=staff.map((e,i)=>(i+1)+'. '+castDisplayName(e)+' ['+e.rarity+']').join('\n');let i=Math.floor(+(turnClockPrompt('解雇する雇用キャラクター\n'+msg,'1')||0))-1;if(i>=0&&staff[i]){nextHireMinRarity=upgradeRarity(staff[i].rarity);staff.splice(i,1);}}}
+ else if(c.special==='amicableRetirement')resolveAmicableRetirement(owner);
  else if(c.special==='honeyTrap'){let targets=[];for(let p=0;p<playerCount;p++)if(p!==owner)(employees[p]||[]).forEach((e,i)=>targets.push({p,i,e}));if(targets.length){let n=Math.floor(+(turnClockPrompt('《ハニートラップ》：解雇する相手の雇用キャラクター番号\n'+targets.map((x,i)=>(i+1)+'. P'+(x.p+1)+' '+castDisplayName(x.e)).join('\n'),'1')||0));if(n&&targets[n-1])employees[targets[n-1].p].splice(targets[n-1].i,1)}}
  else if(c.special==='employeeTrade'){let p=+turnClockPrompt('《トレード》：交換相手のP番号','2')-1;if(p>=0&&p<playerCount&&p!==owner&&(employees[owner]||[]).length&&(employees[p]||[]).length){let a=Math.floor(+(turnClockPrompt('自分の雇用キャラクター番号\n'+employees[owner].map((e,i)=>(i+1)+'. '+castDisplayName(e)).join('\n'),'1')||0))-1;let b=Math.floor(+(turnClockPrompt('相手の雇用キャラクター番号\n'+employees[p].map((e,i)=>(i+1)+'. '+castDisplayName(e)).join('\n'),'1')||0))-1;if(employees[owner][a]&&employees[p][b]){let t=employees[owner][a];employees[owner][a]=employees[p][b];employees[p][b]=t}}}
- else if(c.special==='surpriseSpecialGacha'){let pool=['N','R','SR','SSR'].flatMap(r=>packCastPool(r));if(pool.length){let msg=pool.map((e,i)=>(i+1)+'. '+e.rarity+' '+castDisplayName(e)).join('\n');let n=Math.floor(+(turnClockPrompt('《サプライズスペシャルガチャ》\n雇用するキャラクター\n'+msg,'1')||0));if(n&&pool[n-1])finalizeHire({...pool[n-1]},'サプライズスペシャルガチャ：')}}
+ else if(c.special==='surpriseSpecialGacha'){let pool=['N','R','SR','SSR'].flatMap(r=>packCastPool(r));if(pool.length){let msg=pool.map((e,i)=>(i+1)+'. '+e.rarity+' '+castDisplayName(e)).join('\n');let n=Math.floor(+(turnClockPrompt('《サプライズスペシャルガチャ》\n雇用するキャラクター\n'+msg,'1')||0));if(n&&pool[n-1]){finalizeHire({...pool[n-1]},'サプライズスペシャルガチャ：');notifyStaffingAgency(owner)}}}
  else if(c.special==='specialProcurement'){for(let p=0;p<playerCount;p++){let n=p===owner?15:5;let k=turnClockPrompt('《特需》：P'+(p+1)+'が獲得する資源\n資金/食料/兵力の個数を「資金,食料,兵力」で入力（合計'+n+'）',''+n+',0,0');if(k){let a=k.split(',').map(Number);if(a.length===3&&a.reduce((x,y)=>x+y,0)===n){powers[p].y+=a[0];powers[p].p+=a[1];powers[p].r+=a[2]}}}}
  else if(c.special==='cursedclock'){gainResource(owner,'y',3,'effect');gainResource(owner,'r',3,'effect');gainResource(owner,'p',3,'effect');alert('呪怨の懐中時計の設置時効果：資金・兵力・食料を3個ずつ獲得しました。');}
  else if(c.special==='paneteria'){installEffectStack.push({kind:'park',owner,remaining:2,active:false});drainInstallEffects()}
@@ -624,10 +633,12 @@ function drainInstallEffects(){
  if(installEffectRunning)return;installEffectRunning=true;
  try{while(installEffectStack.length&&!gameEnded){
   const frame=installEffectStack[installEffectStack.length-1];
-  if(pendingParkPlayers.length)break;
+  if(pendingParkPlayers.length||pendingNormalInstallChoice)break;
   if(!frame.remaining){installEffectStack.pop();continue}
   frame.remaining--;
-  if(frame.kind==='park'){
+  if(frame.kind==='petitBonus'){
+   const added=cardCommands.dice('roll',{count:1});resolveReactiveRolls(added,false);for(const key of ['y','p','r'])cardCommands.pool(key,1,{owner:frame.owner});
+  }else if(frame.kind==='park'){
    blockAllMarketUndo('ナーロッパランドで市場が変更されました。');cardCommands.change('market','all');
    pendingParkTaken=[];parkChoiceRevision++;pendingParkPlayers=parkSelectionOrder(frame.owner);frame.active=true;
    addDialog('ナーロッパランド：公開場を入れ替え、P'+(frame.owner+1)+'から順に選択（'+(2-frame.remaining)+'/2）。');
@@ -657,6 +668,114 @@ function applyOnlineParkPick(p,key){
  pendingParkTaken.push({player:p,name:got[0].name,count:got.length});
  addDialog('ナーロッパランド：P'+(p+1)+'が公開場から「'+got[0].name+'」'+(got.length>1?'×'+got.length:'')+'を獲得しました。');
  cardCommands.start(p,1,{queue:pendingParkPlayers,step:()=>true});parkChoiceRevision++;resumeDeferredInstall();renderGame();return true;
+}
+
+function notifyStaffingAgency(hiredOwner){
+ for(let p=0;p<playerCount;p++)if(p!==hiredOwner){const count=allFieldCards(p).filter(c=>c.special==='staffingAgency').length;
+  if(count){cardCommands.draw('command',count,{owner:p});const gain=(playerCount===2?3:playerCount===3?2:1)*count;for(const key of ['y','p','r'])cardCommands.pool(key,gain,{owner:p})}
+ }
+}
+function resolveAmicableRetirement(owner){
+ const opts=(employees[owner]||[]).filter(e=>e.rarity!=='UR'&&upgradeRarity(e.rarity));if(!opts.length)return;
+ normalInstallChoice('円満退職','解雇する雇用キャラクターを選択（通常の雇用コストを支払う）',opts.map(e=>({label:castDisplayName(e)+' ['+e.rarity+']',e})),o=>{
+  if(!employees[owner].includes(o.e)||!isHireFree()&&(!canPayResourceCost({y:5},owner)||!unusedDice().length))return;
+  // Same ordinary hire cost: money5 and one die, waived only by the existing free-hire rule.
+  const pay=()=>{if(!employees[owner].includes(o.e))return;employees[owner].splice(employees[owner].indexOf(o.e),1);nextHireMinRarity=upgradeRarity(o.e.rarity);renderGame()};
+  if(isHireFree()){pay();return}
+  normalInstallChoice('円満退職','雇用コストとして支払うサイコロを選択',unusedDice().map(d=>({label:'🎲'+d.value+' (#'+d.id+')',d})),x=>{if(!canPayResourceCost({y:5},owner)||!unusedDice().includes(x.d))return;useDie(x.d.id);payResourceCost({y:5},owner);pay()});
+ });
+}
+function useGuaranteedUR(c){
+ const owner=turn;if(!isViewingOwnTurn()||!allFieldCards(owner).includes(c)||c.special!=='guaranteedUR'||!cardCommands.can(null,'hire-space'))return;
+ const pool=packCastPool('UR');if(!pool.length)return;
+ const payment=isHireFree()?0:2;if(!canPayResourceCost({y:payment*5})||unusedDice().length<payment)return;
+ const finish=chosen=>{if(!allFieldCards(owner).includes(c)||!canPayResourceCost({y:payment*5})||chosen.length!==payment||!chosen.every(d=>unusedDice().includes(d)))return;
+  chosen.forEach(d=>useDie(d.id));payResourceCost({y:payment*5});cardCommands.move(c,{zone:installed[owner].includes(c)?'installed':'temporary',owner},'discard');
+  const e=pool[Math.floor(Math.random()*pool.length)];cardCommands.koyou('select',1,{pool,selected:[e]});renderGame();
+ };
+ const select=(selected=[])=>{if(selected.length===payment){finish(selected);return}normalInstallChoice('確定ガチャ','通常雇用コストの2倍：資金10とサイコロ2個',unusedDice().filter(d=>!selected.includes(d)).map(d=>({label:'🎲'+d.value+' (#'+d.id+')',d})),o=>select([...selected,o.d]))};select();
+}
+// TEST238: normal-card choices share the existing lease-aware card modal and install stack.
+let pendingNormalInstallChoice=false, repeatBooksPending=[], specialLegendAcquireOwner=null;
+let replicaOwners=[];
+function characterActivationEnabled(p){return ![...replicaOwners].some(owner=>owner!==p)}
+function normalCard(c){return !!c&&!isLegendCard(c)&&(c.type==='S'||c.type==='N')}
+function normalInstallChoice(title,note,opts,done,cancel=()=>{}){
+ if(botIsPlayer(turn)){if(opts.length)done(opts[0]);else cancel();return}
+ pendingNormalInstallChoice=true;
+ const finish=fn=>x=>{pendingNormalInstallChoice=false;fn(x);drainInstallEffects();renderGame()};
+ chooseLegendCard(title,note,opts,finish(done),finish(cancel));
+}
+function selectNormalCards(title,candidates,count,done,{optional=false,selected=[]}={}){
+ const rest=candidates.filter(c=>!selected.includes(c));
+ if(selected.length===count||!rest.length){done(selected);return}
+ normalInstallChoice(title,'捨てるカードを選択（'+selected.length+'/'+count+'）',rest.map(c=>({c})),o=>selectNormalCards(title,candidates,count,done,{optional,selected:[...selected,o.c]}),()=>{if(optional)done(selected)});
+ if(optional)q('#legendChoiceCancel').textContent='選択を終えて引く';
+}
+function sacrificeNormalCards(c,owner,count){
+ const candidates=(installed[owner]||[]).filter(x=>x!==c&&normalCard(x));
+ if(candidates.length<count)return;
+ if(c.special==='ritualArsNova'&&!ritualLegendCandidates().length)return;
+ selectNormalCards(c.name,candidates,count,chosen=>{
+  const commit=()=>{
+   const zone=installed[owner].includes(c)?'installed':temporary[owner].includes(c)?'temporary':null;
+   if(turn!==owner||!zone||chosen.length!==count||new Set(chosen).size!==count||!chosen.every(x=>x!==c&&normalCard(x)&&installed[owner].includes(x)))return false;
+   cardCommands.move(chosen,{zone:'installed',owner},'discard');cardCommands.move(c,{zone,owner},'discard');return true;
+  };
+  if(c.special==='ritualArsNova'){
+   normalInstallChoice(c.name,'獲得する公開レジェンドを選択（コスト・個別条件は不要）',ritualLegendCandidates().map(L=>({c:{...L,key:L.id,type:'LEGEND'},L})),o=>{if(ritualLegendCandidates().includes(o.L)&&commit())acquireRitualLegend(o.L,owner)});
+  }else if(commit()){
+   // LIFO: complete all nested installation effects before the additional die/resources.
+   installEffectStack.push({kind:'petitBonus',owner,remaining:1});
+   installEffectStack.push({kind:'toba',owner,remaining:1});drainInstallEffects();
+  }
+ });
+}
+function ritualLegendCandidates(){return legends.filter(L=>!L.taken&&!L.eraBlocked&&(L.tier==='lower'||L.tier==='upper'&&L.unlocked))}
+function acquireRitualLegend(L,owner=turn){
+ if(owner!==turn||!ritualLegendCandidates().includes(L))return false;
+ const previous=specialLegendAcquireOwner;specialLegendAcquireOwner=owner;
+ try{
+  if(['goldenAge','greatDepression'].includes(specialEffectId(L)))return resolveEraAcquire(L,true);
+  finishLegendAcquisition(L);
+  if(L.special==='resourceWipe'){cardCommands.start(0,'all',{step:p=>cardCommands.remove('all',{owner:p})});cardCommands.end()}
+  return true;
+ }finally{specialLegendAcquireOwner=previous}
+}
+function resolveRewriteBook(owner){
+ const candidates=hands[owner].filter(normalCard);
+ selectNormalCards('魔導書の書き換え',candidates,candidates.length,selected=>{
+  if(turn!==owner||!selected.every(c=>hands[owner].includes(c)))return;
+  cardCommands.move(selected,{zone:'hand',owner},'discard');cardCommands.draw('deck',selected.length+1,{owner});
+ },{optional:true});
+}
+function repeatBookCandidates(owner=turn){return allFieldCards(owner).filter(c=>normalCard(c)&&normalTurnStartCandidate(c))}
+function resolveRepeatBook(c,done=()=>{},path=new Set()){
+ if(path.has(c)){triggerNotices.push('リピートの魔導書：同じカードへの再帰を終了しました。');done();return}
+ const next=new Set(path);next.add(c);const options=repeatBookCandidates();
+ if(!options.length){done();return}
+ const apply=o=>{
+  if(!repeatBookCandidates().includes(o.c)){done();return}
+  if(o.c.special==='repeatBook')resolveRepeatBook(o.c,done,next);
+  else{repeatTurnStartEffect(o.c,1);done();renderGame()}
+ };
+ if(botIsPlayer(turn)){apply({c:options.find(c=>c.special!=='repeatBook')||options[0]});return}
+ chooseLegendCard('リピートの魔導書','通常カードのターン開始時効果を選択（任意）',options.map(c=>({c})),apply,done);
+}
+function resolvePendingRepeatBooks(){
+ const c=repeatBooksPending.shift();if(!c)return false;
+ if(!installed[turn].includes(c))return resolvePendingRepeatBooks();
+ resolveRepeatBook(c,()=>{if(!resolvePendingRepeatBooks())renderGame()});return true;
+}
+function replicaPaymentFace(choices){
+ if(choices.length!==4||new Set(choices).size!==4)return null;
+ return [1,2,3,4,5,6].find(face=>choices.every(c=>installCostOptions(face).some(o=>o.id===c)))||null;
+}
+function replicaInstallChoices(){for(const face of [1,2,3,4,5,6]){const options=installCostOptions(face);if(options.length>=4)return options.slice(0,4).map(o=>o.id)}return null}
+function installReplica(handIndex,choices){
+ const c=hands[turn][handIndex],face=replicaPaymentFace(choices);if(c?.special!=='clarentReplica'||!face)return false;
+ [...choices].sort((a,b)=>(b.startsWith('b:')?+b.slice(2):-1)-(a.startsWith('b:')?+a.slice(2):-1)).forEach(choice=>consumeCostChoice(choice,face));
+ registerInstallation(turn,hands[turn].splice(handIndex,1)[0]);renderGame();return true;
 }
 // @kokoryo-end-section S0099
 

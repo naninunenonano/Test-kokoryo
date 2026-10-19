@@ -79,8 +79,9 @@ function applyUniqueAbilityDef(entity){
 }
 // 《無限の黄金》は領主マインと雇用ゴルドで別の効果を持つ。
 function isMineGoldLord(p){let lord=CHARACTER_DATA[charOf(p)];return !!lord&&lord.uniqueAbility==='無限の黄金'&&lord.name==='マイン'}
-function employeeUniqueAbilitiesEnabled(p){return true}
-function effectiveEmployeeAbility(e,p){if(employeeUniqueAbilitiesEnabled(p))return e;return {rarity:e.rarity,name:e.name,id:e.id,noCommonDie:e.noCommonDie};}
+function employeeUniqueAbilitiesEnabled(p){return characterActivationEnabled(p)}
+function activeLordAbility(p){return characterActivationEnabled(p)?CHARACTER_DATA[charOf(p)]||{}:{}}
+function effectiveEmployeeAbility(e,p){if(employeeUniqueAbilitiesEnabled(p)||!characterActivationEnabled(p))return e;return {rarity:e.rarity,name:e.name,id:e.id,noCommonDie:e.noCommonDie};}
 function abilityStackLabel(name){if(!name||!UNIQUE_ABILITY_DEFS[name])return '';return UNIQUE_ABILITY_DEFS[name].stackable===false?'重複不可':'重複可'}
 function abilityStackTag(name){let label=abilityStackLabel(name);return label?' <span class="ability-stack-tag">'+label+'</span>':''}
 function abilityStackText(name){let label=abilityStackLabel(name);return label?' 【'+label+'】':''}
@@ -254,7 +255,7 @@ function fieldUniqueAbilities(){
  return [...set]
 }
 function abilityProfile(name){if(!name)return null;let def=UNIQUE_ABILITY_DEFS[name];if(def)return applyUniqueAbilityDef({uniqueAbility:name});for(const x of Object.values(CHARACTER_DATA))if(x?.uniqueAbility===name)return x;for(const x of Object.values(CAST_TYPES))if(x?.uniqueAbility===name)return x;return null}
-function recreationRangeForTurn(){let vals=[];let lord=CHARACTER_DATA[charOf(turn)];if(lord?.recreationRange)vals.push(lord.recreationRange);(employeeUniqueAbilitiesEnabled(turn)?(employees[turn]||[]):[]).forEach(e=>{if(e?.recreationRange)vals.push(e.recreationRange)});let cp=abilityProfile(copiedAbility);if(cp?.recreationRange)vals.push(cp.recreationRange);return vals.length?Math.max(...vals):0}
+function recreationRangeForTurn(){if(!characterActivationEnabled(turn))return 0;let vals=[];let lord=CHARACTER_DATA[charOf(turn)];if(lord?.recreationRange)vals.push(lord.recreationRange);(employeeUniqueAbilitiesEnabled(turn)?(employees[turn]||[]):[]).forEach(e=>{if(e?.recreationRange)vals.push(e.recreationRange)});let cp=abilityProfile(copiedAbility);if(cp?.recreationRange)vals.push(cp.recreationRange);return vals.length?Math.max(...vals):0}
 function resolveAbilityCopyLegend(onDone){
  const copyCard=installed[turn].find(c=>c.special==='abilityCopy');if(!copyCard||!cardCommands.once(1,'turn',{usage:stdAbilityUsed,cardId:'copy:'+commandInstanceId(copyCard)}))return false;
  let opts=fieldUniqueAbilities();if(!opts.length)return false;
@@ -296,10 +297,10 @@ function hasSameOwnedUniqueAbility(e,p=turn){
 }
 function sameUniqueAbilityAsLord(e,p=turn){return hasSameOwnedUniqueAbility(e,p)}
 function redrawSameRarityCast(e){let pool=implementedCastPool(e.rarity).filter(x=>x.id!==e.id);if(!pool.length)pool=allImplementedCastPool(e.rarity).filter(x=>x.id!==e.id);return pool.length?{...pool[Math.floor(Math.random()*pool.length)]}:null}
-function resolveDoppelCopy(e){if(!e?.doppelganger)return e;let targets=[];for(let p=0;p<playerCount;p++)(employees[p]||[]).forEach((x,i)=>{if(x&&x.rarity===e.rarity&&!x.doppelganger)targets.push({p,i,x})});if(!targets.length){e.copiedFrom=null;return e}let msg=targets.map((t,i)=>(i+1)+'. P'+(t.p+1)+' '+castDisplayName(t.x)).join('\n');let n=Math.floor(+(botIsPlayer(turn)?'1':turnClockPrompt('《ドッペルゲンガー》\nコピーする同レアリティの雇用キャラクターを選んでください。\n\n'+msg,'1')||0));if(!n||!targets[n-1]){e.copiedFrom=null;return e}let src=targets[n-1].x;let copied={...e,copiedFrom:src.id,uniqueAbility:src.uniqueAbility,abilityText:castEffectText(src),copySourceName:castDisplayName(src)};return applyUniqueAbilityDef(copied) }
+function resolveDoppelCopy(e){if(!characterActivationEnabled(turn))return e;if(!e?.doppelganger)return e;let targets=[];for(let p=0;p<playerCount;p++)(employees[p]||[]).forEach((x,i)=>{if(x&&x.rarity===e.rarity&&!x.doppelganger)targets.push({p,i,x})});if(!targets.length){e.copiedFrom=null;return e}let msg=targets.map((t,i)=>(i+1)+'. P'+(t.p+1)+' '+castDisplayName(t.x)).join('\n');let n=Math.floor(+(botIsPlayer(turn)?'1':turnClockPrompt('《ドッペルゲンガー》\nコピーする同レアリティの雇用キャラクターを選んでください。\n\n'+msg,'1')||0));if(!n||!targets[n-1]){e.copiedFrom=null;return e}let src=targets[n-1].x;let copied={...e,copiedFrom:src.id,uniqueAbility:src.uniqueAbility,abilityText:castEffectText(src),copySourceName:castDisplayName(src)};return applyUniqueAbilityDef(copied) }
 function finalizeHire(e,label=''){
  e=resolveDoppelCopy(e);employees[turn].push(e);if(employeeUniqueAbilitiesEnabled(turn)&&e.hireBread){for(let i=0;i<e.hireBread;i++)drawBread(turn);}
- let agency=allFieldCards(turn).filter(c=>c.special==='staffingAgency').length;if(agency){for(let i=0;i<agency;i++){drawBread(turn);let gain=playerCount>=4?1:playerCount===3?2:3;gainResource(turn,'y',gain,'effect');gainResource(turn,'p',gain,'effect');gainResource(turn,'r',gain,'effect')}}
+
  triggerNotices.push((label||('P'+(turn+1)+'が '))+e.rarity+'「'+e.name+'」を雇用しました。ダイス増加は次の自分のターンから適用されます。');renderGame();
 }
 function hireEmployee(dieId){
@@ -464,6 +465,7 @@ function oracleCanUpgradeTarget(target){
  return !!oracleUpgradeTarget(target)
 }
 function oracleSource(sourceType,sourceIndex){
+ if(!characterActivationEnabled(turn))return null;
  if(sourceType==='copy')return abilityProfile(copiedAbility);
  if(sourceType==='lord')return CHARACTER_DATA[charOf(turn)]||null;
  return employeeUniqueAbilitiesEnabled(turn)?(employees[turn]?.[sourceIndex]||null):null
@@ -496,6 +498,7 @@ function useOracleUpgrade(sourceType,sourceIndex,targetIndex,discardIndices=null
  triggerNotices.push('《神託》：'+before+' → '+castDisplayName(ne)+'（'+ne.rarity+'）。通常手札3枚を捨て、'+(placed?'山札から「'+placed.name+'」を仮設置しました。':'山札から設置できませんでした。'));renderGame();return true;
 }
 function tributeSource(sourceType,sourceIndex){
+ if(!characterActivationEnabled(turn))return null;
  if(sourceType==='copy')return abilityProfile(copiedAbility);
  if(sourceType==='lord')return CHARACTER_DATA[charOf(turn)]||null;
  return employeeUniqueAbilitiesEnabled(turn)?(employees[turn]?.[sourceIndex]||null):null
@@ -586,6 +589,6 @@ function useFran(fieldIndex,handIndex){if(charOf(turn)!=='fran')return;let old=i
 
 // @kokoryo-section S0106
 
-function invisibleHandCount(p=turn){let lord=CHARACTER_DATA[charOf(p)]||{};return (lord.invisibleHand||0)+(employeeUniqueAbilitiesEnabled(p)?(employees[p]||[]):[]).reduce((n,e)=>n+(e.invisibleHand||0),0)+(p===turn&&copiedAbility==='神の見えざる手'?(abilityProfile(copiedAbility).invisibleHand||0):0)}
+function invisibleHandCount(p=turn){if(!characterActivationEnabled(p))return 0;let lord=CHARACTER_DATA[charOf(p)]||{};return (lord.invisibleHand||0)+(employeeUniqueAbilitiesEnabled(p)?(employees[p]||[]):[]).reduce((n,e)=>n+(e.invisibleHand||0),0)+(p===turn&&copiedAbility==='神の見えざる手'?(abilityProfile(copiedAbility).invisibleHand||0):0)}
 function useInvisibleHand(handIndex,color){let n=invisibleHandCount();if(n<=0)return;let c=hands[turn][+handIndex];if(!c)return alert('捨てる手札を選んでください。');c=cardCommands.choice('hand',1,{select:[c]})[0];cardCommands.move(c,'hand','discard');cardCommands.pool(color,n);triggerNotices.push('《神の見えざる手》：「'+c.name+'」を捨て、'+cname(color)+'を'+n+'個獲得しました。');renderGame()}
 // @kokoryo-end-section S0106

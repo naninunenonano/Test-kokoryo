@@ -278,6 +278,7 @@ function botTryInstall(){
  let h=hands[turn]||[],ps=powers[turn];
  let order=h.map((c,i)=>({c,i,v:botScoreCard(c)})).sort((a,b)=>b.v-a.v);
  for(let {c,i} of order){
+  if(c.special==='clarentReplica'){const choices=replicaInstallChoices();if(choices&&installReplica(i,choices))return true;continue}
   if(c.installSpec){if(botTryPackInstall(c,i)){botLog(c.name+'を設置');return true}continue}
   if(balancedInstallCost(c)){
    const choices=balancedCostChoices(c),base={greatermine:'mine',greaterfarm:'farm',greaterbarracks:'barracks',greatercommand:'commandroom'}[c.special];
