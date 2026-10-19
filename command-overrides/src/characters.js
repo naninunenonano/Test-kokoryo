@@ -320,6 +320,7 @@ function resolveDoppelCopy(e){
 }
 function grantDoppelHireDie241(e){
  if(!e?.doppelganger)return;
+ if(turnClockState.active!==turn){e._pendingCommonDie241=true;return}
  if(['SSR','UR'].includes(e.rarity)){pendingSSRBonus++;if(botIsPlayer(turn))gainSSRDie(1)}
  else{const added=cardCommands.dice('roll',{count:1,source:'hire'});resolveReactiveRolls(added,false)}
 }
@@ -370,7 +371,7 @@ function employeeCardView(e){
  let name=document.createElement('strong');name.className='employee-card-name';name.textContent=castDisplayName(e);
  meta.append(rarity,name);
  if(e.uniqueAbility){let a=document.createElement('div');a.className='employee-card-ability';a.innerHTML='《'+escapeHtml(e.uniqueAbility)+'》'+abilityStackTag(e.uniqueAbility);meta.appendChild(a)}
- let ef=document.createElement('div');ef.className='employee-card-effect';ef.textContent=castEffectText(e);meta.appendChild(ef);
+ let ef=document.createElement('div');ef.className='employee-card-effect';ef.textContent=castEffectText(e).replace(/\bCLR\b/g,'LR');meta.appendChild(ef);
  w.appendChild(meta);return w;
 }
 const CAST_SYNTHESIS={CN1:'CR1',CN2:'CR2',CN3:'CR3',CR1:'CSR2',CR2:'CSR3',CR3:'CSR4',CSR2:'CSSR2',CSR3:'CSSR3',CSR4:'CSSR4',CSR1:'CSSR1'};

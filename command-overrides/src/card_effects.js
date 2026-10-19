@@ -63,7 +63,7 @@ function chooseNamedHireForLegend(){
  let head=document.createElement('div');head.className='row';let title=document.createElement('strong');title.textContent='《ビギニング・オブ・レジェンド》：雇用するキャラクターを選択';let close=document.createElement('button');close.className='secondary';close.textContent='閉じる';close.onclick=()=>modal.remove();head.append(title,close);box.appendChild(head);
  let note=document.createElement('div');note.className='small';note.style.marginTop='6px';note.textContent='キャラクター名と能力を確認してタップしてください。';box.appendChild(note);
  let grid=document.createElement('div');grid.className='employee-card-grid';grid.style.marginTop='10px';grid.style.display='flex';grid.style.flexWrap='wrap';grid.style.gap='8px';
- pool.forEach(e=>{let wrap=document.createElement('div');wrap.className='employee-card-wrap';wrap.style.flex='1 1 150px';wrap.style.maxWidth='180px';let btn=document.createElement('button');btn.type='button';btn.className='employee-card';btn.style.width='100%';btn.style.textAlign='left';btn.style.cursor='pointer';btn.appendChild(employeeCardView(e));btn.onclick=()=>{let chosen=cardCommands.koyou('select',1,{pool,selected:cardCommands.choice(pool,1,{select:[e]}),accept:x=>employees[turn].push(x)})[0];if(!chosen)return;triggerNotices.push('《ビギニング・オブ・レジェンド》：'+chosen.rarity+'「'+castDisplayName(chosen)+'」を雇用しました。');modal.remove();renderGame()};wrap.appendChild(btn);grid.appendChild(wrap)});
+ pool.forEach(e=>{let wrap=document.createElement('div');wrap.className='employee-card-wrap';wrap.style.flex='1 1 150px';wrap.style.maxWidth='180px';let btn=document.createElement('button');btn.type='button';btn.className='employee-card';btn.style.width='100%';btn.style.textAlign='left';btn.style.cursor='pointer';btn.appendChild(employeeCardView(e));btn.onclick=()=>{let chosen=cardCommands.koyou('select',1,{pool,selected:cardCommands.choice(pool,1,{select:[e]}),accept:x=>{if(x.doppelganger)finalizeHire(x);else employees[turn].push(x)}})[0];if(!chosen)return;triggerNotices.push('《ビギニング・オブ・レジェンド》：'+chosen.rarity+'「'+castDisplayName(chosen)+'」を雇用しました。');modal.remove();renderGame()};wrap.appendChild(btn);grid.appendChild(wrap)});
  box.appendChild(grid);modal.appendChild(box);document.body.appendChild(modal);
 }
 function fieldDestroyCandidates(p){let a=[];(installed[p]||[]).forEach((c,i)=>{if(c.type!=='LEGEND')a.push({zone:'installed',i,c})});(temporary[p]||[]).forEach((c,i)=>{if(c.type!=='LEGEND')a.push({zone:'temporary',i,c})});return a}
@@ -574,7 +574,7 @@ function usePublicMarket(cardIndex,selection=null){
  cardCommands.once(1,'turn',{cardId:c.id,usage:publicMarketUsed,owner:turn,consume:true});
  renderGame();
 }
-function useScout(cardIndex){if(!isViewingOwnTurn())return alert('相手ターン中は使用できません。');if(!cardCommands.can(null,'hire-space'))return alert('雇用枠が上限です。');let c=installed[turn][cardIndex];if(!cardCommands.can(c,'installed')||!cardCommands.can(c,'special',{value:'scout'}))return;cardCommands.move(c,'installed','discard');let hired=cardCommands.koyou('gacha',1,{accept:e=>{if(sameUniqueAbilityAsLord(e)&&implementedCastPool(e.rarity).length&&turnClockConfirm(e.rarity+'「'+e.name+'」の固有能力は領主と同じです。\nこのキャストを雇用せず、同じレアリティでもう一度雇用しますか？'))e=redrawSameRarityCast(e)||e;employees[turn].push(e);hiredThisTurn=true;if(employeeUniqueAbilitiesEnabled(turn)&&e.hireBread){for(let i=0;i<e.hireBread;i++)drawBread(turn);}triggerNotices.push('スカウト：'+e.rarity+'「'+e.name+'」を雇用しました。');}});if(!hired.length)return alert('雇用できるキャストが実装されていません。');renderGame()}
+function useScout(cardIndex){if(!isViewingOwnTurn())return alert('相手ターン中は使用できません。');if(!cardCommands.can(null,'hire-space'))return alert('雇用枠が上限です。');let c=installed[turn][cardIndex];if(!cardCommands.can(c,'installed')||!cardCommands.can(c,'special',{value:'scout'}))return;cardCommands.move(c,'installed','discard');let hired=cardCommands.koyou('gacha',1,{accept:e=>{if(sameUniqueAbilityAsLord(e)&&implementedCastPool(e.rarity).length&&turnClockConfirm(e.rarity+'「'+e.name+'」の固有能力は領主と同じです。\nこのキャストを雇用せず、同じレアリティでもう一度雇用しますか？'))e=redrawSameRarityCast(e)||e;if(e.doppelganger){finalizeHire(e,'スカウト：');hiredThisTurn=true;return}employees[turn].push(e);hiredThisTurn=true;if(employeeUniqueAbilitiesEnabled(turn)&&e.hireBread){for(let i=0;i<e.hireBread;i++)drawBread(turn);}triggerNotices.push('スカウト：'+e.rarity+'「'+e.name+'」を雇用しました。');}});if(!hired.length)return alert('雇用できるキャストが実装されていません。');renderGame()}
 // @kokoryo-end-section S0091
 
 // @kokoryo-section S0094
@@ -843,7 +843,7 @@ function finishTrade241(message=''){
 function applyTradeChoice241({id,player,kind,target,key}){
  const t=pendingTrade241;if(!t||t.id!==id||!turnClockLeaseValid(t.owner,t.token))return false;
  if(kind==='cancel'){if(player!==t.owner&&player!==t.target)return false;finishTrade241('トレード：交換をキャンセルしました。');return true}
- if(player!==tradeChooser241())return false;
+ if(kind!=='pick'||player!==tradeChooser241())return false;
  const chosen=(employees[player]||[]).find(e=>e._tradeId241===key);if(!chosen)return false;
  if(t.target===null){if(!tradeTargets241(t.owner).includes(target))return false;t.target=target;t.own=key;return true}
  const own=(employees[t.owner]||[]).find(e=>e._tradeId241===t.own);
@@ -861,7 +861,7 @@ function requestTradeChoice241(kind,target,key){
  const t=pendingTrade241;if(!t)return;
  const player=realOnlineMainMode?realMyPlayerIndex():tradeChooser241();
  if(realOnlineMainMode){const n=turnClockNet;if(!n?.ready)return;const payload={client:realLobbyClientId,match:n.match,epoch:n.epoch,token:turnClockState.token,id:t.id,player,kind,target,key};if(isRealLobbyHost())receiveTradeChoice241(payload);else turnClockSend('trade_choice_241',payload)}
- else if(applyTradeChoice241({id:t.id,player,kind,target,key})){advanceTradeBots241();renderGame()}
+ else if(applyTradeChoice241({id:t.id,player,kind,target,key})){advanceTradeBots241();renderTrade241();renderGame()}
 }
 function receiveTradeChoice241(payload){
  const n=turnClockNet,t=pendingTrade241;

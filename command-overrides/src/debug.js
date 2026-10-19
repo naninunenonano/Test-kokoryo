@@ -21,6 +21,7 @@ function debugNamedHire(id){
   chooseLRAbilities({...e},made=>{employees[turn].push(made);triggerNotices.push('デバッグ：LR「'+castDisplayName(made)+'」を指名雇用しました。取得能力：'+(made.grantedAbilities||[]).map(x=>'《'+x+'》').join('＋'));renderGame()});
   return
  }
+ if(e.doppelganger){finalizeHire(e,'デバッグ：');return}
  employees[turn].push(e);triggerNotices.push('デバッグ：'+e.rarity+'「'+castDisplayName(e)+'」を指名雇用しました。');renderGame();
 }
 function debugGainOrder(v){

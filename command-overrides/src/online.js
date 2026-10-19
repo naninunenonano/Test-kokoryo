@@ -703,7 +703,7 @@ function turnClockReceiveAction(payload){
   if(payload.end)turnClockResendState();return;
  }
  if(payload.state?.turn!==turn||payload.client!==realMainRoster[turn]?.client_id)return;
- if(pendingTrade241){turnClockResendState();return}
+ if(pendingTrade241){turnClockCommit();n.barrier=n.revision;return}
  if((payload.revision||0)<(n.barrier||0)){turnClockResendState();return}
  turnClockAccount();
  if(s.remaining[turn]<=0){turnClockExpire(s.token);return}

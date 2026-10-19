@@ -81,7 +81,7 @@ function cardArtwork(c){
 function card(c,count=1,click=false){
  const e=document.createElement(click?'button':'div');if(click)e.type='button';e.className='card hasimg unified-card';e.appendChild(cardArtwork(c));
  const meta=document.createElement('div');meta.className='cardmeta';const name=document.createElement('strong');name.textContent=c.name;meta.appendChild(name);
- for(const [label,text] of [['card-kind',c.type==='S'?'STANDARD':c.type==='LEGEND'?'LEGEND':'NORMAL'],['card-vp','VP：'+vpLabel(c,turn)],['card-cost','設置：'+(c.costText||c.cost||'—')]]){const item=document.createElement('div');item.className='small '+label;item.textContent=text;meta.appendChild(item)}
+ for(const [label,text] of [['card-kind',c.type==='S'?'STANDARD':c.type==='LEGEND'?'LEGEND':'NORMAL'],['card-vp','VP：'+vpLabel(c,turn)],['card-cost','設置：'+costTextForCard(c)]]){const item=document.createElement('div');item.className='small '+label;item.textContent=text;meta.appendChild(item)}
  e.appendChild(meta);if(count>1){const badge=document.createElement('span');badge.className='badge';badge.textContent='×'+count;e.appendChild(badge)}return e;
 }
 // @kokoryo-end-section S0033
@@ -723,7 +723,7 @@ function openPlayerBoard(p,mode="board"){
    let field=section('設置済みカード');let cards=[...(installed[p]||[]),...(temporary[p]||[])];if(!cards.length)field.textContent='なし';cards.forEach(c=>{let tile=document.createElement('button');tile.type='button';tile.className='online-info-card';tile.style.cssText='padding:5px;min-width:115px;max-width:165px;flex:1 1 125px;text-align:left';let visual=card(c,1,false);visual.style.pointerEvents='none';tile.appendChild(visual);let detail=document.createElement('div');detail.className='small';detail.style.cssText='margin-top:5px;line-height:1.4';detail.appendChild(cardInfoSections(c));tile.appendChild(detail);tile.onclick=()=>openCardImage({src:resolvedContentImage(c)||'',alt:c.name},c,'installed');field.appendChild(tile)});
   }
   if(mode==='board'||mode==='employees'){
-   let emp=section('雇用キャラクター');if(!(employees[p]||[]).length)emp.textContent='なし';(employees[p]||[]).forEach(c=>{let btn=document.createElement('button');btn.className='secondary';btn.textContent=(c.rarity||'')+' '+c.name;btn.onclick=()=>{let old=emp.querySelector('.employee-detail');if(old)old.remove();let detail=document.createElement('div');detail.className='notice employee-detail';detail.style.width='100%';detail.textContent=c.name+'：'+(castEffectText(c)||'効果なし');emp.appendChild(detail)};emp.appendChild(btn)});
+   let emp=section('雇用キャラクター');if(!(employees[p]||[]).length)emp.textContent='なし';(employees[p]||[]).forEach(c=>{let btn=document.createElement('button');btn.className='secondary';btn.textContent=displayCastRarity241(c.rarity)+' '+c.name;btn.onclick=()=>{let old=emp.querySelector('.employee-detail');if(old)old.remove();let detail=document.createElement('div');detail.className='notice employee-detail';detail.style.width='100%';detail.textContent=c.name+'：'+(castEffectText(c)||'効果なし');emp.appendChild(detail)};emp.appendChild(btn)});
   }
  }
  overlay.appendChild(panel);overlay.onclick=e=>{if(e.target===overlay)overlay.remove()};document.body.appendChild(overlay);

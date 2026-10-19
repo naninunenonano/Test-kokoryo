@@ -483,7 +483,10 @@ function continueBeginTurn(){
  depressionStartSuppressed=suppressDepressionStart;
  if(depressionDebtLocked(turn)&&!suppressDepressionStart){gainResource(turn,'p',5,'depressionBonus');gainResource(turn,'r',5,'depressionBonus');}
  let lord=activeLordAbility(turn),staff=characterActivationEnabled(turn)?employees[turn]||[]:[],randomBonus=staff.reduce((n,x)=>n+(x.noCommonDie?0:((x.rarity==='SSR'||x.rarity==='UR')?0:1))+(employeeUniqueAbilitiesEnabled(turn)?(x.extraRandomDice||0):0),0)+(characterActivationEnabled(turn)?stackedNumericEffect(turn,'extraDice'):0)+(abilityProfile(copiedAbility)?.extraDice||0);
+ randomBonus+=staff.filter(e=>e.doppelganger&&e._pendingCommonDie241&&!['SSR','UR'].includes(e.rarity)).length;
  pendingSSRBonus=staff.reduce((n,x)=>n+(x.noCommonDie?0:((x.rarity==='SSR'||x.rarity==='UR')?1:0))+(employeeUniqueAbilitiesEnabled(turn)?(x.extraChosenDice||0):0),0);
+ pendingSSRBonus+=staff.filter(e=>e.doppelganger&&e._pendingCommonDie241&&['SSR','UR'].includes(e.rarity)).length;
+ staff.forEach(e=>{delete e._pendingCommonDie241});
  pendingCastResourceChoices=[];
  // パック1金融系雇用：所有者のターン開始時に個体ごと発動。負債禁止はacquireDebtが判定。
  staff.forEach(e=>{if(!employeeUniqueAbilitiesEnabled(turn)||!e.financeIncome)return;let f=e.financeIncome;
