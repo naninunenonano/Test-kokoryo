@@ -18,6 +18,7 @@ function fn(name){
 }
 function element(){return {children:[],style:{},classList:{add(){},remove(){}},appendChild(x){this.children.push(x)},append(...xs){this.children.push(...xs)},set innerHTML(v){this.children=[]}}}
 function makeEnv(names){
+ if(names.includes('finalizeHire'))names=[...new Set([...names,'grantDoppelHireDie241','displayCastRarity241'])];
  const nodes={};const c={turn:0,viewer:0,playerCount:2,onlineDebugMode:false,realOnlineMainMode:false,
   gameSettings:{hireLimit:3,enabledPacks:['pack1','pack2']},characters:['P1','P1'],CHARACTER_DATA:{P1:{}},
   installed:[[],[]],temporary:[[],[]],hands:[[],[]],employees:[[],[]],powers:[{y:20,p:5,r:5},{y:0,p:0,r:0}],
@@ -26,7 +27,7 @@ function makeEnv(names){
   triggerNotices:[],pendingOverclockChoices:[],pendingCastResourceChoices:[],lordFirstBreadUsed:[],lordOverclockUsed:[],
   playerTurnCounts:[],lastCountedTurnToken:-1,oracleUpgradesThisTurn:[],turnClockState:{token:1},lordOracleUsed:[],lordTributeUsed:[],nightEscapeResetNext:[],elekiterUsed:[],organizationUsed:[],
   endgameStarter:null,gameEnded:false,copiedAbility:null,abilityProfile:()=>null,realMainRoster:[],
-  replicaOwners:[],repeatBooksPending:[],specialLegendAcquireOwner:null,characterActivationEnabled:()=>true,activeLordAbility:p=>c.CHARACTER_DATA[c.characters[p]]||{},notifyStaffingAgency(){},resolveAmicableRetirement(){},
+  pendingTrade241:null,tradeRevision241:0,replicaOwners:[],repeatBooksPending:[],specialLegendAcquireOwner:null,characterActivationEnabled:()=>true,activeLordAbility:p=>c.CHARACTER_DATA[c.characters[p]]||{},notifyStaffingAgency(){},resolveAmicableRetirement(){},
   turnClockBeginTurn(){},turnClockRender(){},turnClockAcceptSnapshot:()=>true,turnClockAfterSnapshot(){},turnClockSnapshot:()=>null,
   turnClockStartPending:false,turnClockChoice:null,turnStartPostPending:false,depressionStartSuppressed:false,stdAbilityUsed:{},
   dice:[{id:1,value:1,used:false},{id:2,value:2,used:false}],alerts:[],prompts:[],rules:[],renderedHireFlags:[],

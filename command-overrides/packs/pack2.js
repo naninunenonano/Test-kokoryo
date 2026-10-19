@@ -82,11 +82,11 @@ window.KOKORYO_PACKS.pack2={
   CN6:{id:'CN6',name:'モノマネ師',rarity:'N',mimicMaterial:true,noCommonDie:true,abilityText:'合成時：同レアリティの必要素材1人分として代用できる。雇用時には何も獲得しない。'},
   CR6:{id:'CR6',name:'モノマネ師',rarity:'R',mimicMaterial:true,noCommonDie:true,abilityText:'合成時：同レアリティの必要素材1人分として代用できる。雇用時には何も獲得しない。'},
   CSR8:{id:'CSR8',name:'モノマネ師',rarity:'SR',mimicMaterial:true,noCommonDie:true,abilityText:'合成時：同レアリティの必要素材1人分として代用できる。雇用時には何も獲得しない。'},
-  CN7:{id:'CN7',name:'ドッペルゲンガー',rarity:'N',doppelganger:true,noCommonDie:true,abilityText:'雇用時：全プレイヤーの雇用キャラクターから同レアリティの別キャラクター1人を選び、その固有効果をこの個体が永久にコピーする。対象がいない場合はコピーなしで確定する。'},
-  CR7:{id:'CR7',name:'ドッペルゲンガー',rarity:'R',doppelganger:true,noCommonDie:true,abilityText:'雇用時：全プレイヤーの雇用キャラクターから同レアリティの別キャラクター1人を選び、その固有効果をこの個体が永久にコピーする。対象がいない場合はコピーなしで確定する。'},
-  CSR9:{id:'CSR9',name:'ドッペルゲンガー',rarity:'SR',doppelganger:true,noCommonDie:true,abilityText:'雇用時：全プレイヤーの雇用キャラクターから同レアリティの別キャラクター1人を選び、その固有効果をこの個体が永久にコピーする。対象がいない場合はコピーなしで確定する。'},
-  CSSR8:{id:'CSSR8',name:'ドッペルゲンガー',rarity:'SSR',doppelganger:true,noCommonDie:true,abilityText:'雇用時：全プレイヤーの雇用キャラクターから同レアリティの別キャラクター1人を選び、その固有効果をこの個体が永久にコピーする。対象がいない場合はコピーなしで確定する。'},
-  CUR13:{id:'CUR13',name:'ドッペルゲンガー',title:'',rarity:'UR',doppelganger:true,doppelUniqueException:true,synthesisOnly:true,noCommonDie:true,abilityText:'雇用時：全プレイヤーの雇用キャラクターから同レアリティの別キャラクター1人を選び、その固有効果をこの個体が永久にコピーする。対象がいない場合はコピーなしで確定する。URの同一人物・同名雇用制限の例外として複数雇用できる。'}
+  CN7:{id:'CN7',name:'ドッペルゲンガー',rarity:'N',doppelganger:true,noCommonDie:false,abilityText:'雇用時：全プレイヤーの雇用キャラクターから同レアリティの別キャラクター1人を選び、共通サイコロ獲得を除く固有能力をこの個体が永久にコピーする。雇用成功時、共通サイコロを1個獲得する。対象がいない場合はコピーなしで確定する。'},
+  CR7:{id:'CR7',name:'ドッペルゲンガー',rarity:'R',doppelganger:true,noCommonDie:false,abilityText:'雇用時：全プレイヤーの雇用キャラクターから同レアリティの別キャラクター1人を選び、共通サイコロ獲得を除く固有能力をこの個体が永久にコピーする。雇用成功時、共通サイコロを1個獲得する。対象がいない場合はコピーなしで確定する。'},
+  CSR9:{id:'CSR9',name:'ドッペルゲンガー',rarity:'SR',doppelganger:true,noCommonDie:false,abilityText:'雇用時：全プレイヤーの雇用キャラクターから同レアリティの別キャラクター1人を選び、共通サイコロ獲得を除く固有能力をこの個体が永久にコピーする。雇用成功時、共通サイコロを1個獲得する。対象がいない場合はコピーなしで確定する。'},
+  CSSR8:{id:'CSSR8',name:'ドッペルゲンガー',rarity:'SSR',doppelganger:true,noCommonDie:false,abilityText:'雇用時：全プレイヤーの雇用キャラクターから同レアリティの別キャラクター1人を選び、共通サイコロ獲得を除く固有能力をこの個体が永久にコピーする。雇用成功時、共通サイコロを1個獲得する。対象がいない場合はコピーなしで確定する。'},
+  CUR13:{id:'CUR13',name:'ドッペルゲンガー',title:'',rarity:'UR',doppelganger:true,doppelUniqueException:true,synthesisOnly:true,noCommonDie:false,abilityText:'雇用時：全プレイヤーの雇用キャラクターから同レアリティの別キャラクター1人を選び、共通サイコロ獲得を除く固有能力をこの個体が永久にコピーする。雇用成功時、共通サイコロを1個獲得する。対象がいない場合はコピーなしで確定する。URの同一人物・同名雇用制限の例外として複数雇用できる。'}
  },
  castIds:['CUR10','CUR11','CUR12','CN6','CR6','CSR8','CN7','CR7','CSR9','CSSR8','CUR13'],
  castSynthesis:{CSR8:'CSSR8',CSR9:'CSSR8',CSSR8:'CUR13'},

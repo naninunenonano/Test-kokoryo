@@ -303,11 +303,32 @@ function hasSameOwnedUniqueAbility(e,p=turn){
 }
 function sameUniqueAbilityAsLord(e,p=turn){return hasSameOwnedUniqueAbility(e,p)}
 function redrawSameRarityCast(e){let pool=implementedCastPool(e.rarity).filter(x=>x.id!==e.id);if(!pool.length)pool=allImplementedCastPool(e.rarity).filter(x=>x.id!==e.id);return pool.length?{...pool[Math.floor(Math.random()*pool.length)]}:null}
-function resolveDoppelCopy(e){if(!characterActivationEnabled(turn))return e;if(!e?.doppelganger)return e;let targets=[];for(let p=0;p<playerCount;p++)(employees[p]||[]).forEach((x,i)=>{if(x&&x.rarity===e.rarity&&!x.doppelganger)targets.push({p,i,x})});if(!targets.length){e.copiedFrom=null;return e}let msg=targets.map((t,i)=>(i+1)+'. P'+(t.p+1)+' '+castDisplayName(t.x)).join('\n');let n=Math.floor(+(botIsPlayer(turn)?'1':turnClockPrompt('《ドッペルゲンガー》\nコピーする同レアリティの雇用キャラクターを選んでください。\n\n'+msg,'1')||0));if(!n||!targets[n-1]){e.copiedFrom=null;return e}let src=targets[n-1].x;let copied={...e,copiedFrom:src.id,uniqueAbility:src.uniqueAbility,abilityText:castEffectText(src),copySourceName:castDisplayName(src)};return applyUniqueAbilityDef(copied) }
+// TEST241: copy only the source ability payload, keeping this employee's identity.
+function copiedDoppelAbility241(e,src){
+ const identity=new Set(['id','name','title','rarity','image','packId','synthesisOnly','doppelganger','doppelUniqueException','uniquePersonGroup','noCommonDie','chooseDie','abilityText']);
+ const copied={...e,copiedFrom:src.id,copySourceName:castDisplayName(src),abilityText:castEffectText(src)};
+ for(const [key,value] of Object.entries(src))if(!identity.has(key)&&(!key.startsWith('_')||key==='_appliedUniqueAbilities'))copied[key]=structuredClone(value);
+ copied.noCommonDie=false;return applyUniqueAbilityDef(copied);
+}
+function resolveDoppelCopy(e){
+ if(!characterActivationEnabled(turn)||!e?.doppelganger)return e;
+ const targets=employees.flatMap((list,p)=>(list||[]).filter(x=>x&&x!==e&&x.rarity===e.rarity&&!x.doppelganger).map(x=>({p,x})));
+ if(!targets.length)return {...e,copiedFrom:null};
+ const msg=targets.map((t,i)=>(i+1)+'. P'+(t.p+1)+' '+castDisplayName(t.x)).join('\n');
+ const n=Math.floor(+(botIsPlayer(turn)?'1':turnClockPrompt('《ドッペルゲンガー》\nコピーする同レアリティの固有能力\n'+msg,'1')||0));
+ return targets[n-1]?copiedDoppelAbility241(e,targets[n-1].x):{...e,copiedFrom:null};
+}
+function grantDoppelHireDie241(e){
+ if(!e?.doppelganger)return;
+ if(turnClockState.active!==turn){e._pendingCommonDie241=true;return}
+ if(['SSR','UR'].includes(e.rarity)){pendingSSRBonus++;if(botIsPlayer(turn))gainSSRDie(1)}
+ else{const added=cardCommands.dice('roll',{count:1,source:'hire'});resolveReactiveRolls(added,false)}
+}
+function displayCastRarity241(r){return r==='CLR'?'LR':String(r||'').replace(/^C(?=N$|R$|SR$|SSR$|UR$)/,'')}
 function finalizeHire(e,label=''){
- e=resolveDoppelCopy(e);employees[turn].push(e);if(employeeUniqueAbilitiesEnabled(turn)&&e.hireBread){for(let i=0;i<e.hireBread;i++)drawBread(turn);}
+ grantDoppelHireDie241(e);e=resolveDoppelCopy(e);employees[turn].push(e);if(employeeUniqueAbilitiesEnabled(turn)&&e.hireBread){for(let i=0;i<e.hireBread;i++)drawBread(turn);}
 
- triggerNotices.push((label||('P'+(turn+1)+'が '))+e.rarity+'「'+e.name+'」を雇用しました。ダイス増加は次の自分のターンから適用されます。');renderGame();
+ triggerNotices.push((label||('P'+(turn+1)+'が '))+displayCastRarity241(e.rarity)+'「'+e.name+'」を雇用しました。'+(e.doppelganger?'共通サイコロを1個獲得します。':'ダイス増加は次の自分のターンから適用されます。'));renderGame();
 }
 function hireEmployee(dieId){
  if(!isViewingOwnTurn())return alert('相手ターン中は雇用できません。');
@@ -346,11 +367,11 @@ function employeeCardView(e){
  img.onerror=()=>{let ph=document.createElement('div');ph.className='employee-card-image-missing';ph.textContent='NO IMAGE';img.replaceWith(ph)};
  if(src)w.appendChild(img);else{let ph=document.createElement('div');ph.className='employee-card-image-missing';ph.textContent='NO IMAGE';w.appendChild(ph)}
  let meta=document.createElement('div');meta.className='employee-card-meta';
- let rarity=document.createElement('div');rarity.className='employee-card-rarity';rarity.textContent=e.rarity==='CLR'?'LR':(e.rarity||'');
+ let rarity=document.createElement('div');rarity.className='employee-card-rarity';rarity.textContent=displayCastRarity241(e.rarity);
  let name=document.createElement('strong');name.className='employee-card-name';name.textContent=castDisplayName(e);
  meta.append(rarity,name);
  if(e.uniqueAbility){let a=document.createElement('div');a.className='employee-card-ability';a.innerHTML='《'+escapeHtml(e.uniqueAbility)+'》'+abilityStackTag(e.uniqueAbility);meta.appendChild(a)}
- let ef=document.createElement('div');ef.className='employee-card-effect';ef.textContent=castEffectText(e);meta.appendChild(ef);
+ let ef=document.createElement('div');ef.className='employee-card-effect';ef.textContent=castEffectText(e).replace(/\bCLR\b/g,'LR');meta.appendChild(ef);
  w.appendChild(meta);return w;
 }
 const CAST_SYNTHESIS={CN1:'CR1',CN2:'CR2',CN3:'CR3',CR1:'CSR2',CR2:'CSR3',CR3:'CSR4',CSR2:'CSSR2',CSR3:'CSSR3',CSR4:'CSSR4',CSR1:'CSSR1'};

@@ -71,7 +71,19 @@ function costSelect(required=null,allowDiscount=true){return makeChoicePicker(al
 // @kokoryo-section S0033
 
 
-function card(c,count=1,click=false){let e=document.createElement(click?'button':'div');if(click)e.type='button';let imgSrc=resolvedContentImage(c);e.className='card'+(imgSrc?' hasimg':'');let typeLabel=c.type==='S'?'STANDARD':c.type==='LEGEND'?'LEGEND':'NORMAL';e.innerHTML=(imgSrc?'<img class="cardimg zoomable" src="'+imgSrc+'" alt="'+c.name+'"><div class="cardmeta"><strong>'+c.name+'</strong><span class="small">'+typeLabel+'</span></div>':'<span class="small">'+typeLabel+'</span><strong>'+c.name+'</strong>')+(count>1?'<span class="badge">×'+count+'</span>':'');if(imgSrc){let img=e.querySelector('img');img.onerror=()=>{let ph=document.createElement('div');ph.className='cardimg cardimg-missing';ph.textContent='NO IMAGE';img.replaceWith(ph)}}return e}
+// TEST241: one artwork frame for loaded, missing and future illustrations.
+function cardArtwork(c){
+ const frame=document.createElement('div');frame.className='card-artwork';frame.__cardData241=c;
+ const missing=()=>{frame.replaceChildren();const ph=document.createElement('div');ph.className='cardimg cardimg-missing zoomable';ph.textContent='NO IMAGE';ph.alt=c?.name||'カード';frame.appendChild(ph)};
+ const src=resolvedContentImage(c);if(!src){missing();return frame}
+ const image=document.createElement('img');image.className='cardimg zoomable';image.src=src;image.alt=c?.name||'カード';image.onerror=missing;frame.appendChild(image);return frame;
+}
+function card(c,count=1,click=false){
+ const e=document.createElement(click?'button':'div');if(click)e.type='button';e.className='card hasimg unified-card';e.appendChild(cardArtwork(c));
+ const meta=document.createElement('div');meta.className='cardmeta';const name=document.createElement('strong');name.textContent=c.name;meta.appendChild(name);
+ for(const [label,text] of [['card-kind',c.type==='S'?'STANDARD':c.type==='LEGEND'?'LEGEND':'NORMAL'],['card-vp','VP：'+vpLabel(c,turn)],['card-cost','設置：'+costTextForCard(c)]]){const item=document.createElement('div');item.className='small '+label;item.textContent=text;meta.appendChild(item)}
+ e.appendChild(meta);if(count>1){const badge=document.createElement('span');badge.className='badge';badge.textContent='×'+count;e.appendChild(badge)}return e;
+}
 // @kokoryo-end-section S0033
 
 // @kokoryo-section S0037
@@ -288,7 +300,7 @@ function renderOpponentTurnView(){
  let fieldSec=document.createElement('div');fieldSec.className='actionblock';let fieldTitle=document.createElement('strong');fieldTitle.textContent='相手の設置済みカード';fieldSec.appendChild(fieldTitle);appendInstalledCardGrid(fieldSec,installedDisplayList(opp));box.appendChild(fieldSec);
  let emp=document.createElement('div');emp.className='actionblock';emp.innerHTML='<strong>相手の雇用キャラクター</strong>';let eg=document.createElement('div');eg.className='employee-card-grid';eg.style.marginTop='8px';if(!(employees[opp]||[]).length){let e=document.createElement('div');e.className='muted';e.textContent='雇用キャラクターなし';eg.appendChild(e)}else (employees[opp]||[]).forEach(c=>eg.appendChild(employeeCardView(c)));emp.appendChild(eg);box.appendChild(emp);return true;
 }
-function renderGame(){turnClockRender();playLogChanges('render');refreshActiveRulesButton();let lobbyBtn=q('#mainReturnLobby');if(lobbyBtn)lobbyBtn.classList.toggle('hidden',!(onlineDebugMode||(realOnlineMainMode&&isRealLobbyHost())));q('#cardDetailModal')?.classList.add('hidden');q('#installModal')?.classList.add('hidden');checkEndgameTrigger();renderSharedEndgameStatus();if(renderOpponentTurnView()){renderLegends();renderMarket();renderPlayers();renderParkChoice();return;}q('#turnwho').textContent='P'+(turn+1)+(realOnlineMainMode&&realPlayerName(turn)?' '+realPlayerName(turn):'')+'のターン';let charData=window.KOKORYO_CHARACTER_DATA||CHARACTER_DATA,lord=charData[charOf(turn)]||charData.P1||{};renderLordPortrait(q('#charportrait'),charData[charOf(turn)]?charOf(turn):'P1');q('#chartitle').textContent=lord.title||'';q('#charname').textContent=lord.name||'';q('#chargender').textContent=lord.gender||'';q('#charability').innerHTML='<strong>《'+(lord.uniqueAbility||'能力なし')+'》</strong>';q('#charnote').textContent=hasEquivalentExchange(turn)?'資源コストは合計数で支払います。指定資源を優先し、不足分は資金→食料→兵力の順で自動支払い。':'';renderTriggerNotices();let pw=powers[turn];q('#py').textContent=pw.y;q('#pr').textContent=pw.r;q('#pp').textContent=pw.p;q('#handcount').textContent=totalHandCount(turn);q('#breadhandcount').textContent=breadHands[turn].length;q('#currentvp').textContent=totalVP(turn);
+function renderGame(){renderTrade241();turnClockRender();playLogChanges('render');refreshActiveRulesButton();let lobbyBtn=q('#mainReturnLobby');if(lobbyBtn)lobbyBtn.classList.toggle('hidden',!(onlineDebugMode||(realOnlineMainMode&&isRealLobbyHost())));q('#cardDetailModal')?.classList.add('hidden');q('#installModal')?.classList.add('hidden');checkEndgameTrigger();renderSharedEndgameStatus();if(renderOpponentTurnView()){renderLegends();renderMarket();renderPlayers();renderParkChoice();return;}q('#turnwho').textContent='P'+(turn+1)+(realOnlineMainMode&&realPlayerName(turn)?' '+realPlayerName(turn):'')+'のターン';let charData=window.KOKORYO_CHARACTER_DATA||CHARACTER_DATA,lord=charData[charOf(turn)]||charData.P1||{};renderLordPortrait(q('#charportrait'),charData[charOf(turn)]?charOf(turn):'P1');q('#chartitle').textContent=lord.title||'';q('#charname').textContent=lord.name||'';q('#chargender').textContent=lord.gender||'';q('#charability').innerHTML='<strong>《'+(lord.uniqueAbility||'能力なし')+'》</strong>';q('#charnote').textContent=hasEquivalentExchange(turn)?'資源コストは合計数で支払います。指定資源を優先し、不足分は資金→食料→兵力の順で自動支払い。':'';renderTriggerNotices();let pw=powers[turn];q('#py').textContent=pw.y;q('#pr').textContent=pw.r;q('#pp').textContent=pw.p;q('#handcount').textContent=totalHandCount(turn);q('#breadhandcount').textContent=breadHands[turn].length;q('#currentvp').textContent=totalVP(turn);
 try{renderBoardHand()}catch(err){console.error('renderBoardHand failed',err)}
 try{renderHireActions()}catch(err){console.error('renderHireActions failed',err)}
 let de=q('#dice');de.innerHTML='';dice.forEach(d=>{let x=document.createElement('div');x.className='die '+(d.used?'used':'');x.innerHTML='<strong>🎲 '+d.value+'</strong><div class="small">'+(d.used?'使用済み':cname(colorFor(d.value))+'対応')+'</div>';de.appendChild(x)});
@@ -577,7 +589,7 @@ function showHireCardList(){
  const modal=q('#hireCardListModal'),root=q('#hireCardListBody');
  if(!modal||!root)return;
  root.replaceChildren();
- const order=[['N','N'],['R','R'],['SR','SR'],['SSR','SSR'],['UR','UR'],['CLR','CLR']];
+ const order=[['N','N'],['R','R'],['SR','SR'],['SSR','SSR'],['UR','UR'],['CLR','LR']];
  const all=registeredCastIds().map(id=>CAST_TYPES[id]).filter(Boolean);
  order.forEach(([rarity,label])=>{
   const group=all.filter(e=>e.rarity===rarity).sort((a,b)=>String(a.id||'').localeCompare(String(b.id||''),'ja',{numeric:true}));
@@ -588,7 +600,7 @@ function showHireCardList(){
    const wrap=document.createElement('div');wrap.className='employee-card-wrap';
    wrap.appendChild(employeeCardView(e));
    const note=document.createElement('div');note.className='small';note.style.marginTop='5px';
-   note.textContent=e.id+(e.synthesisOnly||rarity==='CLR'?' ／ 通常ガチャ対象外':'');
+   note.textContent=e.synthesisOnly||rarity==='CLR'?'通常ガチャ対象外':'';
    wrap.appendChild(note);grid.appendChild(wrap);
   });
   root.appendChild(grid);
@@ -711,7 +723,7 @@ function openPlayerBoard(p,mode="board"){
    let field=section('設置済みカード');let cards=[...(installed[p]||[]),...(temporary[p]||[])];if(!cards.length)field.textContent='なし';cards.forEach(c=>{let tile=document.createElement('button');tile.type='button';tile.className='online-info-card';tile.style.cssText='padding:5px;min-width:115px;max-width:165px;flex:1 1 125px;text-align:left';let visual=card(c,1,false);visual.style.pointerEvents='none';tile.appendChild(visual);let detail=document.createElement('div');detail.className='small';detail.style.cssText='margin-top:5px;line-height:1.4';detail.appendChild(cardInfoSections(c));tile.appendChild(detail);tile.onclick=()=>openCardImage({src:resolvedContentImage(c)||'',alt:c.name},c,'installed');field.appendChild(tile)});
   }
   if(mode==='board'||mode==='employees'){
-   let emp=section('雇用キャラクター');if(!(employees[p]||[]).length)emp.textContent='なし';(employees[p]||[]).forEach(c=>{let btn=document.createElement('button');btn.className='secondary';btn.textContent=(c.rarity||'')+' '+c.name;btn.onclick=()=>{let old=emp.querySelector('.employee-detail');if(old)old.remove();let detail=document.createElement('div');detail.className='notice employee-detail';detail.style.width='100%';detail.textContent=c.name+'：'+(castEffectText(c)||'効果なし');emp.appendChild(detail)};emp.appendChild(btn)});
+   let emp=section('雇用キャラクター');if(!(employees[p]||[]).length)emp.textContent='なし';(employees[p]||[]).forEach(c=>{let btn=document.createElement('button');btn.className='secondary';btn.textContent=displayCastRarity241(c.rarity)+' '+c.name;btn.onclick=()=>{let old=emp.querySelector('.employee-detail');if(old)old.remove();let detail=document.createElement('div');detail.className='notice employee-detail';detail.style.width='100%';detail.textContent=c.name+'：'+(castEffectText(c)||'効果なし');emp.appendChild(detail)};emp.appendChild(btn)});
   }
  }
  overlay.appendChild(panel);overlay.onclick=e=>{if(e.target===overlay)overlay.remove()};document.body.appendChild(overlay);
@@ -820,11 +832,12 @@ function setupCompactUI(){
 // @kokoryo-section S0120
 
 function openCardImage(img,c=null,context='view',index=null){
+ c=c||img?.closest?.('.card-artwork')?.__cardData241||null;
  const src=img?.src||'',title=c?.name||img?.alt||'カード詳細';
  const modal=q('#imgmodal');
  if(!modal.classList.contains('hidden')&&modal.dataset.cardKey===(c?.key||title)&&modal.dataset.context===context){modal.classList.add('hidden');return}
  modal.dataset.cardKey=c?.key||title;modal.dataset.context=context;
- q('#modalimg').src=src;q('#modalimg').alt=title;q('#modalimg').classList.toggle('hidden',!src);
+ const oldArt=q('#expandedCardArtwork');if(oldArt)oldArt.remove();q('#modalimg').classList.add('hidden');if(c){const art=cardArtwork({...c,...(src?{image:src}:{})});art.id='expandedCardArtwork';art.querySelectorAll('.zoomable').forEach(e=>e.classList.remove('zoomable'));q('#modalimg').after(art)}else{q('#modalimg').src=src;q('#modalimg').alt=title;q('#modalimg').classList.toggle('hidden',!src)}
  q('#expandedCardTitle').textContent=title;
  const info=q('#expandedCardInfo');info.replaceChildren();
  if(c)info.appendChild(cardInfoSections(c));
