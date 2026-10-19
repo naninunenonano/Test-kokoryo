@@ -46,12 +46,23 @@ for(const [oldKey,key] of [['N26','S13'],['N27','S14'],['N29','S15']]){
  if(!card)throw new Error('Missing standard card source '+oldKey);
  STD_BASE.push({...card,key,type:'S',image:'images/cards/'+oldKey+'.png',...(key==='S14'?{costText:'🎲3＋🎲4＋食料5',installSpec:{faces:[[3],[4]],resources:{p:5}}}:{})});
 }
-const NORMAL_BASE=Array.from({length:20},(_,i)=>({key:'N'+(i+1),name:'仮カードN'+(i+1),type:'N',vp:1,implemented:true,image:false,costText:'🎲ANY×1',effectText:'効果なし。',installSpec:{any:1}}));
+const NORMAL_CARD_MIGRATIONS=Object.freeze({N4:'N1',N5:'N2',N6:'N3',N7:'N4',N11:'N5',N12:'N6',N13:'N7',N14:'N8',N25:'N9',N28:'N10',N30:'N11',N31:'N12',N32:'N13',N34:'N14',N35:'N15'});
+const NORMAL_BASE=[
+{key:'N1',name:'大鉱山',type:'N',special:'greatermine',vp:3,costText:'🎲1＋🎲2＋資金7',implemented:true,image:'images/cards/N4.png'},
+{key:'N2',name:'大農園',type:'N',special:'greaterfarm',vp:3,costText:'🎲3＋🎲4＋食料7',implemented:true,image:'images/cards/N5.png'},
+{key:'N3',name:'要塞',type:'N',special:'greaterbarracks',vp:3,costText:'🎲5＋🎲6＋兵力7',implemented:true,image:'images/cards/N6.png'},
+{key:'N4',name:'大司令部',type:'N',special:'greatercommand',vp:3,costText:'🎲3＋🎲4＋資金4＋兵力3',implemented:true,image:'images/cards/N7.png'},
+{key:'N5',name:'オルフェンズ',type:'N',special:'graveyard',vp:1,costText:'🎲4/5＋食料1＋兵力2',implemented:true,image:'images/cards/N11.png'},
+{key:'N6',name:'納税',type:'N',special:'landgrab',vp:3,costText:'🎲2＋🎲5＋資金3＋食料3＋兵力3',implemented:true,image:'images/cards/N12.png'},
+{key:'N7',name:'義賊',type:'N',special:'bandit',vp:4,costText:'🎲ANY×3＋資金7＋食料5',implemented:true,image:'images/cards/N13.png'},
+{key:'N8',name:'交易場',type:'N',special:'publicmarket',vp:1,costText:'🎲ANY＋資金1＋食料1＋兵力1',implemented:true,image:'images/cards/N14.png'}];
+for(const [oldKey,key] of Object.entries(NORMAL_CARD_MIGRATIONS)){if(NORMAL_BASE.some(c=>c.key===key))continue;const c=Object.values(KOKORYO_PACKS).flatMap(p=>p.normalCards||[]).find(c=>c.key===oldKey);if(!c)throw Error('Missing normal card '+oldKey);NORMAL_BASE.push({...c,key,image:c.image||'images/cards/'+oldKey+'.png',implemented:true});}
+NORMAL_BASE.push(...[{"key": "N16", "name": "リピートの魔導書", "special": "repeatBook", "vp": 0, "costText": "資金3・食料3・兵力3", "installSpec": {"resources": {"y": 3, "p": 3, "r": 3}}, "turnStartTiming": "normal", "effectText": "ターン開始時、自分の場にある通常カードのターン開始時効果を1つ選び、その効果をコピーして発動できる。", "type": "N", "implemented": true, "image": false}, {"key": "N17", "name": "プチアルス・ノヴァ", "special": "petitArsNova", "vp": 0, "costText": "ANY1＋資金3", "installSpec": {"any": 1, "resources": {"y": 3}}, "effectText": "このカードと、自分の設置済み通常カード1枚を捨て札にすることで、通常山札の上から1枚をコストを支払わずに設置する。その後、サイコロを1個獲得し、資金・食料・兵力を1個ずつ獲得する。", "type": "N", "implemented": true, "image": false}, {"key": "N18", "name": "儀典アルス・ノヴァ", "special": "ritualArsNova", "vp": 0, "costText": "ANY1＋資金2・食料2・兵力2", "installSpec": {"any": 1, "resources": {"y": 2, "p": 2, "r": 2}}, "effectText": "このカードと、自分の他の設置済み通常カード5枚を捨て札にすることで、獲得可能なレジェンドを1枚選んで獲得する。", "type": "N", "implemented": true, "image": false}, {"key": "N19", "name": "クラレント・レプリカ", "special": "clarentReplica", "vp": -4, "costText": "同じ出目のサイコロ4個", "installSpec": {"any": 4}, "effectText": "次の自分のターン開始時まで、他のすべてのプレイヤーの固有能力および雇用キャラクターの能力を無効化する。ただし、永続効果は無効化しない。", "type": "N", "implemented": true, "image": false}, {"key": "N20", "name": "魔導書の書き換え", "special": "rewriteBook", "vp": 0, "costText": "ANY1", "installSpec": {"any": 1}, "effectText": "自分の通常手札を好きな枚数捨てる。その後、捨てた枚数＋1枚を通常山札から引く。", "type": "N", "implemented": true, "image": false}]);
 const N_NORMAL_START_SPECIALS=new Set(['mine','farm','barracks','commandroom','church','greatermine','greaterfarm','greaterbarracks','greatercommand','bandit','nanban','tenkucat']);
-STD_BASE.forEach(c=>{if(N_NORMAL_START_SPECIALS.has(c.special))c.turnStartTiming='normal'});
+[...STD_BASE,...NORMAL_BASE].forEach(c=>{if(N_NORMAL_START_SPECIALS.has(c.special))c.turnStartTiming='normal'});
 // Pack1 starts at N36 so its old N16–N20 cannot overwrite placeholders. Adopted pack2 cards exist once, as S cards.
 Object.values(KOKORYO_PACKS).forEach(pack=>(pack.normalCards||[]).forEach(c=>{
- if(STANDARD_CARD_MIGRATIONS[c.key])return;
+ if(STANDARD_CARD_MIGRATIONS[c.key]||NORMAL_CARD_MIGRATIONS[c.key])return;
  const oldNumber=Number(String(c.key||'').replace(/^N/,'')),n=pack.id==='pack1'?oldNumber+20:oldNumber;
  if(n>20)NORMAL_BASE.push({...c,key:'N'+n,image:c.image||'images/cards/'+c.key+'.png',implemented:true,packId:pack.id,turnStartTiming:c.turnStartTiming||((typeof c.hooks?.turnStart==='function')?'normal':undefined)});
 }));
@@ -59,8 +70,8 @@ const STD=copies(STD_BASE), NORMAL=copies(NORMAL_BASE.filter(c=>c.implemented));
 // 固定デッキ定義。表示名とは別に内部IDで管理し、今後のデッキ追加・編集機能の土台にする。
 const DECK_PRESETS={
  standard1:{id:'standard1',name:'スタンダード1',fixed:true,normalKeys:Array.from({length:20},(_,i)=>'N'+(i+1)),lowerLegendKeys:['LL1','LL2','LL3','LL4','LL5','LL6'],upperLegendKeys:['LU1','LU2','LU3','LU4','LU5','LU6']},
- standard2:{id:'standard2',name:'スタンダード2',fixed:true,normalKeys:['N2','N8','N9','N10','N36','N37','N38','N39','N40','N41','N42','N43','N44','N45'],lowerLegendKeys:['LL4','LL5','LL6','LL7','LL8','LL9'],upperLegendKeys:['LU2','LU3','LU6','LU7','LU8','LU9']},
- standard3:{id:'standard3',name:'スタンダード3',fixed:true,normalKeys:['N4','N5','N6','N7','N28','N30','N31','N32','N33','N34','N35'],lowerLegendKeys:['LL4','LL5','LL6','LL10','LL11','LL12'],upperLegendKeys:['LU4','LU5','LU6','LU10','LU11','LU12']}
+ standard2:{id:'standard2',name:'スタンダード2',fixed:true,normalKeys:['N2','N8','N9','N10','N36','N37','N38','N39','N40','N41','N42','N43','N44','N9'],lowerLegendKeys:['LL4','LL5','LL6','LL7','LL8','LL9'],upperLegendKeys:['LU2','LU3','LU6','LU7','LU8','LU9']},
+ standard3:{id:'standard3',name:'スタンダード3',fixed:true,normalKeys:['N4','N5','N6','N7','N10','N11','N12','N13','N33','N14','N15'],lowerLegendKeys:['LL4','LL5','LL6','LL10','LL11','LL12'],upperLegendKeys:['LU4','LU5','LU6','LU10','LU11','LU12']}
 };
 let customDeck={normalKeys:Array.from({length:20},(_,i)=>'N'+(i+1)),lowerLegendKeys:['LL1','LL2','LL3','LL4','LL5','LL6'],upperLegendKeys:['LU1','LU2','LU3','LU4','LU5','LU6']};
 const CUSTOM_DECK_SAVE_KEY='kokoryo_custom_decks_v2';
