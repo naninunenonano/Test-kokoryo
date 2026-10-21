@@ -348,8 +348,8 @@ const botPause=ms=>{const owner=turn,token=turnClockState.token;return new Promi
 // ナーロッパランドの全員選択が完了するまでBOTの行動を止める。
 // P1の選択は人間が操作し、BOTの選択はrenderParkChoiceで自動実行する。
 async function botWaitForParkChoice(actor){
- while(botMatchMode&&turn===actor&&(pendingParkPlayers.length||pendingTrade241)&&!gameEnded){
-  renderParkChoice();renderTrade241();
+ while(botMatchMode&&turn===actor&&(pendingParkPlayers.length||pendingTrade241||pendingSelections242.length)&&!gameEnded){
+  renderParkChoice();renderTrade241();runSelectionBots242();renderSelections242();
   await botPause(250);
  }
 }

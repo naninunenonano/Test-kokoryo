@@ -26,6 +26,7 @@ async function fixture(t,options={}){
  const h=dom.window.__clockTest;assert.ok(h,'TEST clock bridge');
  const run=code=>h.run(code),read=code=>JSON.parse(run('JSON.stringify('+code+')'));
  run(`
+ window.choose242=(n=1)=>{const s=q('#effectSelect242');if(!s)throw Error('missing dropdown');s.value=s.options[n].value;s.dispatchEvent(new Event('change'));q('#selectionConfirm242').click()};
  debugLocalMode=true;onlineDebugMode=false;botMatchMode=false;realOnlineMainMode=false;playerCount=4;
  characters=Array(4).fill('P1');hands=Array.from({length:4},()=>[]);breadHands=Array.from({length:4},()=>[]);
  installed=Array.from({length:4},()=>[]);temporary=Array.from({length:4},()=>[]);employees=Array.from({length:4},()=>[]);

@@ -19,7 +19,7 @@ function fn(name){
 function element(){return {children:[],style:{},classList:{add(){},remove(){}},appendChild(x){this.children.push(x)},append(...xs){this.children.push(...xs)},set innerHTML(v){this.children=[]}}}
 function makeEnv(names){
  if(names.includes('finalizeHire'))names=[...new Set([...names,'grantDoppelHireDie241','displayCastRarity241'])];
- const nodes={};const c={turn:0,viewer:0,playerCount:2,onlineDebugMode:false,realOnlineMainMode:false,
+ const nodes={};const c={structuredClone,turn:0,viewer:0,playerCount:2,onlineDebugMode:false,realOnlineMainMode:false,
   gameSettings:{hireLimit:3,enabledPacks:['pack1','pack2']},characters:['P1','P1'],CHARACTER_DATA:{P1:{}},
   installed:[[],[]],temporary:[[],[]],hands:[[],[]],employees:[[],[]],powers:[{y:20,p:5,r:5},{y:0,p:0,r:0}],
   discard:[],market:[],deck:[],breadHands:[[],[]],breadDeck:[],breadDiscard:[],commandCounts:[0,0],
@@ -27,7 +27,7 @@ function makeEnv(names){
   triggerNotices:[],pendingOverclockChoices:[],pendingCastResourceChoices:[],lordFirstBreadUsed:[],lordOverclockUsed:[],
   playerTurnCounts:[],lastCountedTurnToken:-1,oracleUpgradesThisTurn:[],turnClockState:{token:1},lordOracleUsed:[],lordTributeUsed:[],nightEscapeResetNext:[],elekiterUsed:[],organizationUsed:[],
   endgameStarter:null,gameEnded:false,copiedAbility:null,abilityProfile:()=>null,realMainRoster:[],
-  pendingTrade241:null,tradeRevision241:0,replicaOwners:[],repeatBooksPending:[],specialLegendAcquireOwner:null,characterActivationEnabled:()=>true,activeLordAbility:p=>c.CHARACTER_DATA[c.characters[p]]||{},notifyStaffingAgency(){},resolveAmicableRetirement(){},
+  pendingSelections242:[],selectionSequence242:0,pendingTrade241:null,tradeRevision241:0,replicaOwners:[],repeatBooksPending:[],specialLegendAcquireOwner:null,characterActivationEnabled:()=>true,activeLordAbility:p=>c.CHARACTER_DATA[c.characters[p]]||{},notifyStaffingAgency(){},resolveAmicableRetirement(){},
   turnClockBeginTurn(){},turnClockRender(){},turnClockAcceptSnapshot:()=>true,turnClockAfterSnapshot(){},turnClockSnapshot:()=>null,
   turnClockStartPending:false,turnClockChoice:null,turnStartPostPending:false,depressionStartSuppressed:false,stdAbilityUsed:{},
   dice:[{id:1,value:1,used:false},{id:2,value:2,used:false}],alerts:[],prompts:[],rules:[],renderedHireFlags:[],
@@ -40,7 +40,7 @@ function makeEnv(names){
   employeeUniqueAbilitiesEnabled:()=>true,allFieldCards:p=>[...c.installed[p],...c.temporary[p]],
   hasActiveRule:id=>c.rules.includes(id),isHireFree:()=>c.rules.includes('RC3'),effectiveHireLimit:()=>c.gameSettings.hireLimit+(c.rules.includes('RC3')?1:0),
   unusedDice:()=>c.dice.filter(d=>!d.used),useDie(id){let d=c.dice.find(d=>d.id===id&&!d.used);if(!d)return null;d.used=true;return d},
-  gachaCast:()=>({id:'CN1',rarity:'N',name:'一般会計'}),resolveDoppelCopy:e=>e,
+  gachaCast:()=>({id:'CN1',rarity:'N',name:'一般会計'}),resolveDoppelCopy:(e,done)=>{done?.(e);return e},
   gainResource(p,k,n){c.powers[p][k]+=n},drawBread(p){let b=c.breadDeck.shift()??null;if(b)c.breadHands[p].push(b);return b},
   drawOne:()=>null,breadLabel:b=>String(b.value),stackedNumericEffect:()=>0,depressionDebtLocked:()=>false,
   resolveReactiveRolls(){},runRuleHook(){},runInstalledPackHooks(){},playerScaledGain:()=>1,
@@ -66,7 +66,7 @@ function fieldEnv(){
 }
 function recover(c,index){c.useGraveyard(index);if(c.choice){const choice=c.choice;c.choice=null;choice.choose(choice.opts[0]);c.nodes['#legendChoiceCards'].children[0].onclick()}}
 function buttons(c){const parent=element();c.renderNewNormalInstalledActions(parent);return parent.children.filter(x=>'disabled' in x)}
-function trade(c,index){c.prompts=['1','1'];c.usePublicMarket(index)}
+function trade(c,index){c.prompts=['1','1'];c.usePublicMarket(index,{market:1,hand:1})}
 function stocked(c){c.breadDeck=Array.from({length:25},(_,i)=>({id:`B${i}`,value:i%6+1}));return c}
 
 // Load actual character/employee properties, including the shared unique-ability definitions.
@@ -84,7 +84,7 @@ test('all inline and pack scripts parse',()=>{for(const m of html.matchAll(/<scr
 test('two Orphans can each activate once; neither consumes market usage',()=>{const c=fieldEnv();recover(c,0);assert.deepEqual(buttons(c).map(b=>!!b.disabled),[true,false,false,false]);recover(c,1);assert.equal(c.hands[0].length,2);assert.equal(c.powers[0].y,18);recover(c,0);assert.equal(c.hands[0].length,2);assert.deepEqual(buttons(c).map(b=>!!b.disabled),[true,true,false,false])});
 test('two markets each activate once independently of Orphans',()=>{const c=fieldEnv();trade(c,2);assert.deepEqual(buttons(c).map(b=>!!b.disabled),[false,false,true,false]);trade(c,3);assert.equal(c.powers[0].y,16);trade(c,2);assert.equal(c.powers[0].y,16)});
 test('Orphans cancellation consumes neither resource nor per-card usage',()=>{const c=fieldEnv();c.useGraveyard(0);c.choice.cancel();assert.equal(c.powers[0].y,20);assert.equal(c.normalCardActionUsed(c.graveyardUsed,c.installed[0][0]),false);assert.equal(c.discard.length,3)});
-test('market cancellation and invalid input are atomic',()=>{for(const prompts of [[null],['1',null],['99'],['1','99']]){const c=fieldEnv();c.prompts=prompts;c.usePublicMarket(2);assert.equal(c.powers[0].y,20);assert.equal(c.market.length,2);assert.equal(c.normalCardActionUsed(c.publicMarketUsed,c.installed[0][2]),false)}});
+test('market cancellation and invalid input are atomic',()=>{for(const prompts of [[null],['1',null],['99'],['1','99']]){const c=fieldEnv();c.prompts=prompts;c.usePublicMarket(2,{market:prompts[0]??99,hand:prompts[1]??99});assert.equal(c.powers[0].y,20);assert.equal(c.market.length,2);assert.equal(c.normalCardActionUsed(c.publicMarketUsed,c.installed[0][2]),false)}});
 test('used physical card remains used when its installed index changes',()=>{const c=fieldEnv();recover(c,0);const used=c.installed[0].shift();c.installed[0].push(used);recover(c,3);assert.equal(c.hands[0].length,1);recover(c,0);assert.equal(c.hands[0].length,2)});
 test('removed cards and stale cost callbacks cannot charge twice',()=>{const c=fieldEnv();c.useGraveyard(0);c.choice.choose(c.choice.opts[0]);const pay=c.nodes['#legendChoiceCards'].children[0].onclick;pay();pay();assert.equal(c.hands[0].length,1);assert.equal(c.powers[0].y,19);c.useGraveyard(1);c.choice.choose(c.choice.opts[0]);const stale=c.nodes['#legendChoiceCards'].children[0].onclick;c.installed[0].splice(1,1);stale();assert.equal(c.powers[0].y,19)});
 test('usage resets only for the player beginning a new turn',()=>{const c=stocked(fieldEnv());vm.runInContext(fn('beginTurn'),c);c.continueBeginTurn=()=>{};recover(c,0);trade(c,2);c.graveyardUsed[1]={'other-card':true};c.beginTurn();assert.equal(c.normalCardActionUsed(c.graveyardUsed,c.installed[0][0]),false);assert.equal(c.normalCardActionUsed(c.publicMarketUsed,c.installed[0][2]),false);assert.equal(c.graveyardUsed[1]['other-card'],true)});

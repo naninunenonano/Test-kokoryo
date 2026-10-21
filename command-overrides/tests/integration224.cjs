@@ -62,7 +62,7 @@ test('224 LL1–LL3: boosts and VP follow live installed/temporary board without
 });
 test('224 LL4: select hire includes normal rarities, excludes CLR, honors capacity and clones choice',async t=>{
  const h=await setup(t);h.run('chooseNamedHireForLegend()');
- const buttons=[...h.dom.window.document.querySelectorAll('.imgmodal .employee-card')];assert.ok(buttons.length>=14);buttons[0].click();assert.equal(h.run('employees[0].length'),1);assert.notEqual(h.run('employees[0][0].rarity'),'CLR');
+ const options=[...h.dom.window.document.querySelector('#effectSelect242').options];assert.ok(options.length>=15);h.run('window.choose242()');assert.equal(h.run('employees[0].length'),1);assert.notEqual(h.run('employees[0][0].rarity'),'CLR');
  h.run('employees[0]=Array.from({length:effectiveHireLimit()},()=>({id:"full"}));chooseNamedHireForLegend()');assert.equal(h.run('employees[0].length'),h.run('effectiveHireLimit()'));
 });
 test('224 LL5/LL6 differential: selections, destruction, recycling, players and debt match Ver223',async t=>{
@@ -71,7 +71,7 @@ test('224 LL5/LL6 differential: selections, destruction, recycling, players and 
  const state='({hands,breadHands,installed,temporary,powers,discard,deck,breadDiscard,breadDeck,commandCounts,triggerNotices})';
  const scripts=[`turnClockPrompt=()=>null;installed=Array.from({length:4},(_,p)=>[{id:'s'+p,name:'base',type:'S'},{id:'l'+p,name:'legend',type:'LEGEND'}]);temporary[2]=[{id:'temp',name:'temp',type:'N'}];resolveScorchedEarth(2)`,
  `Math.random=()=>0.5;hands=Array.from({length:4},(_,p)=>Array.from({length:p},(_,i)=>({id:p+'n'+i,name:'normal',key:p+'n'+i})));breadHands=Array.from({length:4},(_,p)=>[{id:'bread'+p,value:1}]);commandCounts=[1,2,3,4];resolveGreatRefresh()`];
- for(const script of scripts){for(const h of [current,old])h.run(script);assert.deepEqual(current.read(state),old.read(state))}
+ for(const script of scripts){for(const h of [current,old])h.run(script);current.run('while(pendingSelections242.length)window.choose242()');assert.deepEqual(current.read(state),old.read(state))}
 });
 test('224 LU2: each of two Yggdrasil copies offers three independent selections and uses cast',async t=>{
  const h=await setup(t);h.run("installed[0]=[{id:'q1',special:'mayqueen'},{id:'q2',special:'mayqueen'},{id:'mine',special:'mine',name:'mine'}];window.__choice=null;chooseLegendCard=(title,note,opts,choose,cancel)=>window.__choice={opts,choose,cancel};resolveMayQueen()");
@@ -85,7 +85,7 @@ test('224 LU3: four serial free installs; N1 pick waits before next choice and s
 });
 test('224 LU4: ownership transfer retains per-instance history and hire limit follows board',async t=>{
  const h=await setup(t);h.run("legends=[{...LEGEND_CATALOG.find(x=>x.id==='LU4'),unlocked:true,taken:false,col:1}];powers[0].y=24;employees[1]=[{id:'CUR4',name:'staff',rarity:'UR',_firstBreadUsed:true,oracleUsedTurn:1}];turnClockPrompt=()=>1;");
- await h.run("takeLegend('LU4')");assert.equal(h.run('employees[1].length'),0);assert.equal(h.run('employees[0][0]._firstBreadUsed'),true);assert.equal(h.run('employees[0][0].oracleUsedTurn'),1);assert.equal(h.run('effectiveHireLimit()'),h.run('gameSettings.hireLimit')+1);
+ await h.run("takeLegend('LU4')");h.run("window.choose242()");assert.equal(h.run('employees[1].length'),0);assert.equal(h.run('employees[0][0]._firstBreadUsed'),true);assert.equal(h.run('employees[0][0].oracleUsedTurn'),1);assert.equal(h.run('effectiveHireLimit()'),h.run('gameSettings.hireLimit')+1);
 });
 test('224 LU5: condition gate, free install, all resources removed before one turn end',async t=>{
  const h=await setup(t);h.run("legends=[{...LEGEND_CATALOG.find(x=>x.id==='LU5'),unlocked:true,taken:false,col:2},{id:'lower',tier:'lower',taken:false,col:2}];turnClockConfirm=()=>true;window.__end=0;completeEnd=()=>window.__end++;");

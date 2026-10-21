@@ -5,7 +5,7 @@ const setup=`renderGame=()=>{};window.__alerts=[];alert=x=>window.__alerts.push(
  window.__pick=null;chooseLegendCard=(title,note,opts,choose,cancel)=>{window.__pick={opts,choose,cancel}};
  gameSettings.marketTypes=3;dialogLog=[];`;
 async function pair(t){const hs=[await fixture(t),await fixture(t)];for(const h of hs)h.run(setup);for(const[name,code]of Object.entries(baseline.legacyFunctions))if(name!=='commandDice')hs[1].run(name+'=('+code+')');return hs}
-function same(hs,script){hs.forEach(h=>h.run(script));assert.deepEqual(hs[0].read(state),hs[1].read(state));assert.deepEqual(hs[0].read('window.__alerts'),hs[1].read('window.__alerts'))}
+function same(hs,script){hs.forEach((h,i)=>h.run(i===0?script.replace(/usePublicMarket\((\d+)\)/g,'usePublicMarket($1,{market:window.__answers[0]??null,hand:window.__answers[1]??null})'):script));assert.deepEqual(hs[0].read(state),hs[1].read(state));assert.deepEqual(hs[0].read('window.__alerts'),hs[1].read('window.__alerts'))}
 function supply(){return `deck=Array.from({length:30},(_,i)=>({key:'K'+i,id:'k'+i,name:'card'+i,type:'N'}));breadDeck=Array.from({length:12},(_,i)=>({id:'b'+i,value:i%6+1}));`}
 test('direct choice/move/can/count: explicit zones, selection only, snapshot counts, atomic invalid move',async t=>{
  const h=await fixture(t);h.run(setup+`hands[0]=[{id:'a',type:'N'},{id:'b',type:'S'}];temporary[0]=[{id:'c'}];`);

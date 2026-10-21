@@ -54,21 +54,26 @@ function consumeLegendItems(items){
  breadIdx.forEach(i=>breadDiscard.push(breadHands[turn].splice(i,1)[0]));recycleBreadIfEmpty();
 }
 function legendSameFaceChoices(face){let rs=[];unusedDice().filter(d=>d.value===face).forEach(d=>rs.push({kind:'die',id:d.id}));breadHands[turn].forEach((b,i)=>{if(b.value==='any'||b.value===face)rs.push({kind:'bread',i})});return rs}
-function chooseNamedHireForLegend(){
- if((employees[turn]||[]).length>=effectiveHireLimit()){triggerNotices.push('《ビギニング・オブ・レジェンド》：雇用枠が上限のため雇用できませんでした。');return}
- let pool=['N','R','SR','SSR','UR'].flatMap(r=>implementedCastPool(r));
- if(!pool.length){triggerNotices.push('《ビギニング・オブ・レジェンド》：雇用可能なキャラクターがいません。');return}
- let modal=document.createElement('div');modal.className='imgmodal';modal.style.zIndex='10020';
- let box=document.createElement('div');box.className='game-confirm-box';box.style.maxWidth='900px';box.style.maxHeight='90vh';box.style.overflow='auto';
- let head=document.createElement('div');head.className='row';let title=document.createElement('strong');title.textContent='《ビギニング・オブ・レジェンド》：雇用するキャラクターを選択';let close=document.createElement('button');close.className='secondary';close.textContent='閉じる';close.onclick=()=>modal.remove();head.append(title,close);box.appendChild(head);
- let note=document.createElement('div');note.className='small';note.style.marginTop='6px';note.textContent='キャラクター名と能力を確認してタップしてください。';box.appendChild(note);
- let grid=document.createElement('div');grid.className='employee-card-grid';grid.style.marginTop='10px';grid.style.display='flex';grid.style.flexWrap='wrap';grid.style.gap='8px';
- pool.forEach(e=>{let wrap=document.createElement('div');wrap.className='employee-card-wrap';wrap.style.flex='1 1 150px';wrap.style.maxWidth='180px';let btn=document.createElement('button');btn.type='button';btn.className='employee-card';btn.style.width='100%';btn.style.textAlign='left';btn.style.cursor='pointer';btn.appendChild(employeeCardView(e));btn.onclick=()=>{let chosen=cardCommands.koyou('select',1,{pool,selected:cardCommands.choice(pool,1,{select:[e]}),accept:x=>{if(x.doppelganger)finalizeHire(x);else employees[turn].push(x)}})[0];if(!chosen)return;triggerNotices.push('《ビギニング・オブ・レジェンド》：'+chosen.rarity+'「'+castDisplayName(chosen)+'」を雇用しました。');modal.remove();renderGame()};wrap.appendChild(btn);grid.appendChild(wrap)});
- box.appendChild(grid);modal.appendChild(box);document.body.appendChild(modal);
+function chooseNamedHireForLegend(owner=turn){
+ if((employees[owner]||[]).length>=effectiveHireLimit(owner)){triggerNotices.push('《ビギニング・オブ・レジェンド》：雇用枠が上限のため雇用できませんでした。');return}
+ const pool=['N','R','SR','SSR','UR'].flatMap(r=>implementedCastPool(r));if(!pool.length)return;
+ selectEmployee242('ビギニング・オブ・レジェンド',pool.map(e=>({e})),({e})=>{
+  if((employees[owner]||[]).length>=effectiveHireLimit(owner)||!implementedCastPool(e.rarity).some(x=>x.id===e.id))return;
+  withSelectionOwner242(owner,()=>{const hired=cardCommands.koyou('select',1,{pool,selected:[e],accept:x=>{if(x.doppelganger)finalizeHire(x);else employees[owner].push(x)}});if(hired.length)triggerNotices.push('《ビギニング・オブ・レジェンド》：'+employeeSelectionLabel242(e)+'を雇用しました。')});
+ },{owner,recovery:{kind:'legendHire',ids:pool.map(e=>e.id)}});
 }
 function fieldDestroyCandidates(p){let a=[];(installed[p]||[]).forEach((c,i)=>{if(c.type!=='LEGEND')a.push({zone:'installed',i,c})});(temporary[p]||[]).forEach((c,i)=>{if(c.type!=='LEGEND')a.push({zone:'temporary',i,c})});return a}
-function destroyChosenFieldCard(p,title){let a=fieldDestroyCandidates(p);if(!a.length)return null;let msg=a.map((x,i)=>(i+1)+'. '+x.c.name+(x.zone==='temporary'?'（仮設置）':'')).join('\n');let raw=turnClockPrompt(title+'\n捨てるカードを番号で選んでください。\n\n'+msg,'1');let n=Math.floor(+raw);if(!n||!a[n-1])n=1;let x=cardCommands.choice(a,1,{select:[n-1]})[0];return cardCommands.move(x.c,{zone:x.zone,owner:p},'discard')[0]}
-function resolveScorchedEarth(owner){let first=destroyChosenFieldCard(owner,'《ジェネシスワールド》：まず自分のカードを1枚選択');if(first)triggerNotices.push('《ジェネシスワールド》：P'+(owner+1)+'の「'+first.name+'」を捨てました。');cardCommands.start(0,'all',{step:p=>{let c=destroyChosenFieldCard(p,'《ジェネシスワールド》：P'+(p+1)+'から1枚選択');if(c)triggerNotices.push('《ジェネシスワールド》：P'+(p+1)+'の「'+c.name+'」を捨てました。')}})}
+function destroyChosenFieldCard(p,title,done=()=>{},chooser=turn,recovery=null){
+ const candidates=fieldDestroyCandidates(p);if(!candidates.length){done(null);return}
+ enqueueSelection242({title,owner:chooser,required:true,recovery:recovery&&{...recovery,targets:candidates.map(x=>({zone:x.zone,i:x.i,id:x.c.id}))},options:candidates.map((x,i)=>({key:'card:'+i,label:tradePlayerName241(p)+'：'+cardSelectionLabel242(x.c,p)+(x.zone==='temporary'?'（仮設置）':''),description:effectText(x.c)}))},key=>{
+  const x=candidates[+key.split(':')[1]];const zone=x?.zone==='temporary'?temporary[p]:installed[p];
+  const out=x&&zone.includes(x.c)?cardCommands.move(x.c,{zone:x.zone,owner:p},'discard')[0]:null;done(out);
+ });
+}
+function resolveScorchedEarth(owner,step=0){
+ const order=[owner,...Array.from({length:playerCount},(_,p)=>p)];if(step>=order.length)return;
+ destroyChosenFieldCard(order[step],'ジェネシスワールド：'+(step===0?'まず自分の通常カードを1枚':'順番に場のカードを1枚'),c=>{if(c)triggerNotices.push('《ジェネシスワールド》：'+tradePlayerName241(order[step])+'の「'+c.name+'」を捨てました。');resolveScorchedEarth(owner,step+1)},owner,{kind:'genesis',p:order[step],step});
+}
 function resolveGreatRefresh(){cardCommands.start(0,'all',{step:p=>{
  let n=cardCommands.count({zone:'hand',owner:p})+cardCommands.count({zone:'bread',owner:p});
  cardCommands.move(cardCommands.choice({zone:'hand',owner:p},'all'),{zone:'hand',owner:p},'discard');
@@ -127,7 +132,7 @@ async function takeLegend(id){
   else if(L.special==='greatRefresh'){let rs=legendAnyChoices();if(rs.length<4)return alert('任意のサイコロ／命令書が4個必要です。');if(!canPayResourceCost({["y"]:(6),["r"]:(6),["p"]:(6)},turn))return alert('資金・兵力・食料が6個ずつ必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'any',4);legendPaymentPending=false;if(!chosen||!legendAcquisitionAllowed(turn))return;consumeLegendItems(chosen);payResourceCost({["y"]:(6),["r"]:(6),["p"]:(6)},turn);}
   else{let amount=['legendmine','legendfarm','legendbarracks'].includes(L.special)?12:8,ri=L.resource==='資金'?'y':L.resource==='食料'?'p':'r';if(!canPayResourceCost({[ri]:(amount)},turn))return alert(L.resource+amount+'が必要です。');let rs=legendCostChoices(L);if(rs.length<3)return alert('対応するサイコロ／命令書が3個必要です。');legendPaymentPending=true;let chosen=await selectLegendPayment(L,'faces',3);legendPaymentPending=false;if(!chosen||!legendAcquisitionAllowed(turn))return;consumeLegendItems(chosen);payResourceCost({[ri]:(amount)},turn);}
  }else if(L.special==='changeOfHeart'){
-  if(!canPayResourceCost({["y"]:(18)},turn))return alert('資金18が必要です。');let targets=[];for(let p=0;p<playerCount;p++)if(p!==turn)(employees[p]||[]).forEach((e,i)=>targets.push({p,i,e}));if(!targets.length)return alert('奪える雇用キャラクターがいません。');let msg=targets.map((x,i)=>(i+1)+'. P'+(x.p+1)+' '+x.e.rarity+' '+castDisplayName(x.e)).join('\n');let raw=turnClockPrompt('《シークレット・サーティーン》\n奪う雇用キャラクターを選んでください。\n\n'+msg,'1');let n=Math.floor(+raw);if(!n||!targets[n-1])return;let x=targets[n-1];payResourceCost({["y"]:(18)},turn);let e=cardCommands.choice({zone:'employees',owner:x.p},1,{select:[x.i]})[0];cardCommands.move(e,{zone:'employees',owner:x.p},{zone:'employees',owner:turn});triggerNotices.push('《シークレット・サーティーン》：P'+(x.p+1)+'の「'+castDisplayName(e)+'」をP'+(turn+1)+'が獲得しました。');
+  return chooseSecretThirteen242(L,false);
  }else if(L.special==='resourceWipe'){
   return alert('《'+L.name+'》はターン開始時の特殊取得でのみ獲得できます。');
  }else if(L.special==='abilityCopy'){
@@ -146,7 +151,7 @@ function finishLegendAcquisition(L){
  if(L.layoutSet&&L.exclusiveLayoutSet)legends.forEach(x=>{if(x!==L&&x.layoutSet===L.layoutSet&&x.tier===L.tier&&!x.taken){x.taken=true;x.eraBlocked=true}});
  if(L.tier==='lower'){if(L.layoutSet==='economyPair'){legends.filter(x=>x.tier==='upper'&&x.layoutSet==='economyPair'&&!x.taken&&!x.eraBlocked).forEach(x=>x.unlocked=true)}else{let U=legends.find(x=>x.tier==='upper'&&x.col===L.col);if(U&&!U.taken)U.unlocked=true}}
  let ef=L.tier==='upper'?(L.effectText||effectText({specialEffect:specialEffectId(L),special:specialEffectId(L)})):L.tier==='lower'?(L.effectText|| (L.special==='talentRecruit'?'雇用可能な任意の雇用キャラクターを1人雇用する。':L.special==='scorchedEarth'?'このカードを設置したとき、自分の場の通常カードを1枚選んで捨て札にする。\nその後、各プレイヤーの場の通常カードを1枚ずつ選んで捨て札にする。':L.special==='greatRefresh'?'このカードを設置したとき、全プレイヤーは通常カードと命令書をすべて捨て札にし、その合計枚数と同じ枚数の通常カードを引く。\nその後、各プレイヤーは自身が捨て札にしたカード2枚につき、資金・食料・兵力をそれぞれ1個ずつ獲得する。':'「'+L.target+'」のターン開始時に獲得する'+L.resource+'を3個増やす。\n「'+L.target+'」1枚につきVPを3増やす。')):effectText({specialEffect:specialEffectId(L),special:specialEffectId(L)});let card={key:L.id,name:L.name,type:'LEGEND',specialEffect:specialEffectId(L),special:specialEffectId(L)||'legend',specialConfig:L.specialConfig||L.effectConfig||null,vp:L.vp,effectText:ef};registerInstallation(turn,card);triggerNotices.push(L.name+'を獲得しました。');
- if(L.special==='talentRecruit')chooseNamedHireForLegend();
+ if(L.special==='talentRecruit')chooseNamedHireForLegend(turn);
  if(L.special==='scorchedEarth')resolveScorchedEarth(turn);
  if(L.special==='greatRefresh')resolveGreatRefresh();
  if(L.special==='eggharp')resolveEggHarp(turn);
@@ -158,7 +163,7 @@ function chooseLegendCard(title,note,opts,onChoose,onCancel){
  if(!canChoose())return;
  q('#legendChoiceCancel').style.display='';q('#legendChoiceCancel').textContent='キャンセル';
  let m=q('#legendChoiceModal'),grid=q('#legendChoiceCards');q('#legendChoiceTitle').textContent=title;q('#legendChoiceNote').textContent=note||'';grid.innerHTML='';
- opts.forEach(x=>{let w=document.createElement('div');w.className='card selectable-card';w.style.justifyContent='flex-start';let c=x.c;if(c){const art=cardArtwork(c);art.querySelectorAll('.zoomable').forEach(e=>e.classList.remove('zoomable'));w.appendChild(art)}let nm=document.createElement('strong');nm.textContent=x.label||c?.name||'カード';w.appendChild(nm);if(c){let meta=document.createElement('div');meta.className='small';meta.style.marginTop='5px';meta.textContent='VP：'+(c.vp||0);w.appendChild(meta);let ef=document.createElement('div');ef.className='small';ef.style.marginTop='6px';ef.textContent=effectText(c);w.appendChild(ef)}w.onclick=()=>{if(choiceSettled||!canChoose()||turn!==choiceOwner)return;choiceSettled=true;m.classList.add('hidden');turnClockChoice=null;onChoose(x)};grid.appendChild(w)});
+ opts.forEach(x=>{let w=document.createElement('div');w.className='card selectable-card compact-selection-242';w.style.justifyContent='flex-start';let c=x.c;if(c){const art=cardArtwork(c);art.querySelectorAll('.zoomable').forEach(e=>e.classList.remove('zoomable'));w.appendChild(art)}let nm=document.createElement('strong');nm.textContent=x.label||c?.name||'カード';w.appendChild(nm);if(c){let meta=document.createElement('div');meta.className='small';meta.style.marginTop='5px';meta.textContent='VP：'+(c.vp||0);w.appendChild(meta);let ef=document.createElement('div');ef.className='small';ef.style.marginTop='6px';ef.textContent=effectText(c);w.appendChild(ef)}w.onclick=()=>{if(choiceSettled||!canChoose()||turn!==choiceOwner)return;choiceSettled=true;m.classList.add('hidden');turnClockChoice=null;onChoose(x)};grid.appendChild(w)});
  q('#legendChoiceCancel').onclick=()=>{if(choiceSettled||!canChoose()||turn!==choiceOwner)return;choiceSettled=true;m.classList.add('hidden');turnClockChoice=null;if(onCancel)onCancel()};m.classList.remove('hidden');
 }
 function resolveEggHarp(owner,n=0){
@@ -539,7 +544,7 @@ function usePublicMarket(cardIndex,selection=null){
  if(!canPayResourceCost({["y"]:(2)},turn))return alert('交易場の使用には資金2個が必要です。');
  let g=groups();if(!g.size)return alert('公開カードがありません。');
  let keys=[...g.keys()];
- if(selection?.dropdown){
+ if(!selection||selection.dropdown){
   const token=turnClockState.token,originalMarket=[...market],originalHand=[...hands[owner]];
   const valid=()=>turnClockLeaseValid(owner,token)&&!turnClockState.resolving&&isViewingOwnTurn()&&installed[owner]?.[cardIndex]===c&&!normalCardActionUsed(publicMarketUsed,c)&&canPayResourceCost({y:2},owner)&&market.length===originalMarket.length&&market.every((x,i)=>x===originalMarket[i])&&hands[owner].length===originalHand.length&&hands[owner].every((x,i)=>x===originalHand[i]);
   const choose=(note,options,label,onChoose)=>{
@@ -555,13 +560,13 @@ function usePublicMarket(cardIndex,selection=null){
    choose('獲得後に捨てる手札を1枚選択',candidates.map((x,i)=>(i<originalHand.length?'手札'+(i+1):'今回獲得'+(i-originalHand.length+1))+'：'+x.name),'資金2で実行',hi=>usePublicMarket(cardIndex,{market:mi+1,hand:hi+1}));
   });return;
  }
- let mraw=selection?selection.market:turnClockPrompt('獲得する公開カードの番号を入力してください。\n'+keys.map((k,i)=>(i+1)+': '+g.get(k)[0].name+' ×'+g.get(k).length).join('\n'));
+ let mraw=selection.market;
  if(mraw===null)return;
  let mi=Number(mraw)-1;if(!Number.isInteger(mi)||mi<0||mi>=keys.length)return alert('正しい公開カード番号を入力してください。');
  let key=keys[mi],got=cardCommands.choice('market','all',{where:c=>c.key===key});
  // 獲得したカードも捨てる候補に含める。キャンセル時は資金・公開場・手札を変更しない。
  let candidates=[...hands[turn],...got];
- let hraw=selection?selection.hand:turnClockPrompt('獲得後に捨てる手札の番号を入力してください。\n'+candidates.map((c,i)=>(i+1)+': '+c.name).join('\n'));
+ let hraw=selection.hand;
  if(hraw===null)return;
  let hi=Number(hraw)-1;if(!Number.isInteger(hi)||hi<0||hi>=candidates.length)return alert('正しい手札番号を入力してください。');
  if(turn!==owner||!isViewingOwnTurn()||!installed[owner].includes(c)||normalCardActionUsed(publicMarketUsed,c)||!canPayResourceCost({["y"]:(2)},owner))return;
@@ -604,7 +609,13 @@ function installTenkuCat(handIndex,a,b,trashIndex){let p=powers[turn];if(!canPay
 function installCursedClock(handIndex,a){let p=powers[turn];if(!canPayResourceCost({["p"]:(3)},turn))return alert('設置には食料が3個必要です。');let ok=(String(a).startsWith('free:request:')&&lordInstallDiceDiscount()>Number(String(a).split(':')[2]))?true:(String(a).startsWith('d:')?(()=>{let d=unusedDice().find(x=>'d:'+x.id===a&&(x.value===5||x.value===6));if(!d)return false;d.used=true;return true})():(()=>{let i=+String(a).split(':')[1],b=breadHands[turn][i];if(!b||!(b.value==='any'||b.value===5||b.value===6))return false;breadDiscard.push(breadHands[turn].splice(i,1)[0]);recycleBreadIfEmpty();return true})());if(!ok)return alert('出目5または6を満たすサイコロまたは命令書を選んでください。');payResourceCost({["p"]:(3)},turn);let c=hands[turn].splice(handIndex,1)[0];registerInstallation(turn,c);renderGame()}
 
 function installTreasureShip(handIndex,color){let p=powers[turn];if(!['y','r','p'].includes(color)||!canPayResourceCost({[color]:(30)},turn))return alert('選んだ1色のパワーが30個必要です。');payResourceCost({[color]:(30)},turn);let c=hands[turn].splice(handIndex,1)[0];registerInstallation(turn,c);renderGame()}
-function installInadamashii(handIndex){if(installed[turn].length<8)return alert('正式に設置済みのマーケットカードが8枚必要です。');let names=installed[turn].map((c,i)=>(i+1)+': '+c.name).join('\n');let raw=turnClockPrompt('捨てる設置済みカード8枚の番号をカンマ区切りで入力してください。\n'+names);if(raw===null)return;let idx=[...new Set(raw.split(',').map(x=>Number(x.trim())-1))];if(idx.length!==8||idx.some(i=>!Number.isInteger(i)||i<0||i>=installed[turn].length))return alert('異なる8枚の番号を正しく入力してください。');idx.sort((a,b)=>b-a).forEach(i=>discard.push(installed[turn].splice(i,1)[0]));let c=hands[turn].splice(handIndex,1)[0];registerInstallation(turn,c);renderGame()}
+function installInadamashii(handIndex){
+ const owner=turn,c=hands[owner][handIndex],candidates=[...installed[owner]];if(candidates.length<8)return alert('正式に設置済みのマーケットカードが8枚必要です。');
+ enqueueSelection242({title:'稲魂：設置済みカードを8枚選択',owner,recovery:{kind:'inadamashii',handIndex,cardId:c.id,ids:candidates.map(x=>x.id)},mode:'multi',min:8,max:8,options:candidates.map((x,i)=>({key:'card:'+i,label:cardSelectionLabel242(x,owner),description:effectText(x)}))},keys=>{
+  const selected=keys.map(k=>candidates[+k.split(':')[1]]);if(hands[owner][handIndex]!==c||!selected.every(x=>installed[owner].includes(x)))return;
+  selected.forEach(x=>cardCommands.move(x,{zone:'installed',owner},'discard'));withSelectionOwner242(owner,()=>registerInstallation(owner,hands[owner].splice(handIndex,1)[0]));
+ });
+}
 function resolveOnInstall(c,owner){
  if(c.special==='clarentReplica')replicaOwners.includes(owner)||replicaOwners.push(owner);
  if(c.special==='petitArsNova'||c.special==='ritualArsNova')sacrificeNormalCards(c,owner,c.special==='petitArsNova'?1:5);
@@ -614,10 +625,10 @@ function resolveOnInstall(c,owner){
  if(c.special==='massRecruitment'){for(let p=0;p<playerCount;p++){let e=gachaCast();if(e){let old=turn;turn=p;finalizeHire(e,'一斉採用：');notifyStaffingAgency(p);turn=old;hiredThisTurn=false;}}let n=playerCount===2?1:playerCount===3?2:3;for(let i=0;i<n;i++)drawBread(owner);}
  else if(c.special==='castLevelUp'){cardCommands.koyou('レベルアップ',1,{targetFilter:(e,next)=>next.rarity!=='UR',render:false})}
  else if(c.special==='amicableRetirement')resolveAmicableRetirement(owner);
- else if(c.special==='honeyTrap'){let targets=[];for(let p=0;p<playerCount;p++)if(p!==owner)(employees[p]||[]).forEach((e,i)=>targets.push({p,i,e}));if(targets.length){let n=Math.floor(+(turnClockPrompt('《ハニートラップ》：解雇する相手の雇用キャラクター番号\n'+targets.map((x,i)=>(i+1)+'. P'+(x.p+1)+' '+castDisplayName(x.e)).join('\n'),'1')||0));if(n&&targets[n-1])employees[targets[n-1].p].splice(targets[n-1].i,1)}}
+ else if(c.special==='honeyTrap')resolveHoneyTrap242(owner);
  else if(c.special==='employeeTrade')resolveTrade241(owner);
  else if(c.special==='surpriseSpecialGacha')resolveSurpriseGacha(owner);
- else if(c.special==='specialProcurement'){for(let p=0;p<playerCount;p++){let n=p===owner?15:5;let k=turnClockPrompt('《特需》：P'+(p+1)+'が獲得する資源\n資金/食料/兵力の個数を「資金,食料,兵力」で入力（合計'+n+'）',''+n+',0,0');if(k){let a=k.split(',').map(Number);if(a.length===3&&a.reduce((x,y)=>x+y,0)===n){powers[p].y+=a[0];powers[p].p+=a[1];powers[p].r+=a[2]}}}}
+ else if(c.special==='specialProcurement')resolveProcurement242(owner);
  else if(c.special==='cursedclock'){gainResource(owner,'y',3,'effect');gainResource(owner,'r',3,'effect');gainResource(owner,'p',3,'effect');alert('呪怨の懐中時計の設置時効果：資金・兵力・食料を3個ずつ獲得しました。');}
  else if(c.special==='paneteria'){installEffectStack.push({kind:'park',owner,remaining:2,active:false});drainInstallEffects()}
  else if(c.special==='blackcasino'){installEffectStack.push({kind:'toba',owner,remaining:2});drainInstallEffects()}
@@ -633,7 +644,7 @@ function drainInstallEffects(){
  if(installEffectRunning)return;installEffectRunning=true;
  try{while(installEffectStack.length&&!gameEnded){
   const frame=installEffectStack[installEffectStack.length-1];
-  if(pendingParkPlayers.length||pendingNormalInstallChoice||pendingTrade241)break;
+  if(pendingParkPlayers.length||pendingNormalInstallChoice||pendingTrade241||pendingSelections242.length)break;
   if(!frame.remaining){installEffectStack.pop();continue}
   frame.remaining--;
   if(frame.kind==='petitBonus'){
@@ -816,7 +827,7 @@ function selectRitualCards(title,candidates,count,done){
  const list=document.createElement('div');list.className='ritual-selection-list';const rows=[];
  const update=()=>{status.textContent=chosen.size+'/'+count+'枚';ok.disabled=chosen.size!==count;for(const [c,row,mark] of rows){const yes=chosen.has(c);row.setAttribute('aria-pressed',String(yes));row.classList.toggle('selected',yes);mark.textContent=yes?'✓ 選択中':'未選択';row.disabled=!!turnClockState?.resolving&&yes}};
  candidates.forEach((c,i)=>{const row=document.createElement('button');row.type='button';row.className='ritual-selection-row';row.dataset.instance=String(i);
- const image=document.createElement('img');image.src=resolvedContentImage(c)||'';image.alt=c.name;image.onerror=()=>{image.style.visibility='hidden'};
+ const image=cardArtwork(c);image.classList.add('ritual-artwork-242');image.querySelectorAll('.zoomable').forEach(el=>el.classList.remove('zoomable'));
  const meta=document.createElement('span');meta.className='ritual-selection-meta';const name=document.createElement('strong');name.textContent=c.name;
  const vp=document.createElement('span');vp.textContent='VP：'+cardVP(c,turn);const mark=document.createElement('span');mark.className='ritual-selection-mark';meta.append(name,vp,mark);row.append(image,meta);
  row.onclick=()=>{if(!dialog.valid())return;if(chosen.has(c))chosen.delete(c);else if(chosen.size<count)chosen.add(c);update()};rows.push([c,row,mark]);list.appendChild(row)});
@@ -891,6 +902,148 @@ function renderTrade241(){
  const update=()=>{ok.disabled=!allowed||!ownSelect.value||!!targetSelect&&targetSelect.value==='';showRoster()};ownSelect.onchange=update;if(targetSelect)targetSelect.onchange=update;
  ok.onclick=()=>{if(ok.disabled)return;requestTradeChoice241('pick',targetSelect?+targetSelect.value:undefined,ownSelect.value)};
  const cancel=document.createElement('button');cancel.className='secondary';cancel.textContent='交換をキャンセル';cancel.disabled=realOnlineMainMode&&![t.owner,t.target].includes(realMyPlayerIndex());cancel.onclick=()=>requestTradeChoice241('cancel');box.append(ok,cancel);showRoster();
+}
+
+// TEST242: explicit chooser, previewable options and a lease-bound FIFO selection queue.
+let pendingSelections242=[],selectionSequence242=0;
+const selectionCallbacks242=new Map(),selectionAccepted242=new Map();
+function selectionLease242(job){return !!job&&turnClockLeaseValid(job.actor,job.token)}
+function selectionValueValid242(job,value){
+ if(value===null)return !job.required;
+ if(job.mode==='allocation')return value&&['y','p','r'].every(k=>Number.isInteger(value[k])&&value[k]>=0&&value[k]<=job.total)&&value.y+value.p+value.r===job.total;
+ const keys=Array.isArray(value)?value:[value];return keys.length>=(job.min??1)&&keys.length<=(job.max??1)&&new Set(keys).size===keys.length&&keys.every(key=>job.options.some(o=>o.key===key));
+}
+function enqueueSelection242(config,done,cancel=()=>{}){
+ const actor=turnClockState?.active??turn,owner=config.owner??turn;
+ const job={...config,id:turnClockState.token+':'+(++selectionSequence242),actor,owner,token:turnClockState.token,options:(config.options||[]).map(o=>({key:String(o.key),label:String(o.label),description:String(o.description||'')}))};
+ selectionCallbacks242.set(job.id,{done,cancel,valid:config.valid||(()=>true)});delete job.valid;
+ pendingSelections242.push(job);runSelectionBots242();renderSelections242();
+ if(realOnlineMainMode&&realMyPlayerIndex()===actor&&!realMainApplying)queueMicrotask(()=>turnClockPublishAction(false));
+ return job.id;
+}
+function finishSelection242(id,value){
+ const job=pendingSelections242[0];if(!job||job.id!==id||!selectionLease242(job)||!selectionValueValid242(job,value))return false;
+ const handler=selectionCallbacks242.get(id)||{valid:()=>true,done:value=>recoverSelection242(job,value),cancel:()=>recoverSelection242(job,null)};
+ pendingSelections242.shift();selectionCallbacks242.delete(id);q('#effectSelection242')?.classList.add('hidden');
+ if(handler.valid()){if(value===null)handler.cancel();else handler.done(value)}else handler.cancel();
+ runSelectionBots242();renderSelections242();drainInstallEffects();renderGame();return true;
+}
+function runSelectionBots242(){
+ for(let guard=0;guard<100&&pendingSelections242.length;guard++){
+  const job=pendingSelections242[0];if(!botIsPlayer(job.owner)||!selectionCallbacks242.has(job.id))break;
+  const value=job.mode==='allocation'?{y:job.total,p:0,r:0}:job.mode==='multi'?job.options.slice(0,job.max).map(o=>o.key):job.options[0]?.key;
+  if(!finishSelection242(job.id,value??null))break;
+ }
+}
+function requestSelection242(value){
+ const job=pendingSelections242[0];if(!job)return;
+ if(realOnlineMainMode){const n=turnClockNet;if(!n?.ready||realMyPlayerIndex()!==job.owner)return;
+  const payload={client:realLobbyClientId,match:n.match,epoch:n.epoch,token:turnClockState.token,id:job.id,owner:job.owner,value};
+  if(isRealLobbyHost())receiveSelection242(payload);else turnClockSend('selection_request_242',payload);
+ }else finishSelection242(job.id,value);
+}
+function receiveSelection242(payload){
+ const n=turnClockNet,job=pendingSelections242[0];if(!realOnlineMainMode||!isRealLobbyHost()||!n?.ready||!job||!payload)return;
+ if(payload.match!==n.match||payload.epoch!==n.epoch||payload.token!==turnClockState.token||payload.id!==job.id||payload.owner!==job.owner||payload.client!==realMainRoster[job.owner]?.client_id||!selectionValueValid242(job,payload.value))return;
+ const accepted=selectionAccepted242.get(job.id);if(accepted){turnClockSend('selection_result_242',accepted);applySelectionResult242(accepted);return}
+ const result={...payload,host:realLobbyClientId,actor:job.actor};selectionAccepted242.set(job.id,result);
+ turnClockSend('selection_result_242',result);applySelectionResult242(result);
+}
+function applySelectionResult242(payload){
+ const n=turnClockNet,job=pendingSelections242[0];if(!job||!n?.ready||payload?.host!==realLobbyHostId||payload.match!==n.match||payload.epoch!==n.epoch||payload.token!==turnClockState.token||payload.actor!==job.actor||payload.owner!==job.owner||payload.id!==job.id||realMyPlayerIndex()!==job.actor)return;
+ if(finishSelection242(job.id,payload.value))turnClockPublishAction(false);
+}
+function closeSelections242(){
+ for(let guard=0;pendingSelections242.length&&guard<100;guard++){
+  const job=pendingSelections242[0];{
+   const value=job.required?(job.mode==='allocation'?{y:job.total,p:0,r:0}:job.mode==='multi'?job.options.slice(0,job.max).map(o=>o.key):job.options[0]?.key):null;
+   if(finishSelection242(job.id,value))continue;
+  }
+  pendingSelections242.shift();selectionCallbacks242.delete(job.id);
+ }
+ q('#effectSelection242')?.classList.add('hidden');
+}
+function renderSelections242(){
+ let modal=q('#effectSelection242'),job=pendingSelections242[0];if(!job){modal?.classList.add('hidden');return}
+ if(!modal){modal=document.createElement('div');modal.id='effectSelection242';modal.className='imgmodal';modal.style.zIndex='10045';document.body.appendChild(modal)}
+ modal.classList.remove('hidden');const allowed=!realOnlineMainMode||realMyPlayerIndex()===job.owner;
+ const signature=job.id+':'+allowed;if(modal.dataset.signature===signature)return;modal.dataset.signature=signature;modal.replaceChildren();
+ const panel=document.createElement('div');panel.className='game-confirm-box selection-panel-242';modal.appendChild(panel);
+ const title=document.createElement('strong');title.textContent=job.title+' — '+tradePlayerName241(job.owner)+'の選択';panel.appendChild(title);
+ const note=document.createElement('p');note.textContent=allowed?(job.note||'候補から選択してください。'):'このプレイヤーの選択を待っています。';panel.appendChild(note);if(!allowed)return;
+ let value=null;const preview=document.createElement('div');preview.id='selectionPreview242';preview.className='selection-preview-242';preview.setAttribute('role','status');
+ const ok=document.createElement('button');ok.id='selectionConfirm242';ok.className='primary';ok.textContent='選択を確定';ok.disabled=true;
+ if(job.mode==='allocation'){
+  value={};for(const [key,label] of [['y','資金'],['p','食料'],['r','兵力']]){const field=document.createElement('label');field.textContent=label;const select=document.createElement('select');select.dataset.resource=key;select.appendChild(new Option('選択してください',''));for(let i=0;i<=job.total;i++)select.appendChild(new Option(label+' '+i+'個',String(i)));select.onchange=()=>{value[key]=select.value===''?null:+select.value;preview.textContent='資金 '+(value.y??0)+'・食料 '+(value.p??0)+'・兵力 '+(value.r??0)+' ／ 合計'+((value.y||0)+(value.p||0)+(value.r||0))+'/'+job.total+'個';ok.disabled=!selectionValueValid242(job,value)};field.appendChild(select);panel.appendChild(field)}
+ }else if(job.mode==='multi'){
+  const selected=new Set(),list=document.createElement('div');list.className='selection-list-242';
+  for(const option of job.options){const row=document.createElement('label');row.className='selection-row-242';const check=document.createElement('input');check.type='checkbox';check.value=option.key;const text=document.createElement('span');text.textContent=option.label;const description=document.createElement('span');description.textContent=option.description;row.append(check,text,description);check.onchange=()=>{if(check.checked){if(selected.size>=job.max){check.checked=false;return}selected.add(option.key)}else selected.delete(option.key);row.classList.toggle('selected',check.checked);value=[...selected];preview.textContent=selected.size+'/'+job.max+'枚';ok.disabled=!selectionValueValid242(job,value)};list.appendChild(row)}
+  value=[];preview.textContent='0/'+job.max+'枚';ok.disabled=!selectionValueValid242(job,value);panel.appendChild(list);
+ }else{
+  const select=document.createElement('select');select.id='effectSelect242';select.setAttribute('aria-label',job.title);select.appendChild(new Option('選択してください',''));job.options.forEach(o=>select.appendChild(new Option(o.label,o.key)));
+  select.onchange=()=>{const option=job.options.find(o=>o.key===select.value);value=option?.key??null;preview.textContent=option?option.description:'選択中の効果はここに表示されます。';ok.disabled=!option};panel.appendChild(select);
+  const compare=document.createElement('details');const heading=document.createElement('summary');heading.textContent='すべての候補と効果を比較';compare.appendChild(heading);
+  job.options.forEach(option=>{const entry=document.createElement('div');entry.className='selection-preview-242';const name=document.createElement('strong');name.textContent=option.label;const effect=document.createElement('div');effect.textContent=option.description;entry.append(name,effect);compare.appendChild(entry)});panel.appendChild(compare);
+ }
+ panel.appendChild(preview);const cancel=document.createElement('button');cancel.className='secondary';cancel.id='selectionCancel242';cancel.textContent='キャンセル';cancel.disabled=!!job.required;cancel.onclick=()=>requestSelection242(null);ok.onclick=()=>{if(!ok.disabled)requestSelection242(value)};panel.append(ok,cancel);
+}
+function cardSelectionLabel242(c,p=turn){return c.name+'｜VP：'+cardVP(c,p)}
+function employeeSelectionLabel242(e){return displayCastRarity241(e.rarity)+'｜'+castDisplayName(e)+(e.copySourceName?'（コピー：'+e.copySourceName+'）':'')}
+function selectEmployee242(title,targets,done,{owner=turn,required=false,onCancel=()=>{},recovery=null}={}){
+ if(!targets.length)return;
+ enqueueSelection242({title,owner,required,recovery:recovery&&{...recovery,targets:targets.map(t=>({p:t.p,i:t.p!=null?employees[t.p].indexOf(t.e):null,id:t.e.id}))},options:targets.map((t,i)=>({key:'choice:'+i,label:(t.p!=null?tradePlayerName241(t.p)+'：':'')+employeeSelectionLabel242(t.e),description:castEffectText(t.e)}))},key=>{const target=targets[+key.split(':')[1]];if(target?.p!=null&&!employees[target.p]?.includes(target.e)){onCancel();return}done(target)},onCancel);
+}
+
+
+function withSelectionOwner242(owner,fn){const old=turn;turn=owner;try{return fn()}finally{turn=old}}
+function resolveHoneyTrap242(owner){
+ const targets=employees.flatMap((list,p)=>p===owner?[]:(list||[]).map(e=>({p,e})));
+ selectEmployee242('ハニートラップ：解雇する相手の雇用',targets,({p,e})=>{const i=employees[p].indexOf(e);if(i>=0)employees[p].splice(i,1)},{owner,recovery:{kind:'honey'}});
+}
+function chooseSecretThirteen242(L,free=false){
+ const owner=turn;if(!free&&!canPayResourceCost({y:18},owner))return alert('資金18が必要です。');
+ const targets=employees.flatMap((list,p)=>p===owner?[]:(list||[]).map(e=>({p,e})));if(!targets.length)return alert('奪える雇用キャラクターがいません。');
+ selectEmployee242('シークレット・サーティーン：奪う雇用',targets,({p,e})=>{
+  if(!employees[p].includes(e)||!free&&!canPayResourceCost({y:18},owner))return;
+  if(!free)payResourceCost({y:18},owner);cardCommands.move(e,{zone:'employees',owner:p},{zone:'employees',owner});
+  if(!free)withSelectionOwner242(owner,()=>finishLegendAcquisition(L));
+ },{owner,recovery:{kind:'secret',legendId:L?.id,free}});
+}
+function resolveProcurement242(owner){
+ for(let p=0;p<playerCount;p++){const total=p===owner?15:5;enqueueSelection242({title:'特需：獲得する資源を配分',owner:p,recovery:{kind:'procurement'},mode:'allocation',total,required:false},allocation=>{for(const key of ['y','p','r'])powers[p][key]+=allocation[key]})}
+}
+
+// Recover serializable choices on the authoritative timeout host or after reload.
+// An unconfirmed generic evolution is cancelled before any materials/cost commit.
+function recoverSelection242(job,value){
+ const r=job.recovery,owner=job.owner;if(!r)return;
+ if(r.kind==='doppelHire'){
+  let made={...r.employee,copiedFrom:null};
+  const t=value&&r.targets[+value.split(':')[1]],src=t&&employees[t.p]?.[t.i];
+  if(src?.id===t?.id)made=copiedDoppelAbility241(made,src);
+  employees[owner].push(made);if(employeeUniqueAbilitiesEnabled(owner)&&made.hireBread)for(let i=0;i<made.hireBread;i++)drawBread(owner);return;
+ }
+ if(value===null)return;
+ if(r.kind==='procurement'){for(const k of ['y','p','r'])powers[owner][k]+=value[k];return}
+ if(r.kind==='legendHire'){
+  const id=r.ids[+value.split(':')[1]],e=CAST_TYPES[id];if(!e||(employees[owner]||[]).length>=effectiveHireLimit(owner)||!implementedCastPool(e.rarity).some(x=>x.id===id))return;
+  withSelectionOwner242(owner,()=>cardCommands.koyou('select',1,{pool:[e],selected:[e],accept:x=>{if(x.doppelganger)finalizeHire(x);else employees[owner].push(x)}}));return;
+ }
+ if(r.kind==='genesis'){
+  const t=r.targets[+value.split(':')[1]],c=t&&(t.zone==='temporary'?temporary[r.p]:installed[r.p])?.[t.i];
+  if(c&&c.id===t.id&&c.type!=='LEGEND')cardCommands.move(c,{zone:t.zone,owner:r.p},'discard');resolveScorchedEarth(owner,r.step+1);return;
+ }
+ if(r.kind==='inadamashii'){
+  const c=hands[owner]?.[r.handIndex],chosen=value.map(k=>installed[owner]?.find(c=>c.id===r.ids[+k.split(':')[1]]));
+  if(!c||c.id!==r.cardId||chosen.some(c=>!c)||new Set(chosen).size!==8)return;
+  chosen.forEach(c=>cardCommands.move(c,{zone:'installed',owner},'discard'));withSelectionOwner242(owner,()=>registerInstallation(owner,hands[owner].splice(r.handIndex,1)[0]));return;
+ }
+ const t=r.targets?.[+value.split(':')[1]],e=t&&employees[t.p]?.[t.i];if(!e||e.id!==t.id)return;
+ if(r.kind==='honey'){employees[t.p].splice(t.i,1);return}
+ if(r.kind==='secret'){
+  const L=legends.find(L=>L.id===r.legendId);if(!r.free&&(!L||L.taken||!canPayResourceCost({y:18},owner)))return;
+  if(!r.free)payResourceCost({y:18},owner);cardCommands.move(e,{zone:'employees',owner:t.p},{zone:'employees',owner});if(!r.free)withSelectionOwner242(owner,()=>finishLegendAcquisition(L));
+ }
 }
 
 // @kokoryo-end-section S0099

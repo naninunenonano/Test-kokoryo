@@ -300,7 +300,7 @@ function renderOpponentTurnView(){
  let fieldSec=document.createElement('div');fieldSec.className='actionblock';let fieldTitle=document.createElement('strong');fieldTitle.textContent='相手の設置済みカード';fieldSec.appendChild(fieldTitle);appendInstalledCardGrid(fieldSec,installedDisplayList(opp));box.appendChild(fieldSec);
  let emp=document.createElement('div');emp.className='actionblock';emp.innerHTML='<strong>相手の雇用キャラクター</strong>';let eg=document.createElement('div');eg.className='employee-card-grid';eg.style.marginTop='8px';if(!(employees[opp]||[]).length){let e=document.createElement('div');e.className='muted';e.textContent='雇用キャラクターなし';eg.appendChild(e)}else (employees[opp]||[]).forEach(c=>eg.appendChild(employeeCardView(c)));emp.appendChild(eg);box.appendChild(emp);return true;
 }
-function renderGame(){renderTrade241();turnClockRender();playLogChanges('render');refreshActiveRulesButton();let lobbyBtn=q('#mainReturnLobby');if(lobbyBtn)lobbyBtn.classList.toggle('hidden',!(onlineDebugMode||(realOnlineMainMode&&isRealLobbyHost())));q('#cardDetailModal')?.classList.add('hidden');q('#installModal')?.classList.add('hidden');checkEndgameTrigger();renderSharedEndgameStatus();if(renderOpponentTurnView()){renderLegends();renderMarket();renderPlayers();renderParkChoice();return;}q('#turnwho').textContent='P'+(turn+1)+(realOnlineMainMode&&realPlayerName(turn)?' '+realPlayerName(turn):'')+'のターン';let charData=window.KOKORYO_CHARACTER_DATA||CHARACTER_DATA,lord=charData[charOf(turn)]||charData.P1||{};renderLordPortrait(q('#charportrait'),charData[charOf(turn)]?charOf(turn):'P1');q('#chartitle').textContent=lord.title||'';q('#charname').textContent=lord.name||'';q('#chargender').textContent=lord.gender||'';q('#charability').innerHTML='<strong>《'+(lord.uniqueAbility||'能力なし')+'》</strong>';q('#charnote').textContent=hasEquivalentExchange(turn)?'資源コストは合計数で支払います。指定資源を優先し、不足分は資金→食料→兵力の順で自動支払い。':'';renderTriggerNotices();let pw=powers[turn];q('#py').textContent=pw.y;q('#pr').textContent=pw.r;q('#pp').textContent=pw.p;q('#handcount').textContent=totalHandCount(turn);q('#breadhandcount').textContent=breadHands[turn].length;q('#currentvp').textContent=totalVP(turn);
+function renderGame(){runSelectionBots242();renderSelections242();renderTrade241();turnClockRender();playLogChanges('render');refreshActiveRulesButton();let lobbyBtn=q('#mainReturnLobby');if(lobbyBtn)lobbyBtn.classList.toggle('hidden',!(onlineDebugMode||(realOnlineMainMode&&isRealLobbyHost())));q('#cardDetailModal')?.classList.add('hidden');q('#installModal')?.classList.add('hidden');checkEndgameTrigger();renderSharedEndgameStatus();if(renderOpponentTurnView()){renderLegends();renderMarket();renderPlayers();renderParkChoice();return;}q('#turnwho').textContent='P'+(turn+1)+(realOnlineMainMode&&realPlayerName(turn)?' '+realPlayerName(turn):'')+'のターン';let charData=window.KOKORYO_CHARACTER_DATA||CHARACTER_DATA,lord=charData[charOf(turn)]||charData.P1||{};renderLordPortrait(q('#charportrait'),charData[charOf(turn)]?charOf(turn):'P1');q('#chartitle').textContent=lord.title||'';q('#charname').textContent=lord.name||'';q('#chargender').textContent=lord.gender||'';q('#charability').innerHTML='<strong>《'+(lord.uniqueAbility||'能力なし')+'》</strong>';q('#charnote').textContent=hasEquivalentExchange(turn)?'資源コストは合計数で支払います。指定資源を優先し、不足分は資金→食料→兵力の順で自動支払い。':'';renderTriggerNotices();let pw=powers[turn];q('#py').textContent=pw.y;q('#pr').textContent=pw.r;q('#pp').textContent=pw.p;q('#handcount').textContent=totalHandCount(turn);q('#breadhandcount').textContent=breadHands[turn].length;q('#currentvp').textContent=totalVP(turn);
 try{renderBoardHand()}catch(err){console.error('renderBoardHand failed',err)}
 try{renderHireActions()}catch(err){console.error('renderHireActions failed',err)}
 let de=q('#dice');de.innerHTML='';dice.forEach(d=>{let x=document.createElement('div');x.className='die '+(d.used?'used':'');x.innerHTML='<strong>🎲 '+d.value+'</strong><div class="small">'+(d.used?'使用済み':cname(colorFor(d.value))+'対応')+'</div>';de.appendChild(x)});
@@ -526,20 +526,25 @@ function renderParkChoice(){
   }
   return;
  }
- modal.classList.remove('hidden');grid.innerHTML='';
+ modal.classList.remove('hidden');
+ const existing=new Map([...grid.children].map(node=>[node.dataset.parkKey,node]));const ordered=[];
  who.textContent='P'+(p+1)+'：獲得する公開カードを直接タップしてください。';
  if(pendingParkTaken.length){taken.classList.remove('hidden');taken.innerHTML='<strong>ここまでの獲得</strong><div style="margin-top:5px">'+pendingParkTaken.map(x=>'P'+(x.player+1)+'：「'+x.name+'」'+(x.count>1?'×'+x.count:'')).join('<br>')+'</div>'}else{taken.classList.add('hidden');taken.innerHTML=''}
  g.forEach((arr,key)=>{
-  let wrap=document.createElement('div'),b=card(arr[0],arr.length,false);
+  const signature=key+':'+arr.length+':'+resolvedContentImage(arr[0]);let wrap=existing.get(key);
+  if(wrap&&wrap.dataset.parkSignature===signature){ordered.push(wrap);return}
+  wrap=document.createElement('div');wrap.dataset.parkKey=key;wrap.dataset.parkSignature=signature;const b=card(arr[0],arr.length,false);
   b.classList.add('selectable-card');b.style.cursor='pointer';
   b.onclick=()=>{
-   if(realOnlineMainMode&&viewer!==p)return;
-   if(realOnlineMainMode){turnClockRequestPark(p,key);return}
-   if(!applyOnlineParkPick(p,key))return;
+   const chooser=pendingParkPlayers[0];if(realOnlineMainMode&&viewer!==chooser)return;
+   if(realOnlineMainMode){turnClockRequestPark(chooser,key);return}
+   if(!applyOnlineParkPick(chooser,key))return;
   };
   let hint=document.createElement('div');hint.className='small';hint.style.cssText='text-align:center;font-weight:800;margin-top:4px';hint.textContent='タップして獲得';
-  wrap.append(b,hint);grid.appendChild(wrap);
+  wrap.append(b,hint);ordered.push(wrap);
  });
+ for(const node of [...grid.children])if(!ordered.includes(node))node.remove();
+ ordered.forEach((node,i)=>{if(grid.children[i]!==node)grid.insertBefore(node,grid.children[i]||null)});
 }
 // @kokoryo-end-section S0100
 

@@ -165,7 +165,7 @@ test('online: N1 sequential choices survive snapshots; a later player cannot ski
  r.same('pendingParkPlayers.length',0);for(const p of [0,1,2,3])r.same(`hands[${p}].length`,2);
 });
 test('online: N11/N14 individual once ledgers and moves survive reconnect snapshots',async t=>{
- const r=await room(t);r.guest.run("renderGame=()=>{};installed[1]=[{id:'g1',special:'graveyard'},{id:'g2',special:'graveyard'},{id:'m1',special:'publicmarket'}];powers[1]={y:10,p:0,r:0};discard=[{id:'recovered',name:'recovered'}];chooseLegendCard=(title,note,opts,choose)=>choose(opts[0]);useGraveyard(0);q('#legendChoiceCards').children[0].click();market=[{id:'taken',key:'K',name:'taken'}];deck=[];window.__prompts=['1','1'];turnClockPrompt=()=>window.__prompts.shift()??null;usePublicMarket(2);turnClockPublishAction(false)");await r.drain();
+ const r=await room(t);r.guest.run("renderGame=()=>{};installed[1]=[{id:'g1',special:'graveyard'},{id:'g2',special:'graveyard'},{id:'m1',special:'publicmarket'}];powers[1]={y:10,p:0,r:0};discard=[{id:'recovered',name:'recovered'}];chooseLegendCard=(title,note,opts,choose)=>choose(opts[0]);useGraveyard(0);q('#legendChoiceCards').children[0].click();market=[{id:'taken',key:'K',name:'taken'}];deck=[];window.__prompts=['1','1'];turnClockPrompt=()=>window.__prompts.shift()??null;usePublicMarket(2,{market:1,hand:1});turnClockPublishAction(false)");await r.drain();
  r.same('graveyardUsed[1]',{g1:true});r.same('publicMarketUsed[1]',{m1:true});r.same('hands[1].map(c=>c.id)',['taken']);
  const snap=r.host.read('realMainSnapshot()');r.guest.run(`applyRealMainSnapshot(${JSON.stringify(snap)})`);r.same('graveyardUsed[1]',{g1:true});
 });
