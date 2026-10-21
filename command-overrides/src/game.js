@@ -573,7 +573,7 @@ function turnClockOriginalCompleteEnd(){playLogChanges('turn_end');playLogEvent(
 // @kokoryo-section S0114
 
 function resetGameEndState(){
- pendingTrade241=null;tradeRevision241=0;q('#tradeModal241')?.remove();replicaOwners=[];repeatBooksPending=[];pendingNormalInstallChoice=false;specialLegendAcquireOwner=null;
+ pendingSelections242=[];selectionCallbacks242.clear();selectionAccepted242.clear();selectionSequence242=0;q('#effectSelection242')?.remove();pendingTrade241=null;tradeRevision241=0;q('#tradeModal241')?.remove();replicaOwners=[];repeatBooksPending=[];pendingNormalInstallChoice=false;specialLegendAcquireOwner=null;
  playerTurnCounts=Array(playerCount).fill(0);lastCountedTurnToken=-1;oracleUpgradesThisTurn=Array(playerCount).fill(0);
  turnClockReset();
  endgameStarter=null;endgameRemaining=0;gameEnded=false;
@@ -663,6 +663,7 @@ function turnClockConfirm(message){
  return result;
 }
 function turnClockResolvePending(owner,token){
+ closeSelections242();
  if(pendingTrade241)finishTrade241('トレード：持ち時間終了のため交換せず終了しました。');
  for(const overlay of document.querySelectorAll('[data-turn-clock-payment]'))overlay.__turnClockCancel?.();
  legendPaymentPending=false;
@@ -769,7 +770,7 @@ function turnClockExpire(token){
  }
 }
 function completeEnd(){
- if(pendingTrade241)return;
+ if(pendingTrade241||pendingSelections242.length)return;
  if(realOnlineMainMode&&!turnClockNet?.completing){turnClockRequestEnd();return}
  const s=turnClockState;
  if(!s)return turnClockOriginalCompleteEnd();

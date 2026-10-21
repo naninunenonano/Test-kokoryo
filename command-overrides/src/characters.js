@@ -310,13 +310,13 @@ function copiedDoppelAbility241(e,src){
  for(const [key,value] of Object.entries(src))if(!identity.has(key)&&(!key.startsWith('_')||key==='_appliedUniqueAbilities'))copied[key]=structuredClone(value);
  copied.noCommonDie=false;return applyUniqueAbilityDef(copied);
 }
-function resolveDoppelCopy(e){
- if(!characterActivationEnabled(turn)||!e?.doppelganger)return e;
- const targets=employees.flatMap((list,p)=>(list||[]).filter(x=>x&&x!==e&&x.rarity===e.rarity&&!x.doppelganger).map(x=>({p,x})));
- if(!targets.length)return {...e,copiedFrom:null};
- const msg=targets.map((t,i)=>(i+1)+'. P'+(t.p+1)+' '+castDisplayName(t.x)).join('\n');
- const n=Math.floor(+(botIsPlayer(turn)?'1':turnClockPrompt('《ドッペルゲンガー》\nコピーする同レアリティの固有能力\n'+msg,'1')||0));
- return targets[n-1]?copiedDoppelAbility241(e,targets[n-1].x):{...e,copiedFrom:null};
+function resolveDoppelCopy(e,onDone=null){
+ const done=onDone||(()=>{}),owner=turn;
+ if(!characterActivationEnabled(owner)||!e?.doppelganger){done(e);return e}
+ const targets=employees.flatMap((list,p)=>(list||[]).filter(x=>x&&x!==e&&x.rarity===e.rarity&&!x.doppelganger).map(x=>({p,e:x})));
+ if(!targets.length){const result={...e,copiedFrom:null};done(result);return result}
+ selectEmployee242('ドッペルゲンガー：コピーする固有能力',targets,({e:src})=>done(copiedDoppelAbility241(e,src)),{owner,onCancel:()=>done({...e,copiedFrom:null})});
+ return e;
 }
 function grantDoppelHireDie241(e){
  if(!e?.doppelganger)return;
@@ -326,9 +326,10 @@ function grantDoppelHireDie241(e){
 }
 function displayCastRarity241(r){return r==='CLR'?'LR':String(r||'').replace(/^C(?=N$|R$|SR$|SSR$|UR$)/,'')}
 function finalizeHire(e,label=''){
- grantDoppelHireDie241(e);e=resolveDoppelCopy(e);employees[turn].push(e);if(employeeUniqueAbilitiesEnabled(turn)&&e.hireBread){for(let i=0;i<e.hireBread;i++)drawBread(turn);}
-
- triggerNotices.push((label||('P'+(turn+1)+'が '))+displayCastRarity241(e.rarity)+'「'+e.name+'」を雇用しました。'+(e.doppelganger?'共通サイコロを1個獲得します。':'ダイス増加は次の自分のターンから適用されます。'));renderGame();
+ const owner=turn;grantDoppelHireDie241(e);
+ const commit=made=>{employees[owner].push(made);if(employeeUniqueAbilitiesEnabled(owner)&&made.hireBread)for(let i=0;i<made.hireBread;i++)drawBread(owner);
+ triggerNotices.push((label||('P'+(owner+1)+'が '))+displayCastRarity241(made.rarity)+'「'+made.name+'」を雇用しました。'+(made.doppelganger?'共通サイコロを1個獲得します。':'ダイス増加は次の自分のターンから適用されます。'));renderGame()};
+ resolveDoppelCopy(e,commit);
 }
 function hireEmployee(dieId){
  if(!isViewingOwnTurn())return alert('相手ターン中は雇用できません。');
@@ -448,8 +449,10 @@ function commandEvolve(mode,stages,{kind='通常',targetIndex=null,selected=null
  if(!options.length)return [];
  let opt=options[0];
  if(options.length>1&&targetIndex===null&&!selected){
-  const n=botIsPlayer(owner)?1:Number(turnClockPrompt('雇用'+mode+'：対象を選択してください。\n'+options.map((o,i)=>(i+1)+'. '+castDisplayName(CAST_TYPES[o.from]||o.a)+' → '+castDisplayName(CAST_TYPES[o.to])).join('\n'),'1'));
-  if(!Number.isInteger(n)||!options[n-1])return [];opt=options[n-1]
+  if(!botIsPlayer(owner)){
+   enqueueSelection242({title:'雇用'+mode+'：対象を選択',owner,options:options.map((o,i)=>({key:'evolve:'+i,label:castDisplayName(CAST_TYPES[o.from]||o.a)+' → '+employeeSelectionLabel242(CAST_TYPES[o.to]),description:castEffectText(CAST_TYPES[o.to])}))},key=>commandEvolve(mode,stages,{kind,targetIndex,selected:options[+key.split(':')[1]],targetFilter,beforeCommit,commitCost,onSuccess,render}));return [];
+  }
+
  }
  const used=mode==='レベルアップ'?[staff[opt.index]]:[];
  if(mode!=='レベルアップ')for(const id of opt.materials||[opt.from,...(opt.materialCount===2?[opt.mimic||opt.from]:[])]){const e=staff.find(e=>e.id===id&&!used.includes(e));if(!e)return [];used.push(e)}
@@ -461,7 +464,7 @@ function commandEvolve(mode,stages,{kind='通常',targetIndex=null,selected=null
   onSuccess(made,used);if(render)renderGame();return true
  };
  if(opt.clrFusion){chooseLRAbilities({...base},commit);return hired}
- let made=applyUniqueAbilityDef({...base});if(made.doppelganger)made=resolveDoppelCopy(made);commit(made);return hired
+ let made=applyUniqueAbilityDef({...base});if(made.doppelganger)resolveDoppelCopy(made,commit);else commit(made);return hired
 }
 function synthesizeCast(opt){
  if(!isViewingOwnTurn())return alert('相手ターン中は雇用融合できません。');
