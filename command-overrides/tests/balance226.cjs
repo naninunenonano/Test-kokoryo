@@ -88,7 +88,7 @@ test('226 all eleven adjusted legends: real takeLegend validates and spends new 
   h.run(`legends=[{...LEGEND_CATALOG.find(c=>c.id==='${key}'),unlocked:true}];legendTakenThisTurn=false;gameEnded=false;installed=Array.from({length:4},()=>[]);temporary=Array.from({length:4},()=>[]);powers[0]={y:30,p:30,r:30};hands=Array.from({length:4},()=>[]);breadHands=Array.from({length:4},()=>[]);employees[1]=[{id:'steal',rarity:'N',name:'worker'}];dice=[];turnClockPrompt=()=>1;chooseNamedHireForLegend=()=>{};finishGame=()=>{gameEnded=true};window.__selected=[];`);
   faces.forEach((value,i)=>h.run(i%2===0?`dice.push({id:${i+1},value:${value},used:false})`:`breadHands[0].push({id:'order${i}',value:${value}})`));
   h.run("selectLegendPayment=async(L,mode,n,face)=>{window.__selected.push([mode,n,face]);return (mode==='faces'?legendCostChoices(L):mode==='same'?legendSameFaceChoices(face):mode==='distinct'?legendAllFacesChoices(n):legendAnyChoices()).slice(0,n)}");
-  await h.run(`takeLegend('${key}')`);assert.equal(h.run('legends[0].taken'),true,key);assert.equal(h.run('temporary[0][0].vp'),expected[key][0],key);
+  await h.run(`takeLegend('${key}')`);h.run('while(pendingSelections242.length)window.choose242()');assert.equal(h.run('legends[0].taken'),true,key);assert.equal(h.run('temporary[0][0].vp'),expected[key][0],key);
   for(const color of ['y','p','r'])assert.equal(h.run('powers[0].'+color),30-(res[color]||0),key+color);
   assert.equal(h.run('dice.every(d=>d.used)'),true,key);if(key!=='LL6')assert.equal(h.run('breadHands[0].length'),0,key);
   if(key==='LU1')assert.equal(h.run('gameEnded'),true);

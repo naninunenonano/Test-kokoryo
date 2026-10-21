@@ -310,12 +310,12 @@ function copiedDoppelAbility241(e,src){
  for(const [key,value] of Object.entries(src))if(!identity.has(key)&&(!key.startsWith('_')||key==='_appliedUniqueAbilities'))copied[key]=structuredClone(value);
  copied.noCommonDie=false;return applyUniqueAbilityDef(copied);
 }
-function resolveDoppelCopy(e,onDone=null){
+function resolveDoppelCopy(e,onDone=null,recovery=null){
  const done=onDone||(()=>{}),owner=turn;
  if(!characterActivationEnabled(owner)||!e?.doppelganger){done(e);return e}
  const targets=employees.flatMap((list,p)=>(list||[]).filter(x=>x&&x!==e&&x.rarity===e.rarity&&!x.doppelganger).map(x=>({p,e:x})));
  if(!targets.length){const result={...e,copiedFrom:null};done(result);return result}
- selectEmployee242('ドッペルゲンガー：コピーする固有能力',targets,({e:src})=>done(copiedDoppelAbility241(e,src)),{owner,onCancel:()=>done({...e,copiedFrom:null})});
+ selectEmployee242('ドッペルゲンガー：コピーする固有能力',targets,({e:src})=>done(copiedDoppelAbility241(e,src)),{owner,recovery,onCancel:()=>done({...e,copiedFrom:null})});
  return e;
 }
 function grantDoppelHireDie241(e){
@@ -329,7 +329,7 @@ function finalizeHire(e,label=''){
  const owner=turn;grantDoppelHireDie241(e);
  const commit=made=>{employees[owner].push(made);if(employeeUniqueAbilitiesEnabled(owner)&&made.hireBread)for(let i=0;i<made.hireBread;i++)drawBread(owner);
  triggerNotices.push((label||('P'+(owner+1)+'が '))+displayCastRarity241(made.rarity)+'「'+made.name+'」を雇用しました。'+(made.doppelganger?'共通サイコロを1個獲得します。':'ダイス増加は次の自分のターンから適用されます。'));renderGame()};
- resolveDoppelCopy(e,commit);
+ resolveDoppelCopy(e,commit,e?.doppelganger?{kind:'doppelHire',employee:structuredClone(e)}:null);
 }
 function hireEmployee(dieId){
  if(!isViewingOwnTurn())return alert('相手ターン中は雇用できません。');
@@ -445,12 +445,13 @@ function commandEvolve(mode,stages,{kind='通常',targetIndex=null,selected=null
  const owner=turn,staff=employees[owner]||[],token=turnClockState.token;
  let options=mode==='レベルアップ'?staff.map((e,i)=>({from:e.id,to:castEvolution(e.id,stages)?.id,index:i})).filter(o=>o.to&&targetFilter(staff[o.index],CAST_TYPES[o.to])&&castResultAllowed(CAST_TYPES[o.to],[staff[o.index]],owner)):synthesisOptions(owner,kind,stages,{ignoreTurnLimit:true});
  if(mode==='レベルアップ'&&targetIndex!==null)options=options.filter(o=>o.index===targetIndex);
- if(selected)options=options.filter(o=>o.from===selected.from&&o.to===selected.to&&o.mimic===selected.mimic&&JSON.stringify(o.materials)===JSON.stringify(selected.materials));
+ if(selected)options=options.filter(o=>o.from===selected.from&&o.to===selected.to&&(selected.index==null||o.index===selected.index)&&o.mimic===selected.mimic&&JSON.stringify(o.materials)===JSON.stringify(selected.materials));
  if(!options.length)return [];
  let opt=options[0];
  if(options.length>1&&targetIndex===null&&!selected){
   if(!botIsPlayer(owner)){
-   enqueueSelection242({title:'雇用'+mode+'：対象を選択',owner,options:options.map((o,i)=>({key:'evolve:'+i,label:castDisplayName(CAST_TYPES[o.from]||o.a)+' → '+employeeSelectionLabel242(CAST_TYPES[o.to]),description:castEffectText(CAST_TYPES[o.to])}))},key=>commandEvolve(mode,stages,{kind,targetIndex,selected:options[+key.split(':')[1]],targetFilter,beforeCommit,commitCost,onSuccess,render}));return [];
+   const originalStaff=[...staff];
+   enqueueSelection242({title:'雇用'+mode+'：対象を選択',owner,valid:()=>employees[owner]===staff&&staff.length===originalStaff.length&&staff.every((e,i)=>e===originalStaff[i]),options:options.map((o,i)=>({key:'evolve:'+i,label:castDisplayName(CAST_TYPES[o.from]||o.a)+' → '+employeeSelectionLabel242(CAST_TYPES[o.to]),description:castEffectText(CAST_TYPES[o.to])}))},key=>commandEvolve(mode,stages,{kind,targetIndex,selected:options[+key.split(':')[1]],targetFilter,beforeCommit,commitCost,onSuccess,render}));return [];
   }
 
  }

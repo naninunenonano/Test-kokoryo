@@ -60,19 +60,19 @@ function chooseNamedHireForLegend(owner=turn){
  selectEmployee242('ビギニング・オブ・レジェンド',pool.map(e=>({e})),({e})=>{
   if((employees[owner]||[]).length>=effectiveHireLimit(owner)||!implementedCastPool(e.rarity).some(x=>x.id===e.id))return;
   withSelectionOwner242(owner,()=>{const hired=cardCommands.koyou('select',1,{pool,selected:[e],accept:x=>{if(x.doppelganger)finalizeHire(x);else employees[owner].push(x)}});if(hired.length)triggerNotices.push('《ビギニング・オブ・レジェンド》：'+employeeSelectionLabel242(e)+'を雇用しました。')});
- },{owner});
+ },{owner,recovery:{kind:'legendHire',ids:pool.map(e=>e.id)}});
 }
 function fieldDestroyCandidates(p){let a=[];(installed[p]||[]).forEach((c,i)=>{if(c.type!=='LEGEND')a.push({zone:'installed',i,c})});(temporary[p]||[]).forEach((c,i)=>{if(c.type!=='LEGEND')a.push({zone:'temporary',i,c})});return a}
-function destroyChosenFieldCard(p,title,done=()=>{},chooser=turn){
+function destroyChosenFieldCard(p,title,done=()=>{},chooser=turn,recovery=null){
  const candidates=fieldDestroyCandidates(p);if(!candidates.length){done(null);return}
- enqueueSelection242({title,owner:chooser,required:true,options:candidates.map((x,i)=>({key:'card:'+i,label:tradePlayerName241(p)+'：'+cardSelectionLabel242(x.c,p)+(x.zone==='temporary'?'（仮設置）':''),description:effectText(x.c)}))},key=>{
+ enqueueSelection242({title,owner:chooser,required:true,recovery:recovery&&{...recovery,targets:candidates.map(x=>({zone:x.zone,i:x.i,id:x.c.id}))},options:candidates.map((x,i)=>({key:'card:'+i,label:tradePlayerName241(p)+'：'+cardSelectionLabel242(x.c,p)+(x.zone==='temporary'?'（仮設置）':''),description:effectText(x.c)}))},key=>{
   const x=candidates[+key.split(':')[1]];const zone=x?.zone==='temporary'?temporary[p]:installed[p];
   const out=x&&zone.includes(x.c)?cardCommands.move(x.c,{zone:x.zone,owner:p},'discard')[0]:null;done(out);
  });
 }
 function resolveScorchedEarth(owner,step=0){
  const order=[owner,...Array.from({length:playerCount},(_,p)=>p)];if(step>=order.length)return;
- destroyChosenFieldCard(order[step],'ジェネシスワールド：'+(step===0?'まず自分の通常カードを1枚':'順番に場のカードを1枚'),c=>{if(c)triggerNotices.push('《ジェネシスワールド》：'+tradePlayerName241(order[step])+'の「'+c.name+'」を捨てました。');resolveScorchedEarth(owner,step+1)},owner);
+ destroyChosenFieldCard(order[step],'ジェネシスワールド：'+(step===0?'まず自分の通常カードを1枚':'順番に場のカードを1枚'),c=>{if(c)triggerNotices.push('《ジェネシスワールド》：'+tradePlayerName241(order[step])+'の「'+c.name+'」を捨てました。');resolveScorchedEarth(owner,step+1)},owner,{kind:'genesis',p:order[step],step});
 }
 function resolveGreatRefresh(){cardCommands.start(0,'all',{step:p=>{
  let n=cardCommands.count({zone:'hand',owner:p})+cardCommands.count({zone:'bread',owner:p});
@@ -611,7 +611,7 @@ function installCursedClock(handIndex,a){let p=powers[turn];if(!canPayResourceCo
 function installTreasureShip(handIndex,color){let p=powers[turn];if(!['y','r','p'].includes(color)||!canPayResourceCost({[color]:(30)},turn))return alert('選んだ1色のパワーが30個必要です。');payResourceCost({[color]:(30)},turn);let c=hands[turn].splice(handIndex,1)[0];registerInstallation(turn,c);renderGame()}
 function installInadamashii(handIndex){
  const owner=turn,c=hands[owner][handIndex],candidates=[...installed[owner]];if(candidates.length<8)return alert('正式に設置済みのマーケットカードが8枚必要です。');
- enqueueSelection242({title:'稲魂：設置済みカードを8枚選択',owner,mode:'multi',min:8,max:8,options:candidates.map((x,i)=>({key:'card:'+i,label:cardSelectionLabel242(x,owner),description:effectText(x)}))},keys=>{
+ enqueueSelection242({title:'稲魂：設置済みカードを8枚選択',owner,recovery:{kind:'inadamashii',handIndex,cardId:c.id,ids:candidates.map(x=>x.id)},mode:'multi',min:8,max:8,options:candidates.map((x,i)=>({key:'card:'+i,label:cardSelectionLabel242(x,owner),description:effectText(x)}))},keys=>{
   const selected=keys.map(k=>candidates[+k.split(':')[1]]);if(hands[owner][handIndex]!==c||!selected.every(x=>installed[owner].includes(x)))return;
   selected.forEach(x=>cardCommands.move(x,{zone:'installed',owner},'discard'));withSelectionOwner242(owner,()=>registerInstallation(owner,hands[owner].splice(handIndex,1)[0]));
  });
@@ -827,7 +827,7 @@ function selectRitualCards(title,candidates,count,done){
  const list=document.createElement('div');list.className='ritual-selection-list';const rows=[];
  const update=()=>{status.textContent=chosen.size+'/'+count+'枚';ok.disabled=chosen.size!==count;for(const [c,row,mark] of rows){const yes=chosen.has(c);row.setAttribute('aria-pressed',String(yes));row.classList.toggle('selected',yes);mark.textContent=yes?'✓ 選択中':'未選択';row.disabled=!!turnClockState?.resolving&&yes}};
  candidates.forEach((c,i)=>{const row=document.createElement('button');row.type='button';row.className='ritual-selection-row';row.dataset.instance=String(i);
- const image=document.createElement('img');image.src=resolvedContentImage(c)||'';image.alt=c.name;image.onerror=()=>{image.style.visibility='hidden'};
+ const image=cardArtwork(c);image.classList.add('ritual-artwork-242');image.querySelectorAll('.zoomable').forEach(el=>el.classList.remove('zoomable'));
  const meta=document.createElement('span');meta.className='ritual-selection-meta';const name=document.createElement('strong');name.textContent=c.name;
  const vp=document.createElement('span');vp.textContent='VP：'+cardVP(c,turn);const mark=document.createElement('span');mark.className='ritual-selection-mark';meta.append(name,vp,mark);row.append(image,meta);
  row.onclick=()=>{if(!dialog.valid())return;if(chosen.has(c))chosen.delete(c);else if(chosen.size<count)chosen.add(c);update()};rows.push([c,row,mark]);list.appendChild(row)});
@@ -906,7 +906,7 @@ function renderTrade241(){
 
 // TEST242: explicit chooser, previewable options and a lease-bound FIFO selection queue.
 let pendingSelections242=[],selectionSequence242=0;
-const selectionCallbacks242=new Map(),selectionAccepted242=new Set();
+const selectionCallbacks242=new Map(),selectionAccepted242=new Map();
 function selectionLease242(job){return !!job&&turnClockLeaseValid(job.actor,job.token)}
 function selectionValueValid242(job,value){
  if(value===null)return !job.required;
@@ -923,10 +923,10 @@ function enqueueSelection242(config,done,cancel=()=>{}){
 }
 function finishSelection242(id,value){
  const job=pendingSelections242[0];if(!job||job.id!==id||!selectionLease242(job)||!selectionValueValid242(job,value))return false;
- const handler=selectionCallbacks242.get(id);if(!handler)return false;
+ const handler=selectionCallbacks242.get(id)||{valid:()=>true,done:value=>recoverSelection242(job,value),cancel:()=>recoverSelection242(job,null)};
  pendingSelections242.shift();selectionCallbacks242.delete(id);q('#effectSelection242')?.classList.add('hidden');
  if(handler.valid()){if(value===null)handler.cancel();else handler.done(value)}else handler.cancel();
- runSelectionBots242();drainInstallEffects();renderGame();return true;
+ runSelectionBots242();renderSelections242();drainInstallEffects();renderGame();return true;
 }
 function runSelectionBots242(){
  for(let guard=0;guard<100&&pendingSelections242.length;guard++){
@@ -943,10 +943,10 @@ function requestSelection242(value){
  }else finishSelection242(job.id,value);
 }
 function receiveSelection242(payload){
- const n=turnClockNet,job=pendingSelections242[0];if(!realOnlineMainMode||!isRealLobbyHost()||!n?.ready||!job||!payload||selectionAccepted242.has(job.id))return;
+ const n=turnClockNet,job=pendingSelections242[0];if(!realOnlineMainMode||!isRealLobbyHost()||!n?.ready||!job||!payload)return;
  if(payload.match!==n.match||payload.epoch!==n.epoch||payload.token!==turnClockState.token||payload.id!==job.id||payload.owner!==job.owner||payload.client!==realMainRoster[job.owner]?.client_id||!selectionValueValid242(job,payload.value))return;
- selectionAccepted242.add(job.id);
- const result={...payload,host:realLobbyClientId,actor:job.actor};
+ const accepted=selectionAccepted242.get(job.id);if(accepted){turnClockSend('selection_result_242',accepted);applySelectionResult242(accepted);return}
+ const result={...payload,host:realLobbyClientId,actor:job.actor};selectionAccepted242.set(job.id,result);
  turnClockSend('selection_result_242',result);applySelectionResult242(result);
 }
 function applySelectionResult242(payload){
@@ -955,7 +955,7 @@ function applySelectionResult242(payload){
 }
 function closeSelections242(){
  for(let guard=0;pendingSelections242.length&&guard<100;guard++){
-  const job=pendingSelections242[0];if(selectionCallbacks242.has(job.id)){
+  const job=pendingSelections242[0];{
    const value=job.required?(job.mode==='allocation'?{y:job.total,p:0,r:0}:job.mode==='multi'?job.options.slice(0,job.max).map(o=>o.key):job.options[0]?.key):null;
    if(finishSelection242(job.id,value))continue;
   }
@@ -989,16 +989,16 @@ function renderSelections242(){
 }
 function cardSelectionLabel242(c,p=turn){return c.name+'｜VP：'+cardVP(c,p)}
 function employeeSelectionLabel242(e){return displayCastRarity241(e.rarity)+'｜'+castDisplayName(e)+(e.copySourceName?'（コピー：'+e.copySourceName+'）':'')}
-function selectEmployee242(title,targets,done,{owner=turn,required=false,onCancel=()=>{}}={}){
+function selectEmployee242(title,targets,done,{owner=turn,required=false,onCancel=()=>{},recovery=null}={}){
  if(!targets.length)return;
- enqueueSelection242({title,owner,required,options:targets.map((t,i)=>({key:'choice:'+i,label:(t.p!=null?tradePlayerName241(t.p)+'：':'')+employeeSelectionLabel242(t.e),description:castEffectText(t.e)}))},key=>done(targets[+key.split(':')[1]]),onCancel);
+ enqueueSelection242({title,owner,required,recovery:recovery&&{...recovery,targets:targets.map(t=>({p:t.p,i:t.p!=null?employees[t.p].indexOf(t.e):null,id:t.e.id}))},options:targets.map((t,i)=>({key:'choice:'+i,label:(t.p!=null?tradePlayerName241(t.p)+'：':'')+employeeSelectionLabel242(t.e),description:castEffectText(t.e)}))},key=>{const target=targets[+key.split(':')[1]];if(target?.p!=null&&!employees[target.p]?.includes(target.e)){onCancel();return}done(target)},onCancel);
 }
 
 
 function withSelectionOwner242(owner,fn){const old=turn;turn=owner;try{return fn()}finally{turn=old}}
 function resolveHoneyTrap242(owner){
  const targets=employees.flatMap((list,p)=>p===owner?[]:(list||[]).map(e=>({p,e})));
- selectEmployee242('ハニートラップ：解雇する相手の雇用',targets,({p,e})=>{const i=employees[p].indexOf(e);if(i>=0)employees[p].splice(i,1)},{owner});
+ selectEmployee242('ハニートラップ：解雇する相手の雇用',targets,({p,e})=>{const i=employees[p].indexOf(e);if(i>=0)employees[p].splice(i,1)},{owner,recovery:{kind:'honey'}});
 }
 function chooseSecretThirteen242(L,free=false){
  const owner=turn;if(!free&&!canPayResourceCost({y:18},owner))return alert('資金18が必要です。');
@@ -1007,10 +1007,43 @@ function chooseSecretThirteen242(L,free=false){
   if(!employees[p].includes(e)||!free&&!canPayResourceCost({y:18},owner))return;
   if(!free)payResourceCost({y:18},owner);cardCommands.move(e,{zone:'employees',owner:p},{zone:'employees',owner});
   if(!free)withSelectionOwner242(owner,()=>finishLegendAcquisition(L));
- },{owner});
+ },{owner,recovery:{kind:'secret',legendId:L?.id,free}});
 }
 function resolveProcurement242(owner){
- for(let p=0;p<playerCount;p++){const total=p===owner?15:5;enqueueSelection242({title:'特需：獲得する資源を配分',owner:p,mode:'allocation',total,required:false},allocation=>{for(const key of ['y','p','r'])powers[p][key]+=allocation[key]})}
+ for(let p=0;p<playerCount;p++){const total=p===owner?15:5;enqueueSelection242({title:'特需：獲得する資源を配分',owner:p,recovery:{kind:'procurement'},mode:'allocation',total,required:false},allocation=>{for(const key of ['y','p','r'])powers[p][key]+=allocation[key]})}
+}
+
+// Recover serializable choices on the authoritative timeout host or after reload.
+// An unconfirmed generic evolution is cancelled before any materials/cost commit.
+function recoverSelection242(job,value){
+ const r=job.recovery,owner=job.owner;if(!r)return;
+ if(r.kind==='doppelHire'){
+  let made={...r.employee,copiedFrom:null};
+  const t=value&&r.targets[+value.split(':')[1]],src=t&&employees[t.p]?.[t.i];
+  if(src?.id===t?.id)made=copiedDoppelAbility241(made,src);
+  employees[owner].push(made);if(employeeUniqueAbilitiesEnabled(owner)&&made.hireBread)for(let i=0;i<made.hireBread;i++)drawBread(owner);return;
+ }
+ if(value===null)return;
+ if(r.kind==='procurement'){for(const k of ['y','p','r'])powers[owner][k]+=value[k];return}
+ if(r.kind==='legendHire'){
+  const id=r.ids[+value.split(':')[1]],e=CAST_TYPES[id];if(!e||(employees[owner]||[]).length>=effectiveHireLimit(owner)||!implementedCastPool(e.rarity).some(x=>x.id===id))return;
+  withSelectionOwner242(owner,()=>cardCommands.koyou('select',1,{pool:[e],selected:[e],accept:x=>{if(x.doppelganger)finalizeHire(x);else employees[owner].push(x)}}));return;
+ }
+ if(r.kind==='genesis'){
+  const t=r.targets[+value.split(':')[1]],c=t&&(t.zone==='temporary'?temporary[r.p]:installed[r.p])?.[t.i];
+  if(c&&c.id===t.id&&c.type!=='LEGEND')cardCommands.move(c,{zone:t.zone,owner:r.p},'discard');resolveScorchedEarth(owner,r.step+1);return;
+ }
+ if(r.kind==='inadamashii'){
+  const c=hands[owner]?.[r.handIndex],chosen=value.map(k=>installed[owner]?.find(c=>c.id===r.ids[+k.split(':')[1]]));
+  if(!c||c.id!==r.cardId||chosen.some(c=>!c)||new Set(chosen).size!==8)return;
+  chosen.forEach(c=>cardCommands.move(c,{zone:'installed',owner},'discard'));withSelectionOwner242(owner,()=>registerInstallation(owner,hands[owner].splice(r.handIndex,1)[0]));return;
+ }
+ const t=r.targets?.[+value.split(':')[1]],e=t&&employees[t.p]?.[t.i];if(!e||e.id!==t.id)return;
+ if(r.kind==='honey'){employees[t.p].splice(t.i,1);return}
+ if(r.kind==='secret'){
+  const L=legends.find(L=>L.id===r.legendId);if(!r.free&&(!L||L.taken||!canPayResourceCost({y:18},owner)))return;
+  if(!r.free)payResourceCost({y:18},owner);cardCommands.move(e,{zone:'employees',owner:t.p},{zone:'employees',owner});if(!r.free)withSelectionOwner242(owner,()=>finishLegendAcquisition(L));
+ }
 }
 
 // @kokoryo-end-section S0099
